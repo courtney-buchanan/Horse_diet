@@ -1,0 +1,493 @@
+sample,copy,area_season,season,enviro,study.area,domestication,DESCRIPTION,state,grass_cover_percent,grass_cover,elevation,biome,latitude,longitude,collection_time,life_stage,sex_known,sex,BCS_known,horse_BCS,fecal_freshness,stud_pile
+AT10,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2051.01,sagerush steppe,41.329281,-108.092353,6/22/2020 12:09,Adult,y,stallion,n,u,2,n
+AT12,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2120.58,sagerush steppe,41.266425,-107.961884,6/22/2020 13:20,Adult,n,u,n,u,3,n
+AT13,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2120.22,sagerush steppe,41.26589,-107.961994,6/22/2020 13:24,Adult,n,u,n,u,2,n
+AT14,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2102.8,sagerush steppe,41.258964,-107.973519,6/22/2020 13:52,Adult,n,u,n,u,2,y
+AT15,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2101.34,sagerush steppe,41.258762,-107.973181,6/22/2020 13:57,Adult,n,u,n,u,2,u
+AT20,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2081.57,sagerush steppe,41.294667,-107.972352,6/22/2020 8:36,Adult,n,u,n,u,3,n
+AT23,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2048.43,sagerush steppe,41.01478,-108.298664,6/23/2020 11:03,Adult,n,u,n,u,4,y
+AT2,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2126.14,sagerush steppe,41.025435,-108.416017,6/23/2020 13:10,Adult,n,u,n,u,4,n
+AT3,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2074.57,sagerush steppe,41.299886,-107.981338,6/22/2020 8:54,Adult,n,u,n,u,3,y
+AT4,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2070.49,sagerush steppe,41.297748,-107.983154,6/22/2020 9:02,Adult,n,u,n,u,3,y
+AT5,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2068.53,sagerush steppe,41.296947,-107.982785,6/22/2020 9:08,Adult,n,u,n,u,3,y
+AT6,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2069.22,sagerush steppe,41.296893,-107.981713,6/22/2020 9:14,Adult,n,u,n,u,3,n
+AT7,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2069.3,sagerush steppe,41.331718,-108.029092,6/22/2020 9:48,Adult,y,stallion,y,5,1,n
+AT8,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2059.75,sagerush steppe,41.348711,-108.048757,6/22/2020 10:06,Adult,n,u,y,5,1,n
+AT9,1,AT,summer,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2050.8,sagerush steppe,41.329276,-108.09236,6/22/2020 12:07,Adult,y,stallion,n,u,2,n
+CN10,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1918.77,sagerush steppe,39.174861,-113.72285,5/29/2020 14:31,Adult,n,u,n,u,5,n
+CN11,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1905.45,sagerush steppe,39.275649,-113.67225,5/30/2020 19:57,Adult,n,u,n,u,3,n
+CN12,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1909.85,sagerush steppe,39.275676,-113.672147,5/30/2020 19:59,Adult,n,u,n,u,3,n
+CN13,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1921.22,sagerush steppe,39.27525,-113.671766,5/30/2020 20:06,Adult,n,u,n,u,3,n
+CN14,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1579.61,sagerush steppe,39.320123,-113.645991,5/31/2020 8:02,Adult,n,u,n,u,2,n
+CN15,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1582.77,sagerush steppe,39.318992,-113.646282,5/31/2020 8:09,Adult,n,u,n,u,2,n
+CN16,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1588.82,sagerush steppe,39.318575,-113.645756,5/31/2020 8:17,Adult,n,u,n,u,1,n
+CN17,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1589.9,sagerush steppe,39.318178,-113.64589,5/31/2020 8:21,Adult,n,u,n,u,1,n
+CN18,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1592.12,sagerush steppe,39.317847,-113.646065,5/31/2020 8:25,Adult,n,u,n,u,1,n
+CN1,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1940.78,sagerush steppe,39.169562,-113.669106,5/31/2020 11:49,Adult,n,u,n,u,1,n
+CN2,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,2004.83,sagerush steppe,39.186258,-113.722622,5/29/2020 15:22,Adult,n,u,n,u,5,y
+CN3,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1999.29,sagerush steppe,39.18555,-113.72341,5/29/2020 15:40,Adult,n,u,n,u,5,n
+CN4,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1872.09,sagerush steppe,39.166267,-113.745044,5/29/2020 16:04,Adult,n,u,n,u,5,n
+CN8,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1732.2,sagerush steppe,39.303267,-113.676431,5/30/2020 18:23,Adult,n,u,n,u,5,n
+CN9,1,CN,summer,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1901.16,sagerush steppe,39.275834,-113.672399,5/30/2020 19:53,Adult,n,u,n,u,3,n
+DG1,1,DG,summer,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,2197.98,pasture,41.320185,-105.636467,8/13/2020 9:05,Adult,y,mare,y,3,3,n
+DG2,1,DG,summer,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,2205.75,pasture,41.32077,-105.636979,8/13/2020 10:12,Adult,y,mare,y,5,1,n
+DG3,1,DG,summer,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,2203.32,pasture,41.32063,-105.637009,8/13/2020 10:19,Adult,y,mare,y,5,1,n
+DG4,1,DG,summer,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,2205.83,pasture,41.320667,-105.637001,8/13/2020 10:27,Adult,y,mare,y,5,1,n
+DG5,1,DG,summer,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,2205.41,pasture,41.320781,-105.636906,8/13/2020 10:36,Adult,y,mare,y,5,1,n
+DG6,1,DG,summer,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,2205.14,pasture,41.320751,-105.636622,8/13/2020 10:43,Adult,y,mare,y,5,2,n
+DP1,1,DP,summer,pasture,DP,domestic,"Domestic pasture, Laramie, WY, feces",WY,.,.,2244.92,pasture,41.246952,-105.550465,8/13/2020 13:32,Adult,y,mare,n,u,3,n
+DP2,1,DP,summer,pasture,DP,domestic,"Domestic pasture, Laramie, WY, feces",WY,.,.,2246.31,pasture,41.246811,-105.550195,8/13/2020 13:35,Adult,y,mare,n,u,1,n
+DP3,1,DP,summer,pasture,DP,domestic,"Domestic pasture, Laramie, WY, feces",WY,.,.,2245.05,pasture,41.24636,-105.549145,8/13/2020 13:42,Adult,y,mare,n,u,1,n
+DP4,1,DP,summer,pasture,DP,domestic,"Domestic pasture, Laramie, WY, feces",WY,.,.,2241.68,pasture,41.24598,-105.547854,8/13/2020 13:48,Adult,y,mare,n,u,4,n
+DP5,1,DP,summer,pasture,DP,domestic,"Domestic pasture, Laramie, WY, feces",WY,.,.,2242.34,pasture,41.247307,-105.55006,8/13/2020 13:56,Adult,y,mare,n,u,3,n
+FR10,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1803.01,sagerush steppe,38.529947,-113.180084,5/28/2020 8:16,Adult,n,u,n,u,3,n
+FR11,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1809.87,sagerush steppe,38.565715,-113.188137,5/28/2020 15:11,Adult,n,u,n,u,5,y
+FR12,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1676.28,sagerush steppe,38.559696,-113.128382,5/28/2020 16:40,Adult,y,stallion,y,5,2,y
+FR13,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1844.15,sagerush steppe,38.538929,-113.193264,5/28/2020 17:29,Adult,n,u,n,u,5,y
+FR14,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1846.3,sagerush steppe,38.538943,-113.194024,5/28/2020 17:34,Adult,n,u,n,u,4,n
+FR15,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1810.45,sagerush steppe,38.544661,-113.186739,5/29/2020 8:11,Adult,n,u,n,u,3,n
+FR16,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1833.79,sagerush steppe,38.541681,-113.189665,5/29/2020 8:26,Adult,n,u,y,5,1,y
+FR1,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1874.48,sagerush steppe,38.536716,-113.20129,5/29/2020 8:56,Adult,n,u,n,u,3,n
+FR3,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1727.71,sagerush steppe,38.582707,-113.167975,5/28/2020 10:21,Adult,n,u,n,u,5,n
+FR4,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1690.94,sagerush steppe,38.57563,-113.151636,5/28/2020 11:05,Adult,n,u,n,u,2,n
+FR5,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1690.3,sagerush steppe,38.575657,-113.15163,5/28/2020 11:06,Adult,n,u,n,u,2,n
+FR6,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1690.5,sagerush steppe,38.575672,-113.151623,5/28/2020 11:07,Adult,n,u,n,u,2,n
+FR7,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1689.6,sagerush steppe,38.575741,-113.151608,5/28/2020 11:09,Adult,n,u,n,u,2,n
+FR8,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1829.13,sagerush steppe,38.505578,-113.177678,5/28/2020 12:57,Adult,n,u,n,u,5,y
+FR9,1,FR,summer,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1970.31,sagerush steppe,38.515958,-113.228675,5/28/2020 13:36,Adult,n,u,n,u,5,n
+GM10,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2248.62,sagerush steppe,42.341876,-107.625571,7/14/2020 14:16,Adult,n,u,n,u,4,y
+GM11,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2294.57,sagerush steppe,42.336999,-107.62826,7/14/2020 14:35,Adult,n,u,n,u,4,y
+GM12,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2345.55,sagerush steppe,42.332714,-107.639668,7/14/2020 14:45,Adult,n,u,n,u,4,y
+GM13,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2544.22,sagerush steppe,42.309429,-107.649136,7/14/2020 15:40,Adult,n,u,n,u,5,n
+GM14,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2571.77,sagerush steppe,42.317589,-107.639887,7/14/2020 16:45,Adult,n,u,n,u,4,y
+GM15,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2249.26,sagerush steppe,42.342232,-107.623496,7/14/2020 18:24,Adult,n,u,n,u,2,y
+GM16,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2256.61,sagerush steppe,42.341525,-107.624532,7/14/2020 18:29,Adult,y,mare,y,5,1,n
+GM17,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2676.72,sagerush steppe,42.353358,-107.703778,7/15/2020 8:31,Adult,n,u,n,u,4,y
+GM18,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2696.61,sagerush steppe,42.355701,-107.713069,7/15/2020 8:36,Adult,n,u,n,u,4,y
+GM19,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2740.39,sagerush steppe,42.341562,-107.716729,7/15/2020 8:44,Adult,n,u,n,u,4,n
+GM20,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2747.98,sagerush steppe,42.341745,-107.715815,7/15/2020 8:47,Adult,n,u,n,u,4,n
+GM22,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2743.42,sagerush steppe,42.340243,-107.717896,7/15/2020 9:12,Adult,n,u,n,u,2,n
+GM3,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2122.3,sagerush steppe,42.371436,-107.589341,7/14/2020 12:51,Adult,n,u,n,u,4,y
+GM5,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2152.91,sagerush steppe,42.362681,-107.597634,7/14/2020 13:14,Adult,n,u,n,u,4,n
+GM8,1,GM,summer,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2236.81,sagerush steppe,42.342005,-107.623382,7/14/2020 13:56,Adult,n,u,n,u,4,y
+LBC10,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2067.58,sagerush steppe,39.27245,-108.535857,7/17/2020 14:23,Adult,n,u,n,u,5,y
+LBC14,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2084.39,sagerush steppe,39.230511,-108.468829,7/17/2020 17:25,Adult,n,u,n,u,5,n
+LBC16,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2020.55,sagerush steppe,39.233125,-108.420056,7/17/2020 18:38,Adult,n,u,n,u,4,y
+LBC17,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2028.97,sagerush steppe,39.235243,-108.432846,7/18/2020 7:13,Adult,n,u,n,u,2,n
+LBC18,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2031.37,sagerush steppe,39.234896,-108.432865,7/18/2020 7:16,Adult,y,stallion,y,5,2,y
+LBC1,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2053.07,sagerush steppe,39.22877,-108.45733,7/18/2020 7:33,Adult,n,u,n,u,3,n
+LBC20,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2103.27,sagerush steppe,39.269263,-108.535178,7/17/2020 14:28,Adult,n,u,n,u,4,n
+LBC21,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2094.05,sagerush steppe,39.21815,-108.488923,7/18/2020 9:17,Adult,n,u,n,u,3,n
+LBC22,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2093.85,sagerush steppe,39.218158,-108.488929,7/18/2020 9:20,Adult,n,u,n,u,4,n
+LBC23,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2064.5,sagerush steppe,39.216824,-108.486272,7/18/2020 9:29,Adult,n,u,n,u,4,n
+LBC24,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,1984.67,sagerush steppe,39.207201,-108.466545,7/18/2020 9:45,Adult,n,u,n,u,5,n
+LBC2,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,1990.77,sagerush steppe,39.198917,-108.437899,7/18/2020 10:32,Adult,n,u,n,u,5,y
+LBC3,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2129.09,sagerush steppe,39.262475,-108.529257,7/17/2020 14:37,Adult,y,stallion,y,5,1,y
+LBC5,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2109.95,sagerush steppe,39.263032,-108.519796,7/17/2020 14:57,Adult,n,u,n,u,5,y
+LBC8,1,LBC,summer,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2074.02,sagerush steppe,39.268048,-108.519032,7/17/2020 15:24,Adult,n,u,n,u,5,y
+MP10,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1485.44,sagerush steppe,44.470703,-108.660131,7/22/2020 17:46,Adult,n,u,n,u,2,y
+MP11,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1452.98,sagerush steppe,44.482974,-108.570353,7/23/2020 8:54,Adult,n,u,n,u,2,y
+MP12,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1452.9,sagerush steppe,44.483257,-108.570293,7/23/2020 9:00,Adult,n,u,n,u,3,u
+MP13,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1450.59,sagerush steppe,44.484533,-108.566531,7/23/2020 9:24,Adult,n,u,n,u,2,n
+MP14,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1449.17,sagerush steppe,44.484167,-108.566194,7/23/2020 9:31,Adult,n,u,n,u,2,n
+MP15,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1450.29,sagerush steppe,44.484188,-108.56625,7/23/2020 9:36,Adult,n,u,n,u,3,n
+MP16,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1449.53,sagerush steppe,44.48424,-108.566311,7/23/2020 9:42,Adult,y,stallion,y,5,1,n
+MP17,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1448.19,sagerush steppe,44.484065,-108.566998,7/23/2020 9:50,Adult,n,u,n,u,2,n
+MP1,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1450.12,sagerush steppe,44.484214,-108.567216,7/23/2020 9:55,Adult,y,stallion,y,5,1,n
+MP2,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1485.38,sagerush steppe,44.470824,-108.660244,7/22/2020 17:47,Adult,n,u,n,u,3,n
+MP3,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1484.64,sagerush steppe,44.470933,-108.66014,7/22/2020 17:51,Adult,n,u,n,u,2,n
+MP4,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1483.4,sagerush steppe,44.471168,-108.660396,7/22/2020 17:53,Adult,n,u,n,u,2,n
+MP6,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1481.46,sagerush steppe,44.471006,-108.660446,7/22/2020 17:59,Adult,n,u,n,u,3,n
+MP7,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1480.75,sagerush steppe,44.471078,-108.660733,7/22/2020 18:05,Adult,n,u,n,u,4,n
+MP9,1,MP,summer,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1478.74,sagerush steppe,44.472003,-108.660907,7/22/2020 18:16,Adult,n,u,n,u,4,y
+NH10,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1744.49,sagerush steppe,37.624115,-113.928844,5/23/2020 15:05,Adult,n,u,n,u,5,n
+NH11,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1581.68,sagerush steppe,37.705018,-113.838764,6/2/2020 9:27,Adult,n,u,n,u,4,y
+NH12,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1584.55,sagerush steppe,37.703739,-113.839491,6/2/2020 9:54,Adult,n,u,n,u,4,n
+NH13,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1582.56,sagerush steppe,37.703542,-113.839415,6/2/2020 9:58,Adult,n,u,n,u,4,y
+NH14,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1670.86,sagerush steppe,37.589163,-113.747351,6/2/2020 11:51,Adult,n,u,n,u,5,n
+NH15,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1902.44,sagerush steppe,37.652794,-113.863483,6/2/2020 13:34,Adult,n,u,n,u,5,y
+NH16,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1845.86,sagerush steppe,37.632309,-113.85966,6/2/2020 14:24,Adult,n,u,n,u,4,y
+NH17,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1804.09,sagerush steppe,37.621609,-113.930039,6/14/2020 10:37,Adult,n,u,y,4,2,n
+NH1,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1762.86,sagerush steppe,37.624507,-113.930122,6/14/2020 14:59,Adult,n,u,y,5,2,n
+NH2,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1746.18,sagerush steppe,37.623824,-113.929161,5/23/2020 15:09,Adult,n,u,n,u,5,n
+NH3,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1745.19,sagerush steppe,37.623751,-113.929614,5/23/2020 15:21,Adult,n,u,n,u,4,n
+NH5,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1816.42,sagerush steppe,37.618156,-113.932243,5/23/2020 16:46,Adult,n,u,n,u,4,n
+NH6,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1593.94,sagerush steppe,37.707442,-113.83806,6/2/2020 8:49,Adult,n,u,n,u,4,n
+NH7,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1586.02,sagerush steppe,37.707255,-113.838334,6/2/2020 8:57,Adult,n,u,n,u,3,y
+NH8,1,NH,summer,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1585.76,sagerush steppe,37.706959,-113.840366,6/2/2020 9:03,Adult,n,u,n,u,3,y
+ON10,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1497.63,sagerush steppe,40.096836,-112.727875,6/16/2020 18:31,Adult,n,u,n,u,2,u
+ON12,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1551.3,sagerush steppe,40.020208,-112.790988,6/16/2020 20:14,Adult,n,u,n,u,2,n
+ON13,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1573.07,sagerush steppe,40.019305,-112.789094,6/16/2020 20:36,Adult,n,u,n,u,2,n
+ON15,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1567.06,sagerush steppe,40.019131,-112.78983,6/16/2020 20:42,Adult,n,u,n,u,2,n
+ON16,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1364.34,sagerush steppe,40.024161,-112.856012,6/17/2020 9:39,Adult,n,u,n,u,2,n
+ON18,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1367.98,sagerush steppe,40.029876,-112.860776,6/17/2020 10:01,Adult,y,stallion,y,5,1,y
+ON19,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1367.91,sagerush steppe,40.029558,-112.861124,6/17/2020 10:04,Adult,y,mare,y,5,1,n
+ON20,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1368.8,sagerush steppe,40.018957,-112.856453,6/17/2020 11:18,Adult,y,mare,y,5,2,n
+ON21,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1368.04,sagerush steppe,40.02168,-112.858365,6/17/2020 11:28,Adult,n,u,y,5,1,n
+ON24,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1535.46,sagerush steppe,40.145651,-112.678454,6/17/2020 15:21,Adult,n,u,n,u,2,n
+ON25,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1534.68,sagerush steppe,40.146073,-112.678176,6/17/2020 15:29,Adult,n,u,n,u,2,n
+ON3,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1509.2,sagerush steppe,40.10062,-112.724612,6/16/2020 17:40,Adult,n,u,n,u,2,n
+ON4,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1509.27,sagerush steppe,40.100577,-112.724816,6/16/2020 17:44,Adult,n,u,n,u,2,n
+ON5,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1510.16,sagerush steppe,40.099007,-112.723593,6/16/2020 18:00,Adult,y,mare,y,6,1,n
+ON9,1,ON,summer,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1498.51,sagerush steppe,40.097123,-112.72742,6/16/2020 18:25,Adult,n,u,n,u,2,y
+PB12,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1369.78,sagerush steppe,43.500526,-119.310064,7/3/2020 14:12,Adult,n,u,n,u,3,y
+PB14,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1325.14,sagerush steppe,43.466238,-119.370845,7/3/2020 17:09,Adult,n,u,n,u,4,y
+PB16,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1326.26,sagerush steppe,43.466455,-119.370518,7/3/2020 17:16,Adult,n,u,n,u,4,y
+PB17,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1319.45,sagerush steppe,43.4603,-119.358214,7/3/2020 17:53,Adult,n,u,n,u,4,n
+PB18,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1325.4,sagerush steppe,43.454809,-119.35811,7/3/2020 18:32,Adult,n,u,n,u,3,n
+PB19,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1328.91,sagerush steppe,43.454393,-119.358731,7/3/2020 18:35,Adult,n,u,n,u,3,n
+PB1,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1338.66,sagerush steppe,43.454052,-119.359309,7/3/2020 18:39,Adult,n,u,n,u,2,n
+PB20,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1374.58,sagerush steppe,43.501472,-119.310511,7/3/2020 14:20,Adult,y,stallion,y,6,1,n
+PB21,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1339.57,sagerush steppe,43.454073,-119.359364,7/3/2020 18:42,Adult,n,u,n,u,2,n
+PB2,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1339.31,sagerush steppe,43.453981,-119.359295,7/3/2020 18:44,Adult,n,u,n,u,2,n
+PB4,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1374.13,sagerush steppe,43.50144,-119.310273,7/3/2020 14:25,Adult,n,u,n,u,4,n
+PB5,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1374.14,sagerush steppe,43.500958,-119.310093,7/3/2020 14:32,Adult,n,u,n,u,3,y
+PB7,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1320.51,sagerush steppe,43.454468,-119.322023,7/3/2020 15:31,Adult,n,u,n,u,4,y
+PB8,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1321.21,sagerush steppe,43.454442,-119.321133,7/3/2020 15:37,Adult,n,u,n,u,4,n
+PB9,1,PB,summer,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1322.64,sagerush steppe,43.45552,-119.322595,7/3/2020 15:48,Adult,n,u,n,u,4,n
+PN12,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1493.01,sagerush steppe,39.24811,-119.497036,6/26/2020 20:26,Adult,n,u,n,u,2,n
+PN13,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1483.6,sagerush steppe,39.248476,-119.496869,6/27/2020 16:31,Adult,y,mare,y,5,1,n
+PN14,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1548.84,sagerush steppe,39.248335,-119.483174,6/27/2020 16:58,Adult,n,u,n,u,3,n
+PN15,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1583.14,sagerush steppe,39.246516,-119.479074,6/27/2020 17:41,Adult,n,u,n,u,2,y
+PN16,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1582.53,sagerush steppe,39.246644,-119.479099,6/27/2020 17:43,Adult,n,u,n,u,2,n
+PN17,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1583.61,sagerush steppe,39.246686,-119.479125,6/27/2020 17:46,Adult,n,u,n,u,2,n
+PN1,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1582.83,sagerush steppe,39.24673,-119.479172,6/27/2020 17:50,Adult,n,u,n,u,2,n
+PN20,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1492.51,sagerush steppe,39.248056,-119.497143,6/26/2020 20:29,Adult,n,u,n,u,3,n
+PN21,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1414.03,sagerush steppe,39.215177,-119.570495,6/28/2020 10:50,Adult,y,mare,y,5,1,n
+PN22,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1418.03,sagerush steppe,39.214648,-119.570877,6/28/2020 10:57,Adult,y,stallion,y,5,1,n
+PN23,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1411.21,sagerush steppe,39.215368,-119.570715,6/28/2020 11:02,Adult,n,u,n,u,3,n
+PN2,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1411.09,sagerush steppe,39.215634,-119.57117,6/28/2020 11:11,Adult,n,u,n,u,3,n
+PN3,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1489.35,sagerush steppe,39.248295,-119.497004,6/26/2020 20:35,Adult,n,u,n,u,1,n
+PN4,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1489.98,sagerush steppe,39.248375,-119.496916,6/26/2020 20:38,Adult,n,u,n,u,2,n
+PN5,1,PN,summer,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1488.47,sagerush steppe,39.248428,-119.496926,6/26/2020 20:40,Adult,n,u,n,u,2,n
+RR10,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1394.06,desert,35.899851,-115.465468,6/7/2020 8:13,Adult,y,stallion,y,5,1,y
+RR11,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1310.98,desert,35.870767,-115.476102,6/7/2020 10:34,Adult,y,stallion,y,5,1,n
+RR12,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1312.55,desert,35.870775,-115.4761,6/7/2020 10:51,Adult,n,u,n,u,3,n
+RR13,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1312.45,desert,35.870746,-115.47602,6/7/2020 10:54,Adult,n,u,n,u,3,n
+RR16,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1310.44,desert,35.870769,-115.476006,6/7/2020 10:56,Adult,n,u,n,u,2,n
+RR18,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1363.03,desert,35.889725,-115.467863,6/7/2020 11:57,Adult,y,stallion,y,5,1,y
+RR19,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1361.15,desert,35.892313,-115.467079,6/7/2020 12:25,Adult,y,stallion,y,6,1,n
+RR1,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1247.84,desert,35.863499,-115.460628,6/7/2020 14:34,Adult,y,mare,y,3,1,n
+RR2,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1394.62,desert,35.899833,-115.465555,6/7/2020 8:15,Adult,y,stallion,y,5,1,n
+RR3,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1279.72,desert,35.872933,-115.472108,6/7/2020 9:26,Adult,n,u,n,u,3,n
+RR4,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1305.47,desert,35.871201,-115.476028,6/7/2020 9:54,Adult,n,u,n,u,4,n
+RR5,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1315.1,desert,35.87079,-115.477416,6/7/2020 10:13,Adult,n,u,n,u,3,n
+RR6,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1314.87,desert,35.870673,-115.477178,6/7/2020 10:17,Adult,n,u,n,u,2,n
+RR8,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1311.14,desert,35.870831,-115.476287,6/7/2020 10:28,Adult,n,u,n,u,3,n
+RR9,1,RR,summer,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1312.51,desert,35.870691,-115.476216,6/7/2020 10:31,Adult,y,stallion,y,5,1,n
+SB10,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1286.56,sagebrush steppe,43.41931,-117.008925,7/8/2020 13:13,Adult,n,u,n,u,4,y
+SB11,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1422.67,sagebrush steppe,43.415514,-117.020904,7/8/2020 19:01,Adult,n,u,n,u,1,y
+SB12,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1423.54,sagebrush steppe,43.415555,-117.020986,7/8/2020 19:03,Adult,n,u,n,u,1,n
+SB13,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1449.95,sagebrush steppe,43.416016,-117.023231,7/8/2020 19:09,Adult,n,u,n,u,3,n
+SB14,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1438.24,sagebrush steppe,43.415836,-117.021956,7/8/2020 19:15,Adult,n,u,n,u,2,y
+SB15,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1421.69,sagebrush steppe,43.415522,-117.020905,7/8/2020 19:20,Adult,n,u,n,u,4,y
+SB16,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1418.16,sagebrush steppe,43.415644,-117.020723,7/8/2020 19:25,Adult,n,u,n,u,2,n
+SB17,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1411.34,sagebrush steppe,43.415823,-117.02062,7/8/2020 19:29,Adult,n,u,n,u,2,n
+SB18,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1409.32,sagebrush steppe,43.415833,-117.020578,7/8/2020 19:30,Adult,n,u,n,u,2,n
+SB1,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1262.41,sagebrush steppe,43.440353,-116.982105,7/8/2020 20:17,Adult,y,stallion,y,5,2,n
+SB2,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1288.08,sagebrush steppe,43.418755,-117.009097,7/8/2020 13:17,Adult,n,u,n,u,5,y
+SB3,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1289.95,sagebrush steppe,43.417858,-117.009847,7/8/2020 13:21,Adult,n,u,n,u,4,y
+SB5,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1274.53,sagebrush steppe,43.416048,-117.010249,7/8/2020 13:31,Adult,n,u,n,u,5,y
+SB6,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1184.89,sagebrush steppe,43.432112,-116.969716,7/8/2020 15:46,Adult,n,u,n,u,4,n
+SB9,1,SB,summer,n_great_basin,SB,wild,"Sands Basin HMA, ID, feces ",ID,32.9,high,1426.14,sagebrush steppe,43.416724,-117.021786,7/8/2020 18:53,Adult,n,u,n,u,3,n
+SC10,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1095.86,sagebrush steppe,42.667989,-115.265566,7/6/2020 14:47,Adult,n,u,n,u,4,n
+SC11,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1093.63,sagebrush steppe,42.668278,-115.266198,7/6/2020 15:08,Adult,n,u,n,u,3,n
+SC12,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1094.09,sagebrush steppe,42.668318,-115.266225,7/6/2020 15:10,Adult,n,u,n,u,4,n
+SC13,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1094.56,sagebrush steppe,42.668255,-115.26635,7/6/2020 15:13,Adult,n,u,n,u,3,n
+SC14,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1093.63,sagebrush steppe,42.668208,-115.266438,7/6/2020 15:17,Adult,n,u,n,u,2,n
+SC15,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1093.86,sagebrush steppe,42.66821,-115.266474,7/6/2020 15:20,Adult,n,u,n,u,3,n
+SC1,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1093.24,sagebrush steppe,42.668144,-115.266457,7/6/2020 15:25,Adult,n,u,n,u,4,n
+SC2,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1096.27,sagebrush steppe,42.668042,-115.265667,7/6/2020 14:50,Adult,n,u,n,u,3,n
+SC3,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1094.72,sagebrush steppe,42.668102,-115.265889,7/6/2020 14:52,Adult,n,u,n,u,3,n
+SC4,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1093.61,sagebrush steppe,42.66813,-115.265983,7/6/2020 14:55,Adult,n,u,n,u,4,n
+SC5,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1094.92,sagebrush steppe,42.668095,-115.265978,7/6/2020 14:56,Adult,n,u,n,u,4,y
+SC6,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1094.01,sagebrush steppe,42.668175,-115.266087,7/6/2020 14:59,Adult,n,u,n,u,3,n
+SC7,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1095.73,sagebrush steppe,42.668179,-115.266144,7/6/2020 15:00,Adult,n,u,n,u,3,n
+SC8,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1092.95,sagebrush steppe,42.668178,-115.266154,7/6/2020 15:02,Adult,n,u,n,u,4,n
+SC9,1,SC,summer,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1092.19,sagebrush steppe,42.668277,-115.266279,7/6/2020 15:04,Adult,n,u,n,u,3,n
+SS10,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1580.88,sagebrush steppe,42.707443,-118.949934,7/1/2020 18:36,Adult,n,u,n,u,2,n
+SS11,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1588,sagebrush steppe,42.707236,-118.949109,7/1/2020 18:39,Adult,n,u,n,u,2,y
+SS12,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1598.34,sagebrush steppe,42.706037,-118.946599,7/1/2020 18:50,Adult,n,u,n,u,2,n
+SS13,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1641.79,sagebrush steppe,42.637414,-118.808724,7/2/2020 10:05,Adult,n,u,n,u,3,u
+SS14,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1648.19,sagebrush steppe,42.635498,-118.806187,7/2/2020 10:11,Adult,n,u,n,u,3,n
+SS15,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1648.75,sagebrush steppe,42.635196,-118.805256,7/2/2020 10:16,Adult,n,u,n,u,3,n
+SS16,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1648.62,sagebrush steppe,42.635189,-118.805267,7/2/2020 10:18,Adult,n,u,n,u,3,n
+SS17,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1654.06,sagebrush steppe,42.634918,-118.802967,7/2/2020 10:37,Adult,n,u,n,u,3,n
+SS18,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1447.08,sagebrush steppe,42.753392,-118.962932,7/2/2020 15:25,Adult,n,u,n,u,4,y
+SS20,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1446.87,sagebrush steppe,42.75201,-118.962442,7/2/2020 15:35,Adult,n,u,n,u,4,n
+SS21,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1441.46,sagebrush steppe,42.753866,-118.962017,7/2/2020 15:50,Adult,y,stallion,y,6,1,n
+SS22,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1441.18,sagebrush steppe,42.753851,-118.961996,7/2/2020 15:51,Adult,n,u,n,u,2,n
+SS5,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1614.96,sagebrush steppe,42.691269,-118.922823,7/1/2020 15:34,Adult,n,u,n,u,4,n
+SS6,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1622.59,sagebrush steppe,42.688216,-118.91928,7/1/2020 15:48,Adult,n,u,n,u,4,n
+SS9,1,SS,summer,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1576.8,sagebrush steppe,42.707775,-118.951104,7/1/2020 18:26,Adult,n,u,n,u,2,n
+SW10,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1193.58,sagebrush steppe,43.674349,-118.460629,7/4/2020 13:18,Adult,n,u,n,u,3,n
+SW11,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1458.97,sagebrush steppe,43.681037,-118.535986,7/4/2020 14:51,Adult,n,u,n,u,4,n
+SW13,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1461.83,sagebrush steppe,43.681461,-118.536029,7/4/2020 14:56,Adult,n,u,n,u,4,n
+SW16,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1497.1,sagebrush steppe,43.582016,-118.517912,7/4/2020 16:11,Adult,n,u,n,u,4,y
+SW17,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1482.36,sagebrush steppe,43.670653,-118.536355,7/4/2020 18:11,Adult,n,u,n,u,2,n
+SW18,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1480.39,sagebrush steppe,43.670443,-118.536384,7/4/2020 18:36,Adult,n,u,n,u,3,y
+SW19,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1481,sagebrush steppe,43.670083,-118.536491,7/4/2020 18:39,Adult,n,u,n,u,3,n
+SW1,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1479.21,sagebrush steppe,43.670259,-118.536307,7/4/2020 18:43,Adult,n,u,n,u,2,n
+SW2,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1194.02,sagebrush steppe,43.674565,-118.460212,7/4/2020 13:22,Adult,n,u,n,u,2,y
+SW3,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1194.97,sagebrush steppe,43.674685,-118.460156,7/4/2020 13:23,Adult,n,u,n,u,2,n
+SW4,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1193.04,sagebrush steppe,43.674905,-118.459931,7/4/2020 13:28,Adult,y,mare,y,5,1,n
+SW5,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1189.25,sagebrush steppe,43.675427,-118.459325,7/4/2020 13:31,Adult,n,u,n,u,2,n
+SW6,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1189.11,sagebrush steppe,43.674521,-118.459731,7/4/2020 13:37,Adult,n,u,n,u,2,n
+SW7,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1189.85,sagebrush steppe,43.674346,-118.459508,7/4/2020 13:40,Adult,n,u,n,u,2,n
+SW8,1,SW,summer,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1191.52,sagebrush steppe,43.674171,-118.45976,7/4/2020 13:44,Adult,n,u,n,u,2,n
+TP10,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1935.87,sagebrush steppe,40.872576,-120.019708,6/29/2020 9:50,Adult,n,u,n,u,3,n
+TP11,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1750.48,sagebrush steppe,40.735649,-120.025351,6/30/2020 10:15,Adult,n,u,n,u,3,y
+TP12,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1755.92,sagebrush steppe,40.735323,-120.026014,6/30/2020 10:22,Adult,n,u,n,u,3,y
+TP13,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1765.92,sagebrush steppe,40.734351,-120.02686,6/30/2020 10:26,Adult,n,u,n,u,3,n
+TP14,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1739.04,sagebrush steppe,40.737996,-120.002485,6/30/2020 12:55,Adult,n,u,n,u,4,y
+TP15,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1739.69,sagebrush steppe,40.738086,-120.00256,6/30/2020 12:59,Adult,n,u,n,u,4,y
+TP16,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1717.53,sagebrush steppe,40.813768,-120.031361,6/30/2020 15:35,Adult,n,u,n,u,5,y
+TP1,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1717.45,sagebrush steppe,40.81405,-120.031195,6/30/2020 15:40,Adult,n,u,n,u,5,y
+TP2,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1936.05,sagebrush steppe,40.872218,-120.020025,6/29/2020 9:52,Adult,n,u,n,u,3,n
+TP4,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1931.7,sagebrush steppe,40.865477,-120.023985,6/29/2020 10:12,Adult,n,u,n,u,4,y
+TP5,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1930.04,sagebrush steppe,40.862961,-120.023454,6/29/2020 10:20,Adult,n,u,n,u,3,n
+TP6,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1939.02,sagebrush steppe,40.861236,-120.024278,6/29/2020 10:27,Adult,n,u,n,u,3,n
+TP7,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1948.47,sagebrush steppe,40.860772,-120.024949,6/29/2020 10:32,Adult,n,u,n,u,3,y
+TP8,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1750.34,sagebrush steppe,40.735414,-120.024693,6/30/2020 10:06,Adult,n,u,n,u,3,y
+TP9,1,TP,summer,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1749.89,sagebrush steppe,40.7356,-120.024559,6/30/2020 10:08,Adult,n,u,n,u,3,y
+WAT10,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2112.030518,sagerush steppe,41.284436,-107.946308,44196.52316,Adult,n,u,n,u,1,n
+WAT11,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2110.686279,sagerush steppe,41.284242,-107.946665,44196.52678,Adult,n,u,n,u,2,n
+WAT13,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2113.212158,sagerush steppe,41.284803,-107.947603,44196.53478,Adult,n,u,n,u,2,n
+WAT14,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2125.387939,sagerush steppe,41.273716,-107.954789,44196.57176,Adult,y,stallion,y,6,1,n
+WAT15,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2126.690186,sagerush steppe,41.273736,-107.954646,44196.57403,Adult,y,stallion,y,5,1,n
+WAT17,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,1896.810913,sagerush steppe,41.095829,-107.939297,44197.5714,Adult,n,u,y,5,1,n
+WAT19,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,1896.104614,sagerush steppe,41.108862,-107.937197,44197.61016,Adult,n,u,n,u,1,n
+WAT20,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2029.931641,sagerush steppe,41.288997,-107.883528,44196.45845,Adult,y,stallion,y,6,1,n
+WAT21,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,1894.425903,sagerush steppe,41.108612,-107.937017,44197.61346,Adult,n,u,n,u,1,n
+WAT22,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,1894.898804,sagerush steppe,41.108218,-107.936361,44197.61537,Adult,y,stallion,y,5,1,y
+WAT2,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,1904.607056,sagerush steppe,41.10686,-107.925923,44197.63233,Adult,y,mare,y,6,1,n
+WAT3,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2032.796509,sagerush steppe,41.28679,-107.881924,44196.46568,Adult,n,u,n,u,2,n
+WAT6,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2025.556274,sagerush steppe,41.289535,-107.881586,44196.48098,Adult,n,u,n,u,2,n
+WAT7,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2026.480591,sagerush steppe,41.289443,-107.881671,44196.48473,Adult,n,u,n,u,2,n
+WAT9,1,WAT,winter,wy_basin,AT,wild,"Adobe Town HMA, WY, feces",WY,8.6,low ,2112.627441,sagerush steppe,41.284155,-107.947976,44196.51778,Adult,n,u,n,u,2,n
+WCN10,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1876.272583,sagerush steppe,39.150015,-113.631255,44180.38874,Adult,n,u,n,u,2,n
+WCN12,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1793.212769,sagerush steppe,39.155867,-113.617162,44180.44559,Adult,n,u,n,u,3,n
+WCN13,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1792.341919,sagerush steppe,39.156185,-113.616852,44180.45086,Adult,n,u,n,u,2,y
+WCN15,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1793.620605,sagerush steppe,39.156115,-113.616877,44180.45138,Adult,n,u,n,u,3,n
+WCN16,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1756.334839,sagerush steppe,39.163139,-113.612642,44180.4617,Adult,n,u,n,u,3,n
+WCN17,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1682.731934,sagerush steppe,39.155936,-113.591205,44180.67865,Adult,n,u,n,u,3,n
+WCN1,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1908.814941,sagerush steppe,39.125994,-113.619658,44180.69319,Adult,n,u,n,u,3,n
+WCN2,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1852.70166,sagerush steppe,39.148444,-113.623419,44180.40273,Adult,n,u,n,u,2,n
+WCN3,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1854.16626,sagerush steppe,39.14844,-113.623456,44180.40441,Adult,n,u,n,u,2,n
+WCN4,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1853.923462,sagerush steppe,39.148442,-113.623453,44180.40586,Adult,n,u,n,u,2,n
+WCN5,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1847.785522,sagerush steppe,39.148617,-113.623434,44180.41453,Adult,n,u,n,u,2,n
+WCN6,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1837.765747,sagerush steppe,39.148066,-113.622442,44180.4236,Adult,n,u,n,u,2,n
+WCN7,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1833.979736,sagerush steppe,39.148426,-113.621514,44180.42759,Adult,n,u,n,u,2,n
+WCN8,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1819.538696,sagerush steppe,39.150809,-113.621539,44180.43141,Adult,n,u,n,u,2,n
+WCN9,1,WCN,winter,salt_desert ,CN,wild,"Conger HMA, UT, feces ",UT,10.1,medium,1820.803101,sagerush steppe,39.151107,-113.62153,44180.43409,Adult,n,u,n,u,2,y
+WDF1,1,WDF,winter,pasture,DF,domestic,"Domestic grass hay, Laramie WY, feces",WY,.,.,2181.781738,pasture,41.30115,-105.650804,44251.51894,Adult,y,gelding,y,7,1,u
+WDF2,1,WDF,winter,pasture,DF,domestic,"Domestic grass hay, Laramie WY, feces",WY,.,.,2202.265625,pasture,41.301347,-105.650726,44251.53034,Adult,y,gelding,y,6,1,n
+WDF3,1,WDF,winter,pasture,DF,domestic,"Domestic grass hay, Laramie WY, feces",WY,.,.,2200.326904,pasture,41.301217,-105.650936,44251.54652,Adult,y,gelding,y,5,1,u
+WDF4,1,WDF,winter,pasture,DF,domestic,"Domestic grass hay, Laramie WY, feces",WY,.,.,2192.926514,pasture,41.286215,-105.659791,44251.55845,Adult,y,mare,y,5,2,n
+WDF5,1,WDF,winter,pasture,DF,domestic,"Domestic grass hay, Laramie WY, feces",WY,.,.,2207.420898,pasture,41.301306,-105.65076,44252.61197,Adult,y,gelding,y,5,1,u
+WDF6,1,WDF,winter,pasture,DF,domestic,"Domestic grass hay, Laramie WY, feces",WY,.,.,2205.009521,pasture,41.301245,-105.650807,44252.61718,Adult,y,mare,y,6,1,n
+WDG1,1,WDG,winter,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,1955.658081,pasture,39.228277,-108.404176,44163.45425,Adult,y,mare,y,5,1,n
+WDG2,1,WDG,winter,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,2086.152588,pasture,39.273327,-108.535994,44163.68909,Adult,y,mare,y,6,1,n
+WDG3,1,WDG,winter,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,2170.6604,pasture,41.396975,-105.59554,44225.4616,Adult,y,mare,y,5,1,n
+WDG4,1,WDG,winter,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,2173.687256,pasture,41.396897,-105.595618,44225.46721,Adult,n,u,n,u,2,n
+WDG5,1,WDG,winter,pasture,DG,domestic,"Domestic grain, Laramie WY, feces",WY,.,.,2183.000977,pasture,41.397117,-105.595818,44225.50493,Adult,y,mare,y,6,2,n
+WDP1,1,WDP,winter,pasture,DP,domestic,"Domestic pasture, Laramie, WY, feces",WY,.,.,2259.478516,pasture,41.260222,-105.53298,44267.4977,Adult,y,gelding,y,7,1,n
+WDP2,1,WDP,winter,pasture,DP,domestic,"Domestic pasture, Laramie, WY, feces",WY,.,.,2260.599609,pasture,41.260459,-105.532681,44267.49991,Adult,y,mare,y,6,1,n
+WDP5,1,WDP,winter,pasture,DP,domestic,"Domestic pasture, Laramie, WY, feces",WY,.,.,2259.344238,pasture,41.260968,-105.533238,44267.54718,Adult,y,mare,y,6,1,n
+WDP6,1,WDP,winter,pasture,DP,domestic,"Domestic pasture, Laramie, WY, feces",WY,.,.,2259.82373,pasture,41.261224,-105.533174,44267.56147,Adult,y,gelding,y,5,1,n
+WFR13,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1824.531982,sagerush steppe,38.507715,-113.176642,44177.71064,Adult,n,u,n,u,2,n
+WFR14,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1929.487427,sagerush steppe,38.576301,-113.211757,44178.44848,Adult,n,u,n,u,3,y
+WFR15,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1896.924194,sagerush steppe,38.574044,-113.206038,44178.47372,Adult,n,u,n,u,3,n
+WFR16,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1764.971191,sagerush steppe,38.577806,-113.174107,44178.51556,Adult,n,u,y,5,1,n
+WFR17,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1739.355225,sagerush steppe,38.583035,-113.168635,44178.67491,Adult,n,u,n,u,3,y
+WFR18,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1251.158447,sagerush steppe,40.265825,-120.043306,44209.59366,Adult,n,u,n,u,2,n
+WFR19,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1803.93811,sagerush steppe,38.566258,-113.188091,44179.46549,Adult,n,u,n,u,2,y
+WFR1,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1730.776489,sagerush steppe,39.243635,-119.467971,44211.5489,Adult,y,stallion,y,5,1,n
+WFR2,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1824.544922,sagerush steppe,38.507711,-113.176649,44177.71088,Adult,n,u,n,u,2,n
+WFR3,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1821.932373,sagerush steppe,38.507322,-113.176988,44177.7191,Adult,n,u,n,u,2,n
+WFR4,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1835.586548,sagerush steppe,38.506037,-113.181043,44178.33882,Adult,n,u,n,u,2,n
+WFR5,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1836.47229,sagerush steppe,38.506246,-113.181096,44178.34219,Adult,n,u,n,u,2,n
+WFR6,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1833.422852,sagerush steppe,38.506266,-113.180833,44178.34572,Adult,n,u,n,u,2,n
+WFR7,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1835.856567,sagerush steppe,38.500609,-113.183617,44178.3708,Adult,n,u,n,u,2,n
+WFR9,1,WFR,winter,salt_desert ,FR,wild,"Frisco HMA, UT, feces",UT,9.3,low ,1888.211914,sagerush steppe,38.574062,-113.205707,44178.42486,Adult,n,u,n,u,3,n
+WGM10,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2163.467041,sagerush steppe,42.390717,-107.667996,44170.44705,Adult,n,u,n,u,2,n
+WGM11,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2165.817871,sagerush steppe,42.390172,-107.666207,44170.45624,Adult,n,u,n,u,3,n
+WGM12,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2192.801758,sagerush steppe,42.388205,-107.664979,44170.47226,Adult,n,u,n,u,3,n
+WGM13,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2190.169678,sagerush steppe,42.388328,-107.666158,44170.47772,Adult,y,mare,y,5,1,n
+WGM14,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2165.258789,sagerush steppe,42.390852,-107.665836,44170.49135,Adult,n,u,n,u,3,n
+WGM15,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2126.258301,sagerush steppe,42.379087,-107.616953,44170.52215,Adult,y,stallion,y,4,1,n
+WGM16,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,1918.659424,sagerush steppe,42.451734,-107.579674,44170.58802,Adult,y,mare,y,6,1,n
+WGM17,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,1919.432129,sagerush steppe,42.451815,-107.579728,44170.58984,Adult,y,mare,y,5,1,n
+WGM18,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2097.534912,sagerush steppe,42.382361,-107.586503,44170.63229,Adult,n,u,y,5,1,n
+WGM19,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,1921.171265,sagerush steppe,42.333182,-107.472661,44171.3561,Adult,y,stallion,y,5,2,n
+WGM5,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2168.205322,sagerush steppe,42.389429,-107.670723,44170.42084,Adult,n,u,y,5,1,n
+WGM6,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2165.85083,sagerush steppe,42.390039,-107.669707,44170.42809,Adult,n,u,y,5,1,n
+WGM7,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2161.724609,sagerush steppe,42.390354,-107.669863,44170.43316,Adult,n,u,n,u,2,n
+WGM8,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2162.488281,sagerush steppe,42.390338,-107.669884,44170.43528,Adult,n,u,n,u,2,n
+WGM9,1,WGM,winter,wy_basin,GM,wild,"Green Mountain HMA, WY, feces ",WY,21.2,high,2163.805908,sagerush steppe,42.390535,-107.668339,44170.44313,Adult,n,u,y,5,1,n
+WLBC10,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,1543.643677,sagerush steppe,39.170025,-108.339996,44162.62787,Adult,n,u,n,u,2,y
+WLBC11,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,1559.908447,sagerush steppe,39.170247,-108.34035,44162.63451,Adult,n,u,n,u,2,n
+WLBC12,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2107.471924,sagerush steppe,39.235914,-108.476754,44163.33473,Adult,n,u,n,u,2,n
+WLBC13,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2093.943604,sagerush steppe,39.23705,-108.471877,44163.3524,Adult,n,u,n,u,2,y
+WLBC14,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2084.401855,sagerush steppe,39.23773,-108.471395,44163.36715,Adult,n,u,n,u,2,y
+WLBC15,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2083.953125,sagerush steppe,39.23771,-108.471365,44163.36904,Adult,n,u,y,5,1,y
+WLBC16,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2083.624512,sagerush steppe,39.237708,-108.47136,44163.36985,Adult,y,mare,y,4,1,n
+WLBC17,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2070.954834,sagerush steppe,39.238416,-108.470475,44163.38112,Adult,n,u,n,u,2,n
+WLBC18,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,2065.032715,sagerush steppe,39.239231,-108.470467,44163.38964,Adult,n,u,n,u,2,n
+WLBC3,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,1495.210205,sagerush steppe,39.166992,-108.341341,44162.54541,Adult,n,u,n,u,2,n
+WLBC4,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,1490.723511,sagerush steppe,39.167035,-108.337005,44162.56691,Adult,n,u,n,u,2,n
+WLBC5,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,1489.405884,sagerush steppe,39.166743,-108.33676,44162.57236,Adult,n,u,n,u,2,n
+WLBC6,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,1493.177368,sagerush steppe,39.166522,-108.337019,44162.57649,Adult,y,mare,y,6,1,n
+WLBC7,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,1493.430786,sagerush steppe,39.166533,-108.337115,44162.57889,Adult,n,u,n,u,1,n
+WLBC9,1,WLBC,winter,pinyon_juniper,LBC,wild,"Little Book Cliffs HMA, CO, feces",CO,9.9,low ,1491.867065,sagerush steppe,39.166501,-108.337876,44162.60916,Adult,n,u,n,u,2,n
+WMP11,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1466.090454,sagerush steppe,44.472793,-108.644466,44172.59294,Adult,y,stallion,y,4,3,n
+WMP12,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1440.723877,sagerush steppe,44.465171,-108.604085,44172.69586,Adult,n,u,n,u,2,y
+WMP14,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1349.84021,sagerush steppe,44.525411,-108.493162,44173.35956,Adult,y,mare,y,7,1,n
+WMP15,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1385.914062,sagerush steppe,44.519042,-108.492544,44173.3845,Adult,n,u,n,u,2,n
+WMP16,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1388.710815,sagerush steppe,44.518583,-108.493122,44173.38878,Adult,n,u,n,u,2,n
+WMP17,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1388.908081,sagerush steppe,44.518626,-108.493116,44173.39088,Adult,n,u,n,u,2,n
+WMP18,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1391.352661,sagerush steppe,44.518617,-108.493318,44173.39361,Adult,n,u,n,u,2,n
+WMP1,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1392.038452,sagerush steppe,44.518804,-108.493603,44173.39618,Adult,n,u,n,u,2,n
+WMP2,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1445.19751,sagerush steppe,44.469295,-108.60473,44172.66007,Adult,n,u,n,u,2,n
+WMP3,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1446.567017,sagerush steppe,44.468867,-108.604809,44172.66166,Adult,n,u,n,u,2,n
+WMP4,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1447.856567,sagerush steppe,44.468681,-108.605033,44172.66759,Adult,y,stallion,y,6,1,y
+WMP5,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1446.460083,sagerush steppe,44.468628,-108.605296,44172.6713,Adult,y,stallion,y,5,1,y
+WMP6,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1447.30249,sagerush steppe,44.467358,-108.604786,44172.6753,Adult,n,u,y,5,1,n
+WMP7,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1446.746216,sagerush steppe,44.467434,-108.602743,44172.67966,Adult,y,mare,y,5,1,n
+WMP8,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1443.335815,sagerush steppe,44.466728,-108.604035,44172.68279,Adult,n,u,n,u,2,y
+WMP9,1,WMP,winter,wy_basin,MP,wild,"McCullough Peaks HMA, WY, feces",WY,13.8,medium,1441.212769,sagerush steppe,44.465875,-108.604435,44172.68811,Adult,n,u,y,5,1,n
+WNH10,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1787.58252,sagerush steppe,39.236151,-119.461055,44212.61433,Adult,n,u,n,u,2,y
+WNH16,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1540.863281,sagerush steppe,37.743817,-113.868518,44184.34601,Adult,n,u,n,u,3,y
+WNH17,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1672.400024,sagerush steppe,37.721521,-113.931204,44184.47249,Adult,n,u,n,u,3,n
+WNH19,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1674.082275,sagerush steppe,37.721604,-113.930983,44184.47873,Adult,n,u,n,u,3,y
+WNH1,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1674.98938,sagerush steppe,37.721761,-113.930849,44184.48316,Adult,n,u,n,u,3,n
+WNH20,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1790.60498,sagerush steppe,39.236143,-119.460862,44212.61795,Adult,n,u,n,u,2,n
+WNH21,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1672.816528,sagerush steppe,37.721557,-113.930903,44184.48534,Adult,n,u,n,u,2,n
+WNH22,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1642.511597,sagerush steppe,37.726033,-113.90797,44184.50315,Adult,n,u,n,u,2,y
+WNH2,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1649.619141,sagerush steppe,37.705547,-113.872966,44184.58756,Adult,n,u,n,u,3,n
+WNH4,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1672.754395,sagerush steppe,37.721416,-113.931471,44182.41926,Adult,n,u,n,u,2,n
+WNH5,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1666.164551,sagerush steppe,37.706962,-113.867513,44182.53265,Adult,n,u,n,u,2,n
+WNH6,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1645.115845,sagerush steppe,37.706983,-113.867551,44182.53328,Adult,n,u,n,u,2,n
+WNH7,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1640.803589,sagerush steppe,37.706956,-113.867632,44182.53435,Adult,n,u,n,u,2,n
+WNH8,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1648.190186,sagerush steppe,37.705662,-113.870198,44182.54097,Adult,n,u,n,u,2,y
+WNH9,1,WNH,winter,pinyon_juniper,NH,wild,"North Hills HMA, UT, feces ",UT,10.9,medium,1784.585449,sagerush steppe,37.610044,-113.935025,44183.58737,Adult,n,u,n,u,3,n
+WON10,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1587.094971,sagerush steppe,40.136634,-112.74914,44201.49147,Adult,n,u,n,u,2,n
+WON11,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1585.470093,sagerush steppe,40.136644,-112.749275,44201.49382,Adult,n,u,n,u,2,n
+WON15,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1597.353638,sagerush steppe,40.136499,-112.749674,44201.51083,Adult,y,stallion,y,5,1,n
+WON16,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1581.839722,sagerush steppe,40.124947,-112.683447,44201.61316,Adult,n,u,y,5,1,n
+WON17,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1584.202637,sagerush steppe,40.12486,-112.683884,44201.6199,Adult,n,u,y,5,1,n
+WON18,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1584.302368,sagerush steppe,40.124849,-112.683907,44201.62024,Adult,n,u,y,5,1,n
+WON19,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1581.404297,sagerush steppe,40.123192,-112.682278,44201.63642,Adult,y,mare,y,4,1,n
+WON20,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1475.59375,sagerush steppe,40.195397,-112.70978,44201.34444,Adult,y,stallion,y,5,1,n
+WON21,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1573.101074,sagerush steppe,40.12298,-112.681389,44201.65291,Adult,n,u,n,u,1,y
+WON2,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1572.206909,sagerush steppe,40.122997,-112.681282,44201.6573,Adult,n,u,n,u,1,n
+WON3,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1501.998901,sagerush steppe,40.166491,-112.692873,44201.37274,Adult,n,u,n,u,2,n
+WON4,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1557.295166,sagerush steppe,40.14472,-112.711125,44201.41133,Adult,n,u,n,u,1,n
+WON5,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1550.673096,sagerush steppe,40.14702,-112.710966,44201.42784,Adult,n,u,n,u,2,y
+WON6,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1552.693481,sagerush steppe,40.137658,-112.748916,44201.47188,Adult,y,mare,y,5,1,n
+WON8,1,WON,winter,salt_desert ,ON,wild,"Onaqui HMA, UT, feces",UT,20,medium,1588.481689,sagerush steppe,40.136517,-112.748998,44201.48638,Adult,n,u,n,u,2,n
+WPB11,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1384.431274,sagerush steppe,43.472283,-119.31432,44205.45036,Adult,n,u,n,u,2,n
+WPB13,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1401.112427,sagerush steppe,43.472632,-119.311924,44205.46079,Adult,n,u,n,u,2,n
+WPB14,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1403.752075,sagerush steppe,43.47293,-119.312023,44205.46616,Adult,n,u,n,u,2,n
+WPB17,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1389.136841,sagerush steppe,43.474001,-119.315616,44205.48035,Adult,n,u,n,u,2,n
+WPB18,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1381.33252,sagerush steppe,43.473232,-119.316449,44205.49639,Adult,y,stallion,y,6,1,n
+WPB19,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1381.146973,sagerush steppe,43.473238,-119.316455,44205.49248,Adult,n,u,n,u,2,n
+WPB20,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1379.138794,sagerush steppe,43.471223,-119.311897,44204.72949,Adult,n,u,n,u,2,n
+WPB21,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1371.369629,sagerush steppe,43.474418,-119.32232,44205.52449,Adult,y,mare,y,5,1,n
+WPB2,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1371.074829,sagerush steppe,43.474603,-119.322288,44205.52809,Adult,y,mare,y,5,1,n
+WPB3,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1380.044556,sagerush steppe,43.471216,-119.311832,44204.72973,Adult,n,u,n,u,2,n
+WPB4,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1378.997192,sagerush steppe,43.471412,-119.312429,44204.73372,Adult,n,u,n,u,2,n
+WPB5,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1379.223633,sagerush steppe,43.471369,-119.312469,44204.73422,Adult,n,u,n,u,2,n
+WPB7,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1378.083862,sagerush steppe,43.471543,-119.312723,44204.73942,Adult,n,u,n,u,2,n
+WPB8,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1373.479614,sagerush steppe,43.47171,-119.314435,44204.74325,Adult,n,u,n,u,2,n
+WPB9,1,WPB,winter,n_great_basin,PB,wild,"Palomino Buttes HMA, OR, feces",OR,26.2,high,1437.159424,sagerush steppe,43.47764,-119.319344,44205.38642,Adult,n,u,n,u,2,n
+WPN11,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1585.523682,sagerush steppe,40.332347,-120.078723,44210.52191,Adult,n,u,n,u,2,n
+WPN12,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1726.131104,sagerush steppe,39.243963,-119.468033,44211.54429,Adult,y,stallion,y,5,1,y
+WPN14,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1646.249634,sagerush steppe,39.191415,-119.539347,44211.69164,Adult,n,u,n,u,2,n
+WPN15,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1466.097778,sagerush steppe,39.204945,-119.573002,44212.42878,Adult,y,stallion,y,5,1,n
+WPN16,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1480.070435,sagerush steppe,39.203284,-119.577079,44212.45743,Adult,n,u,n,u,2,n
+WPN17,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1475.731812,sagerush steppe,39.203269,-119.576142,44212.47229,Adult,n,u,n,u,2,n
+WPN18,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1472.634033,sagerush steppe,39.203607,-119.576259,44212.47983,Adult,n,u,n,u,2,n
+WPN19,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1471.598389,sagerush steppe,39.203598,-119.576092,44212.48065,Adult,n,u,n,u,1,n
+WPN1,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1470.053345,sagerush steppe,39.203623,-119.576076,44212.48545,Adult,n,u,n,u,1,n
+WPN2,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1740.060669,sagerush steppe,40.341064,-120.112836,44210.58992,Adult,n,u,n,u,2,n
+WPN3,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1602.217529,sagerush steppe,39.247712,-119.476843,44211.41773,Adult,y,stallion,y,5,1,y
+WPN4,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1690.891357,sagerush steppe,39.24452,-119.469125,44211.44718,Adult,y,stallion,y,5,1,y
+WPN5,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1591.917236,sagerush steppe,39.247286,-119.477648,44211.41517,Adult,n,u,n,u,2,n
+WPN6,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1692.418701,sagerush steppe,39.244507,-119.46912,44211.44748,Adult,n,u,n,u,2,y
+WPN8,1,WPN,winter,pinyon_juniper,PN,wild,"Pine Nuts HMA, NV, feces",NV,9.3,low ,1689.484253,sagerush steppe,39.245817,-119.467962,44211.46203,Adult,y,stallion,y,5,1,y
+WRR10,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1648.894287,desert,37.705974,-113.87308,44184.59128,Adult,y,stallion,y,6,1,n
+WRR11,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1352.355347,desert,35.857251,-115.485873,44185.54339,Adult,n,u,n,u,2,n
+WRR12,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1307.430298,desert,35.876762,-115.472701,44185.57556,Adult,y,mare,y,5,1,n
+WRR13,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1306.235229,desert,35.876812,-115.472535,44185.57829,Adult,y,mare,y,5,1,n
+WRR14,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1313.851685,desert,35.877989,-115.471111,44185.58973,Adult,y,stallion,y,5,1,n
+WRR15,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1310.668945,desert,35.877774,-115.470581,44185.59258,Adult,y,stallion,y,5,1,n
+WRR1,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1254.088989,desert,35.86839,-115.462059,44185.62602,Adult,y,stallion,y,5,1,n
+WRR2,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1651.880249,desert,37.705527,-113.872759,44184.59476,Adult,y,mare,y,5,1,n
+WRR3,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1424.130127,desert,35.894137,-115.479353,44185.43668,Adult,y,stallion,y,4,1,n
+WRR4,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1448.293213,desert,35.894277,-115.479081,44185.44259,Adult,n,u,n,u,3,n
+WRR5,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1448.14856,desert,35.894327,-115.479068,44185.44471,Adult,n,u,n,u,3,n
+WRR6,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1346.675659,desert,35.865766,-115.481844,44185.50608,Adult,y,stallion,y,5,1,n
+WRR7,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1346.230591,desert,35.865726,-115.481738,44185.50813,Adult,n,u,n,u,3,y
+WRR8,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1343.104858,desert,35.865223,-115.481702,44185.5126,Adult,y,mare,y,3,1,n
+WRR9,1,WRR,winter,mojave,RR,wild,"Red Rock HMA, NV, feces ",NV,8.4,low ,1352.982422,desert,35.857085,-115.485898,44185.5378,Adult,n,u,n,u,3,n
+WSC10,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1038.505859,sagerush steppe,42.746059,-115.235476,44203.43149,Adult,n,u,n,u,2,y
+WSC11,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1038.012329,sagerush steppe,42.746049,-115.235515,44203.43345,Adult,n,u,n,u,2,n
+WSC12,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1037.509155,sagerush steppe,42.745827,-115.235813,44203.43662,Adult,n,u,n,u,2,n
+WSC13,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1036.998169,sagerush steppe,42.745821,-115.235866,44203.43888,Adult,n,u,n,u,2,n
+WSC14,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1035.981445,sagerush steppe,42.745807,-115.235764,44203.44087,Adult,n,u,n,u,2,n
+WSC15,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1035.610107,sagerush steppe,42.745499,-115.235943,44203.44355,Adult,n,u,n,u,2,n
+WSC16,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1150.401367,sagerush steppe,42.667205,-115.288485,44203.55262,Adult,n,u,n,u,2,y
+WSC17,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1163.052002,sagerush steppe,42.668986,-115.298693,44203.57159,Adult,n,u,y,5,1,n
+WSC18,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1161.556519,sagerush steppe,42.670048,-115.298893,44203.57907,Adult,y,mare,y,5,1,n
+WSC2,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1050.494385,sagerush steppe,42.746296,-115.236394,44203.40141,Adult,n,u,n,u,2,n
+WSC3,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1046.567871,sagerush steppe,42.746309,-115.236404,44203.40492,Adult,n,u,n,u,2,n
+WSC5,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1043.572876,sagerush steppe,42.74644,-115.236298,44203.40778,Adult,n,u,n,u,2,n
+WSC7,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1040.260864,sagerush steppe,42.746337,-115.236403,44203.41603,Adult,n,u,n,u,2,n
+WSC8,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1034.321899,sagerush steppe,42.746609,-115.235124,44203.42508,Adult,n,u,n,u,2,n
+WSC9,1,WSC,winter,n_great_basin,SC,wild,"Saylor Creek HMA, ID, feces",ID,26.9,high,1039.609497,sagerush steppe,42.746105,-115.235471,44203.42905,Adult,n,u,n,u,2,n
+WSS10,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1480.868164,sagerush steppe,42.778876,-118.948657,44205.6499,Adult,n,u,n,u,2,n
+WSS13,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1474.60083,sagerush steppe,42.788039,-118.948576,44205.71369,Adult,n,u,n,u,2,n
+WSS15,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1482.616943,sagerush steppe,42.788265,-118.948077,44205.72039,Adult,n,u,n,u,2,n
+WSS16,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1499.46228,sagerush steppe,42.788645,-118.946831,44205.72672,Adult,n,u,n,u,2,n
+WSS17,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1402.379761,sagerush steppe,42.74396,-118.98606,44206.41802,Adult,n,u,n,u,1,n
+WSS18,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1402.910522,sagerush steppe,42.743666,-118.986985,44206.42164,Adult,n,u,n,u,2,n
+WSS19,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1429.723511,sagerush steppe,42.719263,-118.991192,44206.43877,Adult,y,stallion,y,5,1,n
+WSS1,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1423.849976,sagerush steppe,42.718485,-118.990423,44206.50983,Adult,n,u,n,u,2,n
+WSS21,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1407.229492,sagerush steppe,42.721051,-118.993529,44206.5253,Adult,n,u,n,u,2,n
+WSS22,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1410.095703,sagerush steppe,42.721032,-118.992704,44206.52986,Adult,n,u,n,u,2,u
+WSS23,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1411.963013,sagerush steppe,42.720108,-118.992929,44206.53788,Adult,n,u,y,5,1,n
+WSS5,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1496.443604,sagerush steppe,42.773315,-118.94668,44205.67606,Adult,n,u,n,u,1,n
+WSS6,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1497.078613,sagerush steppe,42.773368,-118.946622,44205.677,Adult,n,u,n,u,2,n
+WSS7,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1482.973145,sagerush steppe,42.778585,-118.947369,44205.68872,Adult,n,u,n,u,2,u
+WSS9,1,WSS,winter,n_great_basin,SS,wild,"South Steens HMA, OR, feces",OR,22.4,high,1471.137085,sagerush steppe,42.787737,-118.94867,44205.71105,Adult,n,u,n,u,2,n
+WSW10,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1162.03125,sagerush steppe,43.68282,-118.442034,44206.71016,Adult,y,mare,y,5,1,n
+WSW11,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1159.546631,sagerush steppe,43.683678,-118.441336,44206.71451,Adult,n,u,n,u,2,n
+WSW12,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1159.987671,sagerush steppe,43.683729,-118.441416,44206.71516,Adult,n,u,n,u,2,n
+WSW13,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1125.905273,sagerush steppe,43.693989,-118.435423,44207.42646,Adult,n,u,y,5,1,n
+WSW14,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1124.825562,sagerush steppe,43.693998,-118.435435,44207.42682,Adult,n,u,y,5,1,n
+WSW15,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1135.946289,sagerush steppe,43.688364,-118.432528,44207.44037,Adult,n,u,n,u,2,n
+WSW16,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1128.273682,sagerush steppe,43.689061,-118.433249,44207.44382,Adult,n,u,n,u,2,y
+WSW17,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1129.148926,sagerush steppe,43.689096,-118.433265,44207.44514,Adult,n,u,n,u,2,n
+WSW18,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1131.531006,sagerush steppe,43.694993,-118.439239,44207.47833,Adult,y,mare,y,6,1,n
+WSW19,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1161.751709,sagerush steppe,43.686874,-118.437989,44207.51581,Adult,n,u,n,u,1,n
+WSW2,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1132.734009,sagerush steppe,43.695515,-118.442141,44206.66676,Adult,n,u,n,u,2,y
+WSW6,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1145.464111,sagerush steppe,43.693734,-118.444125,44206.68434,Adult,n,u,n,u,2,n
+WSW7,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1140.886963,sagerush steppe,43.693902,-118.443468,44206.68692,Adult,n,u,n,u,2,n
+WSW8,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1134.533691,sagerush steppe,43.695737,-118.441876,44206.69159,Adult,n,u,n,u,2,n
+WSW9,1,WSW,winter,n_great_basin,SW,wild,"Stinkingwater HMA, OR, feces ",OR,30.7,high,1135.28833,sagerush steppe,43.69575,-118.441861,44206.69191,Adult,n,u,n,u,2,y
+WTP10,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1483.579468,sagerush steppe,40.457207,-120.076652,44209.38903,Adult,n,u,n,u,1,n
+WTP11,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1568.06897,sagerush steppe,40.414848,-119.985351,44209.50957,Adult,n,u,n,u,2,n
+WTP12,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1570.382446,sagerush steppe,40.415164,-119.984234,44209.49587,Adult,n,u,n,u,2,y
+WTP13,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1570.923706,sagerush steppe,40.415454,-119.984221,44209.49865,Adult,n,u,n,u,2,n
+WTP14,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1570.633911,sagerush steppe,40.415427,-119.984377,44209.5019,Adult,n,u,n,u,3,n
+WTP15,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1571.653442,sagerush steppe,40.415674,-119.98422,44209.50397,Adult,n,u,n,u,2,n
+WTP16,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1572.754395,sagerush steppe,40.415715,-119.984195,44209.50606,Adult,n,u,n,u,2,n
+WTP1,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1789.631836,sagerush steppe,38.56512,-113.18509,44179.47363,Adult,n,u,n,u,3,n
+WTP2,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1487.489014,sagerush steppe,40.45713,-120.076509,44209.39098,Adult,n,u,n,u,1,n
+WTP4,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1541.82605,sagerush steppe,40.448969,-120.050333,44209.40819,Adult,n,u,n,u,3,y
+WTP5,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1550.955688,sagerush steppe,40.442908,-120.047906,44209.41438,Adult,n,u,n,u,3,y
+WTP6,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1590.188354,sagerush steppe,40.438596,-120.018157,44209.44105,Adult,n,u,n,u,2,n
+WTP7,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1566.671021,sagerush steppe,40.416179,-120.01216,44209.45222,Adult,n,u,n,u,4,y
+WTP8,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1554.202271,sagerush steppe,40.413237,-119.989383,44209.48242,Adult,n,u,n,u,2,n
+WTP9,1,WTP,winter,n_great_basin,TP,wild,"Twin Peaks HMA, CA, feces",CA,19.8,medium,1566.703735,sagerush steppe,40.414687,-119.985234,44209.48839,Adult,n,u,n,u,2,n

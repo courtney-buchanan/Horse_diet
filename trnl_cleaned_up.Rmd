@@ -1,0 +1,1102 @@
+---
+title: "Horse diet TRNL (cleaned up)"
+author: "Courtney Buchanan"
+date: "2024-09-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#install and load packages
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = './')
+library(BiocManager)
+library(devtools)
+#install.packages("devtools")
+#devtools::install_github("benjjneb/dada2", ref="v1.16")
+library(dada2)
+#BiocManager::install("DECIPHER", force=TRUE)
+library(DECIPHER)
+#install.packages("phangorn")
+library(phangorn)
+#BiocManager::install("phyloseq", force=TRUE)
+library(phyloseq)
+#BiocManager::install("decontam")
+library(decontam)
+#install.packages("tidyverse")
+library(tidyverse)
+library(dplyr)
+#BiocManager::install("multtest", force=TRUE)
+#devtools::install_github("gauravsk/ranacapa")
+library(ranacapa)
+#BiocManager::install("genefilter")
+library(genefilter)
+#install.packages("BiodiversityR")
+library(BiodiversityR)
+library(vegan)
+library(reshape2)
+#devtools::install_github("jbisanz/qiime2R")
+library(qiime2R)
+#install.packages("dplyr")
+library(plyr)
+library(dplyr)
+#install.packages("parallelDist")
+library(parallelDist)
+#install.packages("Hmisc")
+library(Hmisc)
+#install.packages("corrplot")
+library(corrplot)
+library(tibble)
+library(plyr)
+library(ggplot2)
+#install.packages("ggrepel")
+library(ggrepel)
+#install.packages("betareg")
+library(betareg)
+
+#install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
+library(pairwiseAdonis)
+```
+
+# read in files, create phyloseq
+
+```{r}
+# code below creates the phyloseq object 
+taxatab<-read.csv("1_31taxonomy.csv") #read in table of ASV taxonomy assignments
+seqtab<-read.csv("renamed_1_31_read_table_no_plants.csv", row.names=1) #read in sequences, first column is row names, full data- includes the double samples but took out the samples that were sequenced plants from herbarium- just fecals 
+horse_metadata <- read.csv("5_4_23_horse_fecal_metadata.csv", header=TRUE, row.names=1) #read in metadata for double samples
+
+samdf1<-cbind(rownames(seqtab), horse_metadata)# i think this may just re-doing what I did with row.names=1 in metadata
+samdf2 <- data.frame(samdf1, row.names = 1)# make data frame
+taxa<-as.matrix(data.frame(taxatab,row.names=1)) #make matrix form
+
+
+ps_big <- phyloseq(otu_table(seqtab, taxa_are_rows=FALSE),
+               sample_data(samdf2), tax_table(taxa))#create ps object with full data of doubled samples
+
+
+ps_big
+View(otu_table(ps_big)) #look at the sequence table if needed
+
+#merge samples, this worked, but due to structure removes metadata, we will add it later
+
+ps_big_merge <- merge_samples(ps_big, "sample") #merge the 2 observations of each sample
+
+ps_big_merge #check if we maintained the correct number of ASVs
+View(otu_table(ps_big_merge)) #look at the sequence table if needed
+
+```
+#subset to plants, remove rare taxa
+```{r}
+
+ps_plant<-subset_taxa(ps_big_merge, Kingdom== "Viridiplantae") # only keep things in kingdom "viridiplantae"- this will remove all the NA assignments
+ps_plant # it worked. now i only have 3201 taxa
+
+
+
+#remove rare taxa in diet from each sample, to stay it must be 1% of an animal's diet- adapted code from the cactus R file
+##for each sample: set taxa < 1% to zero
+ps_common<- transform_sample_counts(ps_plant, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything that no longer has occurance because <1% set to 0
+ps_common1<-prune_taxa(taxa_sums(ps_common) > 0, ps_common)
+ps_common1 # i now have 284 plants  
+view(tax_table(ps_common1))#look at what plants we have in the diets.
+
+```
+
+
+#Add no copy metadata
+```{r}
+
+#note have to create a new ps object with the sample metadata because it was nullified with the merging of the 2 samples of each sample 
+view(tax_table(ps_common1)) #looks good
+view(otu_table(ps_common1)) #looks good
+view(sample_data(ps_common1)) #full of NAs becuse of the merging
+horse_metadata_no_copy <- read.csv("11_9_23_metadata_no_copy.csv", header=TRUE, row.names=1)#read in new metadata for the single copy of data
+#change so the two variables that are integer variables are characters
+horse_metadata_no_copy$copy<-as.character(horse_metadata_no_copy$copy)
+horse_metadata_no_copy$fecal_freshness<-as.character(horse_metadata_no_copy$fecal_freshness)
+
+#constructing new object 
+no_copy_otu<-otu_table(ps_common1) #pull otu table from merged ps
+no_copy_taxa<-tax_table(ps_common1) #pull taxa table from merged ps
+
+#create ps object with merged file otu and taxa and the no copy metadata
+ps_common2 <- phyloseq(otu_table(no_copy_otu),
+               sample_data(horse_metadata_no_copy), tax_table(no_copy_taxa))
+ps_common2 #Check- looks like same number of taxa and samples
+view(sample_data(ps_common2)) # check- new metadata is there!!! 
+```
+
+#stacked barcharts
+
+##group by taxa levels
+```{r}
+ps_filtered_phylum <- tax_glom(ps_common2, taxrank = "Phylum") #group by Phylum
+ps_filtered_phylum #check- how many-  1
+
+ps_filtered_class <- tax_glom(ps_common2, taxrank = "Subphylum") #group by Subphylum (class)
+ps_filtered_class #check- how many- 1
+
+#Note these are the same for each sample- all plants are in same phylum and class
+
+ps_filtered_order <- tax_glom(ps_common2, taxrank = "Order") #group by Order
+ps_filtered_order #check how many- 31 different orders
+
+ps_filtered_family <- tax_glom(ps_common2, taxrank = "Family") #group by Family
+ps_filtered_family #check how many- 50 different families
+
+ps_filtered_genus <- tax_glom(ps_common2, taxrank = "Genus") #group by Genus
+ps_filtered_genus #check how many- 120 different genera
+
+ps_filtered_species <- tax_glom(ps_common2, taxrank = "Species") #group by Species 
+ps_filtered_species #check how many- 46 different species
+
+```
+
+##percent assinged
+
+```{r}
+#Percent reads assigned to each level (note run this chunk after the code below that creates the different taxonomy level objects)
+sum(sample_sums(ps_filtered_phylum)) / sum(sample_sums(ps_common2)) #100%
+sum(sample_sums(ps_filtered_class)) / sum(sample_sums(ps_common2))#100%
+sum(sample_sums(ps_filtered_order)) / sum(sample_sums(ps_common2)) #99.98%
+sum(sample_sums(ps_filtered_family)) / sum(sample_sums(ps_common2)) #99.97%
+sum(sample_sums(ps_filtered_genus)) / sum(sample_sums(ps_common2)) #69.32%
+sum(sample_sums(ps_filtered_species)) / sum(sample_sums(ps_common2)) #11.24%
+```
+#Transform to relative abundance
+
+```{r}
+#Create transformed object to relative abundance to run downstream simplified analysis
+
+ps_common_tr <- transform_sample_counts(ps_common2, function(x) x / sum(x))# transforms to relative abundance
+sort(rowSums(otu_table(ps_common_tr))) # checks to see that the sum for each row (each sample) is 1  
+ps_common_tr # check and make sure all samples and taxa were retained
+
+```
+# seperate into seasons and wild only for further analysis of subsets 
+
+```{r}
+#make a file with just the wild horses...excluding the domestic horses
+
+ps_common_wild<-subset_samples(ps_common_tr, domestication == "wild") #wild only subset
+ps_common_wild #there are fewer samples, all the domestic horses are gone
+View(otuTable(ps_common_wild)) #and it stayed in relative abundance form of data
+
+# make a file so we can look at just summer
+
+ps_common_wild_sum<-subset_samples(ps_common_wild, season == "summer")#subset wild only file to summer only
+ps_common_wild_sum #there are 240 samples, looks like winter gone
+View(otuTable(ps_common_wild_sum)) #check0 it is summer and it stayed in relative abundance form of data
+
+# make a file so we can look at just winter 
+ps_common_wild_win<-subset_samples(ps_common_wild, season == "winter") #subset wild only file to winter only
+ps_common_wild_win #there are 226 samples, looks like winter only
+View(otuTable(ps_common_wild_win)) #check- indeed winter ones and it stayed in relative abundance form of data
+
+```
+#Make a PS object for each HMA
+```{r}
+#Subset AT out of transformed wild
+ps_AT <- subset_samples(ps_common_wild, study.area == "AT") #only AT samples
+ps_AT #check sample and taxa numbers 
+View(otuTable(ps_AT))#check that it separated out correctly 
+
+#Subset CN out of transformed wild
+ps_CN <- subset_samples(ps_common_wild, study.area == "CN") #only CN samples
+ps_CN #check sample and taxa numbers 
+View(otuTable(ps_CN))#check that it separated out correctly 
+
+#Subset out of transformed wild
+ps_FR <- subset_samples(ps_common_wild, study.area == "FR") #only FR samples
+ps_FR #check sample and taxa numbers 
+View(otuTable(ps_FR)) #check that it separated out correctly 
+
+#Subset GM out of transformed wild
+ps_GM <- subset_samples(ps_common_wild, study.area == "GM") #only GM samples
+ps_GM #check sample and taxa numbers 
+View(otuTable(ps_GM))
+
+#Subset LBC out of transformed wild
+ps_LBC <- subset_samples(ps_common_wild, study.area == "LBC") #only LBC samples
+ps_LBC #check sample and taxa numbers 
+View(otuTable(ps_LBC)) #check that it separated out correctly 
+
+#Subset MP out of transformed wild
+ps_MP <- subset_samples(ps_common_wild, study.area == "MP") #only MP samples
+ps_MP #check sample and taxa numbers 
+View(otuTable(ps_MP)) #check that it separated out correctly 
+
+#Subset NH out of transformed wild
+ps_NH <- subset_samples(ps_common_wild, study.area == "NH") #only NH samples
+ps_NH #check sample and taxa numbers 
+View(otuTable(ps_NH)) #check that it separated out correctly 
+
+#Subset ON out of transformed wild
+ps_ON <- subset_samples(ps_common_wild, study.area == "ON") #only ON samples
+ps_ON #check sample and taxa numbers 
+View(otuTable(ps_ON)) #check that it separated out correctly  
+
+#Subset PB out of transformed wild
+ps_PB <- subset_samples(ps_common_wild, study.area == "PB") #only PB samples
+ps_PB #check sample and taxa numbers 
+View(otuTable(ps_PB)) #check that it separated out correctly 
+
+#Subset PN out of transformed wild
+ps_PN <- subset_samples(ps_common_wild, study.area == "PN") #only PN samples
+ps_PN #check sample and taxa numbers 
+View(otuTable(ps_PN)) #check that it separated out correctly 
+
+#Subset RR out of transformed wild
+ps_RR <- subset_samples(ps_common_wild, study.area == "RR") #only RR samples
+ps_RR #check sample and taxa numbers 
+View(otuTable(ps_RR)) #check that it separated out correctly 
+
+#Subset SC out of transformed wild
+ps_SC <- subset_samples(ps_common_wild, study.area == "SC") #only SC samples
+ps_SC #check sample and taxa numbers 
+View(otuTable(ps_SC)) #check that it separated out correctly 
+
+#Subset SS out of transformed wild
+ps_SS <- subset_samples(ps_common_wild, study.area == "SS") #only SS samples
+ps_SS #check sample and taxa numbers 
+View(otuTable(ps_SS)) #check that it separated out correctly 
+
+#Subset SW out of transformed wild
+ps_SW <- subset_samples(ps_common_wild, study.area == "SW") #only SW samples
+ps_SW #check sample and taxa numbers 
+View(otuTable(ps_SW)) #check that it separated out correctly  
+
+#Subset TP out of transformed wild
+ps_TP <- subset_samples(ps_common_wild, study.area == "TP") #only TP samples
+ps_TP #check sample and taxa numbers 
+View(otuTable(ps_TP)) #check that it separated out correctly 
+
+```
+
+
+
+
+
+
+
+# Family HMA Visuals
+##color for each HMA 
+```{r}
+col_vector <- c(  "#00FECF", "#000000","#FF2F80", "#FF913F","#FFDBE5",  "#FFB500", "#6B7900", "#006FA6", "#A30059", "#1CE6FF",
+ "#7A4900", "#0000A6", "#8FB0FF","#3A2465",  "#FEFFE6","#BA0900","#B79762","#5A0007", "#008941","#FF34FF",  "#3B5DFF","#FF90C9","#000035", "#809693", "#C2FF99", "#1B4400",  "#4A3B53", 
+"#61615A",   "#00C2A0", "#004D43", "#A079BF", "#FF4A46", "#300018", "#7B4F4B","#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#00846F","#FFFF00", "#CC0744","#0AA6D8", "#D790FF","#A1C299","#013349","#DDEFFF",
+  "#B903AA","#C0B9B2","#6F0062") 
+
+#AT
+c("#FFB500", "#006FA6", "#1CE6FF",
+ "#3A2465",  "#FEFFE6","#5A0007", "#008941",  "#3B5DFF","#FF90C9","#000035", "#C2FF99", "#004D43", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#D790FF") 
+
+#CN
+c("#FFB500", "#A30059", "#1CE6FF",
+   "#FEFFE6", "#008941",  "#3B5DFF","#000035", "#C2FF99","#1B4400", "#61615A", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#CC0744","#D790FF") 
+ 
+
+#FR
+c("#FFB500", "#1CE6FF",
+ "#3A2465",  "#FEFFE6","#5A0007", "#008941", "#FF34FF", "#3B5DFF", "#C2FF99", "#004D43", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#FFFF00","#CC0744","#0AA6D8", "#D790FF") 
+
+#GM
+
+c("#000000","#FF913F","#FFB500","#6B7900","#A30059","#1CE6FF","#7A4900", 
+ "#3A2465",  "#FEFFE6","#BA0900", "#008941", "#3B5DFF","#000035", "#C2FF99",  "#C2FFED", "#4FC601", "#FFAA92","#00489C","#FFFF00","#CC0744","#0AA6D8", "#D790FF", "#013349") 
+
+
+#LBC
+c("#FF2F80","#FFB500","#A30059","#1CE6FF", 
+ "#3A2465",  "#FEFFE6","#BA0900", "#008941", "#3B5DFF","#FF90C9", "#C2FF99","#FF4A46",  "#C2FFED", "#D16100","#4FC601", "#00489C","#CC0744","#0AA6D8", "#D790FF", "#B903AA") 
+
+#MP
+c("#FFB500","#006FA6", "#A30059","#1CE6FF", 
+  "#FEFFE6", "#008941", "#3B5DFF","#FF90C9", "#C2FF99","#004D43","#FF4A46",  "#C2FFED", "#D16100","#4FC601","#FFAA92", "#00489C","#00846F", "#D790FF", "#B903AA")
+
+#NH
+c("#FF913F","#FFB500","#006FA6","#A30059","#1CE6FF", 
+ "#3A2465",  "#FEFFE6","#5A0007", "#008941","#FF34FF", "#3B5DFF","#FF90C9", "#C2FF99",  "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#00846F","#FFFF00", "#D790FF", "#B903AA") 
+
+
+#ON
+c("#FFB500","#A30059","#1CE6FF", 
+ "#3A2465",  "#FEFFE6", "#008941", "#3B5DFF","#FF90C9", "#C2FF99", "#00C2A0","#FF4A46", "#7B4F4B","#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#D790FF")
+
+#PB
+c("#FF913F","#FFB500","#1CE6FF", 
+  "#FEFFE6", "#5A0007", "#008941","#FF34FF", "#3B5DFF","#FF90C9", "#C2FF99", "#FF4A46", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#D790FF")
+
+#PN
+c("#FFB500","#A30059","#1CE6FF", 
+  "#FEFFE6","#B79762","#008941","#FF34FF", "#3B5DFF","#000035","#809693", "#C2FF99","#004D43","#FF4A46",  "#C2FFED", "#4FC601", "#FFAA92","#00489C","#FFFF00","#CC0744", "#0AA6D8","#D790FF", "#DDEFFF") 
+
+#RR
+c("#FFDBE5","#FFB500","#A30059","#1CE6FF", 
+  "#FEFFE6","#008941","#FF34FF","#3B5DFF", "#000035", "#C2FF99","#4A3B53","#004D43","#A079BF","#FF4A46", "#300018", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C", "#013349","#6F0062")
+
+#SC
+c("#FFB500","#1CE6FF", 
+  "#FEFFE6","#008941","#3B5DFF", "#000035", "#C2FF99","#FF4A46", "#4FC601", "#FFAA92","#00489C")
+
+#SS
+c("#FFB500","#A30059","#1CE6FF", "#0000A6", "#FEFFE6", "#5A0007","#008941","#FF34FF","#3B5DFF", "#FF4A46", "#300018", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#0AA6D8","#A1C299" )
+
+#SW
+c("#FFB500","#A30059", "#0000A6","#8FB0FF", "#3A2465", "#5A0007","#008941","#3B5DFF","#000035", "#C2FF99","#FF4A46","#D16100",  "#4FC601", "#FFAA92","#00489C","#A1C299","#013349","#C0B9B2")
+
+#TP
+c("#00FECF","#FF913F","#FFB500","#1CE6FF", "#FEFFE6", "#008941", "#3B5DFF","#809693", "#C2FF99","#FF4A46",  "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#CC0744", "#0AA6D8", "#D790FF", "#B903AA") 
+
+#SB
+c("#FFB500","#1CE6FF", "#FEFFE6", "#008941", "#FF34FF", "#3B5DFF","#FF90C9","#000035", "#C2FF99","#A079BF","#FF4A46", "#4FC601", "#00489C","#D790FF")
+
+ 
+```
+
+##Grouped HMA figure
+```{r}
+#Note these two lines were done above, just put here for reference
+#ps_filtered_family <- tax_glom(ps_common2, taxrank = "Family") #group by Family
+#ps_filtered_family #check how many- 50 different families
+ps_filtered_family#it has all 492 samples and 50 families
+view(sample_data(ps_filtered_family)) #look at metadata to decide what to separate by
+ps_family_merge<-subset_samples(ps_filtered_family, domestication == "wild") #wild only subset
+ps_family_merge #check-it has all wild samples (466) and 50 families 
+ps_family_merge <- merge_samples(ps_family_merge, "area_season")
+ps_family_merge #it has all 50 families but now lumped into area/season groups (31 counting SB)
+ps_family_percent <- transform_sample_counts(ps_family_merge, function(x) 100 * x/sum(x)) #make into % relative abundance
+View(otu_table(ps_family_percent)) #check in a percentage form 
+
+#remove rare taxa (diet elements) from each sample, must be 2% of an herd's diet 
+##for each sample (herd average): set taxa < 2% to zero
+ps_family_percent<- transform_sample_counts(ps_family_percent, function(x) replace(x, x<(.02*sum(x)),0) )
+#remove anything no longer present 
+ps_family_percent<-prune_taxa(taxa_sums(ps_family_percent) > 0, ps_family_percent)
+ps_family_percent # I now have 20 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_family_percent))#look at what we have in the diets.
+
+#if you run this code line below again after it will put everything back to 100%, if not then it will make it so the bars show how much remaining is left that isn't at least 2%
+
+#ps_family_percent <- transform_sample_counts(ps_family_percent, function(x) 100 * x/sum(x))## Transform abundances to percentages
+
+
+#plot
+herd_family_abundance <- plot_bar(ps_family_percent, fill = "Family", title="Herd Average Diet Composition") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values= c("#FFB500",  "#A30059", "#1CE6FF", "#0000A6",  "#FEFFE6","#BA0900","#5A0007", "#008941","#FF34FF",  "#3B5DFF","#FF90C9","#000035", "#C2FF99",   "#00C2A0", "#004D43", "#A079BF", "#FF4A46","#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#00846F","#FFFF00", "#CC0744","#0AA6D8", "#D790FF",
+  "#B903AA"))
+
+herd_family_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5)) +geom_bar(stat="identity", size=2)
+
+ggsave("overall_herd_diet.png", width=22, height =8, dpi = 300)
+
+
+
+```
+
+## Range-wide level
+```{r}
+ps_family_range<-subset_samples(ps_filtered_family, domestication == "wild") #wild only subset
+ps_family_range #check it has all 466 wild samples, 50 families
+ps_family_range<-subset_samples(ps_family_range, study.area != "SB") #wild only subset to exclude SB
+ps_family_range #check it has all 466 wild samples, 50 families
+ps_family_range <- merge_samples(ps_family_range, "season") #group by seasib
+ps_family_range #check we only have 2 seasons
+
+ps_family_range_percent <- transform_sample_counts(ps_family_range, function(x) 100 * x/sum(x)) #make into % relative abundance
+View(otu_table(ps_family_range_percent)) #check in a percentage form 
+
+
+#remove rare taxa (diet elements) from each sample, must be 2% of an season's diet 
+##for each sample (season average): set taxa < 2% to zero
+ps_family_range_percent<- transform_sample_counts(ps_family_range_percent, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present 
+ps_family_range_percent<-prune_taxa(taxa_sums(ps_family_range_percent) > 0, ps_family_range_percent)
+ps_family_range_percent # I now have 9 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_family_range_percent))#look at what we have in the diets.
+
+#plot
+season_family_abundance <- plot_bar(ps_family_range_percent, fill = "Family", title="Rangewide Average Diet Composition") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values= c("#FFB500", "#1CE6FF",  "#FEFFE6", "#008941","#FF34FF",  "#3B5DFF","#FF90C9", "#C2FF99", "#4FC601", "#00489C","#00846F","#FFFF00", "#CC0744", "#D790FF", "#B903AA"))
+
+season_family_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5)) +geom_bar(stat="identity", size=2)
+
+ggsave("overall_season_diet.png", width=8, height =8, dpi = 300)
+
+```
+
+
+###AT
+```{r}
+# Group all plants by family
+ps_AT_family <- tax_glom(ps_AT, taxrank = "Family")
+ps_AT_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the AT group
+##for each sample: set taxa < 1% to zero
+ps_AT_family<- transform_sample_counts(ps_AT_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_AT_family<-prune_taxa(taxa_sums(ps_AT_family) > 0, ps_AT_family)
+ps_AT_family # I now have 19 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_AT_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+ATfamily_merge <- merge_samples(ps_AT_family, "season")
+ATfamily_percent <- transform_sample_counts(ATfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+ATfamily_abundance <- plot_bar(ATfamily_percent, fill = "Family", title="Adobe Town") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values= c("#FFB500", "#006FA6", "#1CE6FF",
+ "#3A2465",  "#FEFFE6","#5A0007", "#008941",  "#3B5DFF","#FF90C9","#000035", "#C2FF99", "#004D43", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#D790FF"))
+
+ATfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5)) +geom_bar(stat="identity", size=2)
+
+ggsave("AT_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+ATfamily_percent2 <- transform_sample_counts(ps_AT_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+ATfamily_abundance2 <- plot_bar(ATfamily_percent2, fill = "Family", title= "Adobe Town") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values= c("#FFB500", "#006FA6", "#1CE6FF",
+ "#3A2465",  "#FEFFE6","#5A0007", "#008941",  "#3B5DFF","#FF90C9","#000035", "#C2FF99", "#004D43", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#D790FF"))
+
+ATfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("AT_sample_SBC.png", width=15, height =6, dpi = 300)
+
+```
+###CN
+```{r}
+# Group all plants by family
+ps_CN_family <- tax_glom(ps_CN, taxrank = "Family")
+ps_CN_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the CN group
+##for each sample: set taxa < 1% to zero
+ps_CN_family<- transform_sample_counts(ps_CN_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_CN_family<-prune_taxa(taxa_sums(ps_CN_family) > 0, ps_CN_family)
+ps_CN_family # I now have 16 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_CN_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+CNfamily_merge <- merge_samples(ps_CN_family, "season")
+CNfamily_percent <- transform_sample_counts(CNfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+CNfamily_abundance <- plot_bar(CNfamily_percent, fill = "Family", title="Conger") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500", "#A30059", "#1CE6FF",
+   "#FEFFE6", "#008941",  "#3B5DFF","#000035", "#C2FF99","#1B4400", "#61615A", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#CC0744","#D790FF")) 
+
+CNfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("CN_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+CNfamily_percent2 <- transform_sample_counts(ps_CN_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+CNfamily_abundance2 <- plot_bar(CNfamily_percent2, fill = "Family", title= "Conger") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500", "#A30059", "#1CE6FF",
+   "#FEFFE6", "#008941",  "#3B5DFF","#000035", "#C2FF99","#1B4400","#61615A", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#CC0744","#D790FF")) 
+
+CNfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("CN_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+###FR
+```{r}
+# Group all plants by family
+ps_FR_family <- tax_glom(ps_FR, taxrank = "Family")
+ps_FR_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the FR group
+##for each sample: set taxa < 1% to zero
+ps_FR_family<- transform_sample_counts(ps_FR_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_FR_family<-prune_taxa(taxa_sums(ps_FR_family) > 0, ps_FR_family)
+ps_FR_family # I now have 19 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_FR_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+FRfamily_merge <- merge_samples(ps_FR_family, "season")
+FRfamily_percent <- transform_sample_counts(FRfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+FRfamily_abundance <- plot_bar(FRfamily_percent, fill = "Family", title="Frisco") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500", "#1CE6FF",
+ "#3A2465",  "#FEFFE6","#5A0007", "#008941", "#FF34FF", "#3B5DFF", "#C2FF99", "#004D43", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#FFFF00","#CC0744","#0AA6D8", "#D790FF"))
+
+FRfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("FR_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+FRfamily_percent2 <- transform_sample_counts(ps_FR_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+FRfamily_abundance2 <- plot_bar(FRfamily_percent2, fill = "Family", title= "Frisco") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500", "#1CE6FF",
+ "#3A2465",  "#FEFFE6","#5A0007", "#008941", "#FF34FF", "#3B5DFF", "#C2FF99", "#004D43", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#FFFF00","#CC0744","#0AA6D8", "#D790FF"))
+
+FRfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("FR_sample_SBC.png", width=15, height =6, dpi = 300)
+
+```
+###GM
+```{r}
+# Group all plants by family
+ps_GM_family <- tax_glom(ps_GM, taxrank = "Family")
+ps_GM_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the GM group
+##for each sample: set taxa < 1% to zero
+ps_GM_family<- transform_sample_counts(ps_GM_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_GM_family<-prune_taxa(taxa_sums(ps_GM_family) > 0, ps_GM_family)
+ps_GM_family # I now have 23 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_GM_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+GMfamily_merge <- merge_samples(ps_GM_family, "season")
+GMfamily_percent <- transform_sample_counts(GMfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+GMfamily_abundance <- plot_bar(GMfamily_percent, fill = "Family", title="Green Mountain") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#000000","#FF913F","#FFB500","#6B7900","#A30059","#1CE6FF","#7A4900", 
+ "#3A2465",  "#FEFFE6","#BA0900", "#008941", "#3B5DFF","#000035", "#C2FF99",  "#C2FFED", "#4FC601", "#FFAA92","#00489C","#FFFF00","#CC0744","#0AA6D8", "#D790FF", "#013349")) 
+
+GMfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("GM_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+GMfamily_percent2 <- transform_sample_counts(ps_GM_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+GMfamily_abundance2 <- plot_bar(GMfamily_percent2, fill = "Family", title= "Green Mountain") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#000000","#FF913F","#FFB500","#6B7900","#A30059","#1CE6FF","#7A4900", 
+ "#3A2465",  "#FEFFE6","#BA0900", "#008941", "#3B5DFF","#000035", "#C2FF99",  "#C2FFED", "#4FC601", "#FFAA92","#00489C","#FFFF00","#CC0744","#0AA6D8", "#D790FF", "#013349")) 
+
+GMfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("GM_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+###LBC
+```{r}
+# Group all plants by family
+ps_LBC_family <- tax_glom(ps_LBC, taxrank = "Family")
+ps_LBC_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the LBC group
+##for each sample: set taxa < 1% to zero
+ps_LBC_family<- transform_sample_counts(ps_LBC_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_LBC_family<-prune_taxa(taxa_sums(ps_LBC_family) > 0, ps_LBC_family)
+ps_LBC_family # I now have 20 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_LBC_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+LBCfamily_merge <- merge_samples(ps_LBC_family, "season")
+LBCfamily_percent <- transform_sample_counts(LBCfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+LBCfamily_abundance <- plot_bar(LBCfamily_percent, fill = "Family", title="Little Book Cliffs") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FF2F80","#FFB500","#A30059","#1CE6FF", 
+ "#3A2465",  "#FEFFE6","#BA0900", "#008941", "#3B5DFF","#FF90C9", "#C2FF99","#FF4A46",  "#C2FFED", "#D16100","#4FC601", "#00489C","#CC0744","#0AA6D8", "#D790FF", "#B903AA")) 
+
+LBCfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("LBC_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+LBCfamily_percent2 <- transform_sample_counts(ps_LBC_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+LBCfamily_abundance2 <- plot_bar(LBCfamily_percent2, fill = "Family", title= "Little Book Cliffs") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FF2F80","#FFB500","#A30059","#1CE6FF", 
+ "#3A2465",  "#FEFFE6","#BA0900", "#008941", "#3B5DFF","#FF90C9", "#C2FF99","#FF4A46",  "#C2FFED", "#D16100","#4FC601", "#00489C","#CC0744","#0AA6D8", "#D790FF", "#B903AA")) 
+
+LBCfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("LBC_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+###MP
+```{r}
+# Group all plants by family
+ps_MP_family <- tax_glom(ps_MP, taxrank = "Family")
+ps_MP_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the MP group
+##for each sample: set taxa < 1% to zero
+ps_MP_family<- transform_sample_counts(ps_MP_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_MP_family<-prune_taxa(taxa_sums(ps_MP_family) > 0, ps_MP_family)
+ps_MP_family # I now have 19 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_MP_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+MPfamily_merge <- merge_samples(ps_MP_family, "season")
+MPfamily_percent <- transform_sample_counts(MPfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+MPfamily_abundance <- plot_bar(MPfamily_percent, fill = "Family", title="McCullough Peaks") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#006FA6", "#A30059","#1CE6FF", 
+  "#FEFFE6", "#008941", "#3B5DFF","#FF90C9", "#C2FF99","#004D43","#FF4A46",  "#C2FFED", "#D16100","#4FC601","#FFAA92", "#00489C","#00846F", "#D790FF", "#B903AA"))
+
+MPfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("MP_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+MPfamily_percent2 <- transform_sample_counts(ps_MP_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+MPfamily_abundance2 <- plot_bar(MPfamily_percent2, fill = "Family", title= "McCullough Peaks") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#006FA6", "#A30059","#1CE6FF", 
+  "#FEFFE6", "#008941", "#3B5DFF","#FF90C9", "#C2FF99","#004D43","#FF4A46",  "#C2FFED", "#D16100","#4FC601","#FFAA92", "#00489C","#00846F", "#D790FF", "#B903AA"))
+
+MPfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("MP_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+###NH
+```{r}
+# Group all plants by family
+ps_NH_family <- tax_glom(ps_NH, taxrank = "Family")
+ps_NH_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the NH group
+##for each sample: set taxa < 1% to zero
+ps_NH_family<- transform_sample_counts(ps_NH_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_NH_family<-prune_taxa(taxa_sums(ps_NH_family) > 0, ps_NH_family)
+ps_NH_family # I now have 22 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_NH_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+NHfamily_merge <- merge_samples(ps_NH_family, "season")
+NHfamily_percent <- transform_sample_counts(NHfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+NHfamily_abundance <- plot_bar(NHfamily_percent, fill = "Family", title="North Hills") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FF913F","#FFB500","#006FA6","#A30059","#1CE6FF", 
+ "#3A2465",  "#FEFFE6","#5A0007", "#008941","#FF34FF", "#3B5DFF","#FF90C9", "#C2FF99",  "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#00846F","#FFFF00", "#D790FF", "#B903AA")) 
+
+NHfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("NH_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+NHfamily_percent2 <- transform_sample_counts(ps_NH_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+NHfamily_abundance2 <- plot_bar(NHfamily_percent2, fill = "Family", title= "North Hills") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FF913F","#FFB500","#006FA6","#A30059","#1CE6FF", 
+ "#3A2465",  "#FEFFE6","#5A0007", "#008941","#FF34FF", "#3B5DFF","#FF90C9", "#C2FF99",  "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#00846F","#FFFF00", "#D790FF", "#B903AA"))
+
+NHfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("NH_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+### ON
+```{r}
+# Group all plants by family
+ps_ON_family <- tax_glom(ps_ON, taxrank = "Family")
+ps_ON_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the ON group
+##for each sample: set taxa < 1% to zero
+ps_ON_family<- transform_sample_counts(ps_ON_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_ON_family<-prune_taxa(taxa_sums(ps_ON_family) > 0, ps_ON_family)
+ps_ON_family # I now have 19 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_ON_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+ONfamily_merge <- merge_samples(ps_ON_family, "season")
+ONfamily_percent <- transform_sample_counts(ONfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+ONfamily_abundance <- plot_bar(ONfamily_percent, fill = "Family", title="Onaqui") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#A30059","#1CE6FF", 
+ "#3A2465",  "#FEFFE6", "#008941", "#3B5DFF","#FF90C9", "#C2FF99", "#00C2A0","#FF4A46", "#7B4F4B","#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#D790FF"))
+
+ONfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("ON_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+ONfamily_percent2 <- transform_sample_counts(ps_ON_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+ONfamily_abundance2 <- plot_bar(ONfamily_percent2, fill = "Family", title= "Onaqui") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#A30059","#1CE6FF", 
+ "#3A2465",  "#FEFFE6", "#008941", "#3B5DFF","#FF90C9", "#C2FF99", "#00C2A0","#FF4A46", "#7B4F4B","#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#D790FF"))
+
+ONfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("ON_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+### PB
+```{r}
+# Group all plants by family
+ps_PB_family <- tax_glom(ps_PB, taxrank = "Family")
+ps_PB_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the PB group
+##for each sample: set taxa < 1% to zero
+ps_PB_family<- transform_sample_counts(ps_PB_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_PB_family<-prune_taxa(taxa_sums(ps_PB_family) > 0, ps_PB_family)
+ps_PB_family # I now have 16 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_PB_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+PBfamily_merge <- merge_samples(ps_PB_family, "season")
+PBfamily_percent <- transform_sample_counts(PBfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+PBfamily_abundance <- plot_bar(PBfamily_percent, fill = "Family", title="Palomino Buttes") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FF913F","#FFB500","#1CE6FF", 
+  "#FEFFE6", "#5A0007", "#008941","#FF34FF", "#3B5DFF","#FF90C9", "#C2FF99", "#FF4A46", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#D790FF"))
+
+PBfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("PB_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+PBfamily_percent2 <- transform_sample_counts(ps_PB_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+PBfamily_abundance2 <- plot_bar(PBfamily_percent2, fill = "Family", title= "Palomino Buttes") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FF913F","#FFB500","#1CE6FF", 
+  "#FEFFE6", "#5A0007", "#008941","#FF34FF", "#3B5DFF","#FF90C9", "#C2FF99", "#FF4A46", "#4FC601", "#FFAA92","#00489C","#FFFF00", "#D790FF"))
+
+PBfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("PB_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+###PN
+```{r}
+# Group all plants by family
+ps_PN_family <- tax_glom(ps_PN, taxrank = "Family")
+ps_PN_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the PN group
+##for each sample: set taxa < 1% to zero
+ps_PN_family<- transform_sample_counts(ps_PN_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_PN_family<-prune_taxa(taxa_sums(ps_PN_family) > 0, ps_PN_family)
+ps_PN_family # I now have 22 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_PN_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+PNfamily_merge <- merge_samples(ps_PN_family, "season")
+PNfamily_percent <- transform_sample_counts(PNfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+PNfamily_abundance <- plot_bar(PNfamily_percent, fill = "Family", title="Pine Nut Mountains") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#A30059","#1CE6FF", 
+  "#FEFFE6","#B79762","#008941","#FF34FF", "#3B5DFF","#000035","#809693", "#C2FF99","#004D43","#FF4A46",  "#C2FFED", "#4FC601", "#FFAA92","#00489C","#FFFF00","#CC0744", "#0AA6D8","#D790FF", "#DDEFFF")) 
+
+PNfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("PN_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+PNfamily_percent2 <- transform_sample_counts(ps_PN_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+PNfamily_abundance2 <- plot_bar(PNfamily_percent2, fill = "Family", title= "Pine Nut Mountains") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#A30059","#1CE6FF", 
+  "#FEFFE6","#B79762","#008941","#FF34FF", "#3B5DFF","#000035","#809693", "#C2FF99","#004D43","#FF4A46",  "#C2FFED", "#4FC601", "#FFAA92","#00489C","#FFFF00","#CC0744", "#0AA6D8","#D790FF", "#DDEFFF") )
+
+PNfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("PN_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+###RR
+```{r}
+# Group all plants by family
+ps_RR_family <- tax_glom(ps_RR, taxrank = "Family")
+ps_RR_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the RR group
+##for each sample: set taxa < 1% to zero
+ps_RR_family<- transform_sample_counts(ps_RR_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_RR_family<-prune_taxa(taxa_sums(ps_RR_family) > 0, ps_RR_family)
+ps_RR_family # I now have 22 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_RR_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+RRfamily_merge <- merge_samples(ps_RR_family, "season")
+RRfamily_percent <- transform_sample_counts(RRfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+RRfamily_abundance <- plot_bar(RRfamily_percent, fill = "Family", title="Red Rock") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFDBE5","#FFB500","#A30059","#1CE6FF", 
+  "#FEFFE6","#008941","#FF34FF","#3B5DFF", "#000035", "#C2FF99","#4A3B53","#004D43","#A079BF","#FF4A46", "#300018", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C", "#013349","#6F0062"))
+
+RRfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("RR_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+RRfamily_percent2 <- transform_sample_counts(ps_RR_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+RRfamily_abundance2 <- plot_bar(RRfamily_percent2, fill = "Family", title= "Red Rock") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFDBE5","#FFB500","#A30059","#1CE6FF", 
+  "#FEFFE6","#008941","#FF34FF","#3B5DFF", "#000035", "#C2FF99","#4A3B53","#004D43","#A079BF","#FF4A46", "#300018", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C", "#013349","#6F0062"))
+
+RRfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("RR_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+### SC
+```{r}
+# Group all plants by family
+ps_SC_family <- tax_glom(ps_SC, taxrank = "Family")
+ps_SC_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the SC group
+##for each sample: set taxa < 1% to zero
+ps_SC_family<- transform_sample_counts(ps_SC_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_SC_family<-prune_taxa(taxa_sums(ps_SC_family) > 0, ps_SC_family)
+ps_SC_family # I now have 11 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_SC_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+SCfamily_merge <- merge_samples(ps_SC_family, "season")
+SCfamily_percent <- transform_sample_counts(SCfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+SCfamily_abundance <- plot_bar(SCfamily_percent, fill = "Family", title="Saylor Creek") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#1CE6FF", 
+  "#FEFFE6","#008941","#3B5DFF", "#000035", "#C2FF99","#FF4A46", "#4FC601", "#FFAA92","#00489C"))
+
+SCfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("SC_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+SCfamily_percent2 <- transform_sample_counts(ps_SC_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+SCfamily_abundance2 <- plot_bar(SCfamily_percent2, fill = "Family", title= "Saylor Creek") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#1CE6FF", 
+  "#FEFFE6","#008941","#3B5DFF", "#000035", "#C2FF99","#FF4A46", "#4FC601", "#FFAA92","#00489C"))
+
+SCfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("SC_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+### SS
+```{r}
+# Group all plants by family
+ps_SS_family <- tax_glom(ps_SS, taxrank = "Family")
+ps_SS_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the SS group
+##for each sample: set taxa < 1% to zero
+ps_SS_family<- transform_sample_counts(ps_SS_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_SS_family<-prune_taxa(taxa_sums(ps_SS_family) > 0, ps_SS_family)
+ps_SS_family # I now have 18 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_SS_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+SSfamily_merge <- merge_samples(ps_SS_family, "season")
+SSfamily_percent <- transform_sample_counts(SSfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+SSfamily_abundance <- plot_bar(SSfamily_percent, fill = "Family", title="South Steens") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#A30059","#1CE6FF", "#0000A6", "#FEFFE6", "#5A0007","#008941","#FF34FF","#3B5DFF", "#FF4A46", "#300018", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#0AA6D8","#A1C299" ))
+
+SSfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("SS_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+SSfamily_percent2 <- transform_sample_counts(ps_SS_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+SSfamily_abundance2 <- plot_bar(SSfamily_percent2, fill = "Family", title= "South Steens") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#A30059","#1CE6FF", "#0000A6", "#FEFFE6", "#5A0007","#008941","#FF34FF","#3B5DFF", "#FF4A46", "#300018", "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#0AA6D8","#A1C299" ))
+
+SSfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("SS_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+### SW
+```{r}
+# Group all plants by family
+ps_SW_family <- tax_glom(ps_SW, taxrank = "Family")
+ps_SW_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the SW group
+##for each sample: set taxa < 1% to zero
+ps_SW_family<- transform_sample_counts(ps_SW_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_SW_family<-prune_taxa(taxa_sums(ps_SW_family) > 0, ps_SW_family)
+ps_SW_family # I now have 18 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_SW_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+SWfamily_merge <- merge_samples(ps_SW_family, "season")
+SWfamily_percent <- transform_sample_counts(SWfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+SWfamily_abundance <- plot_bar(SWfamily_percent, fill = "Family", title="Stinkingwater") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#A30059", "#0000A6","#8FB0FF", "#3A2465", "#5A0007","#008941","#3B5DFF","#000035", "#C2FF99","#FF4A46","#D16100",  "#4FC601", "#FFAA92","#00489C","#A1C299","#013349","#C0B9B2"))
+
+SWfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("SW_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+SWfamily_percent2 <- transform_sample_counts(ps_SW_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+SWfamily_abundance2 <- plot_bar(SWfamily_percent2, fill = "Family", title= "Stinkingwater") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#A30059", "#0000A6","#8FB0FF", "#3A2465", "#5A0007","#008941","#3B5DFF","#000035", "#C2FF99","#FF4A46","#D16100",  "#4FC601", "#FFAA92","#00489C","#A1C299","#013349","#C0B9B2"))
+
+SWfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("SW_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+
+###TP
+```{r}
+# Group all plants by family
+ps_TP_family <- tax_glom(ps_TP, taxrank = "Family")
+ps_TP_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the TP group
+##for each sample: set taxa < 1% to zero
+ps_TP_family<- transform_sample_counts(ps_TP_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_TP_family<-prune_taxa(taxa_sums(ps_TP_family) > 0, ps_TP_family)
+ps_TP_family # I now have 19 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_TP_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+TPfamily_merge <- merge_samples(ps_TP_family, "season")
+TPfamily_percent <- transform_sample_counts(TPfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+TPfamily_abundance <- plot_bar(TPfamily_percent, fill = "Family", title="Twin Peaks") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#00FECF","#FF913F","#FFB500","#1CE6FF", "#FEFFE6", "#008941", "#3B5DFF","#809693", "#C2FF99","#FF4A46",  "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#CC0744", "#0AA6D8", "#D790FF", "#B903AA")) 
+
+TPfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("TP_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+TPfamily_percent2 <- transform_sample_counts(ps_TP_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+TPfamily_abundance2 <- plot_bar(TPfamily_percent2, fill = "Family", title= "Twin Peaks") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#00FECF","#FF913F","#FFB500","#1CE6FF", "#FEFFE6", "#008941", "#3B5DFF","#809693", "#C2FF99","#FF4A46",  "#C2FFED","#D16100", "#4FC601", "#FFAA92","#00489C","#CC0744", "#0AA6D8", "#D790FF", "#B903AA"))
+
+TPfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("TP_sample_SBC.png", width=15, height =6, dpi = 300)
+
+```
+
+###SB
+```{r}
+#seperate SB
+ps_SB <- subset_samples(ps_common_wild, study.area == "SB")
+# Group all plants by family
+ps_SB_family <- tax_glom(ps_SB, taxrank = "Family")
+ps_SB_family #how many? 30 samples, 50 taxa (families)
+
+#remove rare taxa (diet elements) from each sample, must be 1% of an animal's diet in the SB group
+##for each sample: set taxa < 1% to zero
+ps_SB_family<- transform_sample_counts(ps_SB_family, function(x) replace(x, x<(.01*sum(x)),0) )
+#remove anything no longer present in database
+ps_SB_family<-prune_taxa(taxa_sums(ps_SB_family) > 0, ps_SB_family)
+ps_SB_family # I now have 19 families compared to the 50 plants before rare taxa removal 
+view(tax_table(ps_SB_family))#look at what we have in the diets.
+
+# Transform abundances to percentages
+SBfamily_merge <- merge_samples(ps_SB_family, "season")
+SBfamily_percent <- transform_sample_counts(SBfamily_merge, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+SBfamily_abundance <- plot_bar(SBfamily_percent, fill = "Family", title="Sands Basin") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#1CE6FF", "#FEFFE6", "#008941", "#FF34FF", "#3B5DFF","#FF90C9","#000035", "#C2FF99","#A079BF","#FF4A46", "#4FC601", "#00489C","#D790FF")) 
+
+SBfamily_abundance + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 14, color="black")) + theme(axis.text = element_text(size = 14, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("SB_grouped_SBC.png", width=8, height =8, dpi = 300)
+
+#try to look at all samples diet composition to look at variation 
+SBfamily_percent2 <- transform_sample_counts(ps_SB_family, function(x) 100 * x/sum(x))
+
+# Plot relative abundances
+SBfamily_abundance2 <- plot_bar(SBfamily_percent2, fill = "Family", title= "Sands Basin") + xlab("Season") + ylab("Relative Abundance (%)") + theme_bw()+ scale_fill_manual(values=c("#FFB500","#1CE6FF", "#FEFFE6", "#008941", "#FF34FF", "#3B5DFF","#FF90C9","#000035", "#C2FF99","#A079BF","#FF4A46", "#4FC601", "#00489C","#D790FF"))
+
+SBfamily_abundance2 + theme(text = element_text(size = 14, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 8, color= "black")) + theme(axis.title = element_text(size = 14, color= "black"))+
+theme(plot.title = element_text(hjust=0.5))+geom_bar(stat="identity", size=2)
+
+ggsave("SB_sample_SBC.png", width=15, height =6, dpi = 300)
+```
+
+
+##Pull out data for graminoid based analysis
+###Family level
+```{r}
+
+#note this table goes to family level- need to combine Poaceae, Cyperaceae, and Juncaceae later to get "Poales" for graminoid analysis  
+
+View(otu_table(ps_filtered_family)) #check- looking at family counts- not relative yet, this is read form
+View(otu_table(ps_common_tr)) #check- this is looking at relative abundance..
+
+ps_filtered_family_realtive <- tax_glom(ps_common_tr, taxrank = "Family") #lump relative abundance ps object by family
+
+View(tax_table(ps_filtered_family_realtive)) #looking at family taxonomy
+View(otu_table(ps_filtered_family_realtive)) #looking at family counts relative
+
+
+family_tax<- as.data.frame(tax_table(ps_filtered_family_realtive))#put taxonomy in dataframe
+family_tax<- tibble::rownames_to_column(family_tax, "asv") #make asv column to join by 
+
+family_otu<- as.data.frame(otu_table(ps_filtered_family_realtive))#put otu table in dataframe
+family_otu<-as.data.frame(t(family_otu)) #flip to match taxonomy 
+family_otu<- tibble::rownames_to_column(family_otu, "asv") ##make asv column to join by 
+
+output_family_percents<- left_join(family_otu, family_tax, by="asv") #join
+
+View(output_family_percents)#check what I have
+
+output_family_percents1<-t(output_family_percents) #flip table so rows are fecal samples I can export and later add metadata
+View(output_family_percents1) #check it looks good
+
+
+write.csv(output_family_percents1, "./9_10_24plant_family_percents_outputoftrnlcleaned.csv", row.names = TRUE) #make excel so that I can start new R file without the big objects for stacked bar charts 
+
+

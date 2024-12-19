@@ -1,0 +1,2586 @@
+---
+title: "Gramminoid Composition Analysis"
+author: "Courtney Buchanan"
+date: "2024-09-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#library packages
+```{r}
+
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+#install.packages("FSA")
+library(FSA)
+library(tidyr)
+#install.packages("gggpubr")
+library(ggpubr)
+library(MKinfer)
+
+```
+#read in files
+```{r}
+
+plant_family<-read.csv("./9_10_24plant_family_percents_outputoftrnlcleaned.csv") #diet composition from TRNL file output
+metadata<-read.csv("./11_9_23_metadata_no_copy.csv") #sample metadata
+individual_BCS<-read.csv("./bcs_by_observation_5_24_23.csv") #body condition observations
+HMA_RAP<-read.csv("./allHMAs_withRAP_4_18_24.csv") # RAP biomass and cover data for all HMAs
+
+metadata_with_RAP<-read.csv("./5_9_23_metadata_no_copy_withRAP.csv")#read in buffered RAP data with biomass and cover data buffered for each sample
+
+
+```
+
+#prep dataframe for analysis
+```{r}
+plant_family1<-as.data.frame(plant_family) #make a dataframe to edit from original 
+plant_family1<-tibble::column_to_rownames((as.data.frame(plant_family1)), "X") #puts sample name as the row name
+
+colnames(plant_family1)<-as.character(plant_family1[498,]) #takes family name and makes it the column names 
+
+plant_family1<-plant_family1[2:493,]
+```
+
+##join metadata
+```{r}
+#make a sample column to join by 
+
+plant_family1<- tibble::rownames_to_column((as.data.frame(plant_family1)), "sample") #makes "sample" a column to join with metadata
+
+plant_family_meta<- left_join(plant_family1, metadata, by="sample") # join diet data with horse sample metadata
+
+plant_family_meta_wild<- subset(plant_family_meta, domestication == "wild")#get rid of domestic for now
+
+```
+
+#group for where I want to use HMA as unit and for graphs
+```{r}
+#make the columns I want to use numeric
+plant_family_meta_wild$Poaceae<-as.numeric(plant_family_meta_wild$Poaceae)
+plant_family_meta_wild$Cyperaceae<-as.numeric(plant_family_meta_wild$Cyperaceae)
+plant_family_meta_wild$Juncaceae<-as.numeric(plant_family_meta_wild$Juncaceae)
+
+plant_family_meta_wild$Poales<-plant_family_meta_wild$Poaceae + plant_family_meta_wild$Cyperaceae + plant_family_meta_wild$Juncaceae #this combines poaceae, cyperaceae, and Juncaceae into one grasslike column called "Poales"
+
+# Use the amount Poales to summarize 
+
+#Somehow we got 16 samples for WMP so exclude WMP11 which has least fresh fecal score
+plant_family_meta_wild<-subset(plant_family_meta_wild, sample != "WMP11")
+
+# this leaves each hma season combo as its own
+plant_order_by_HMA_season<-plant_family_meta_wild%>% #Looking at average for Poales only    
+  group_by( study.area, area_season, season )%>%
+  summarise(mean_Poales=mean(Poales), sd=sd(Poales), number= n())
+
+View(plant_order_by_HMA_season)
+
+```
+#find average graminoids per season
+```{r}
+graminoids_by_HMA_summer<- subset(plant_order_by_HMA_season, season == "summer") #subset summer
+mean(graminoids_by_HMA_summer$mean_Poales)# 58.102 summer average including SB
+mean(subset(graminoids_by_HMA_summer, study.area != "SB")$mean_Poales) # 59.43886 summer average no SB 
+graminoids_by_HMA_winter<- subset(plant_order_by_HMA_season, season == "winter")#subset winter
+mean(graminoids_by_HMA_winter$mean_Poales)# 49.874 winter average
+
+mean(plant_order_by_HMA_season$mean_Poales) #overall average = 54.12116 with SB
+mean(subset(plant_order_by_HMA_season, study.area != "SB")$mean_Poales) # 54.6566 average no SB 
+```
+#subset to each study area for analyses
+
+```{r}
+
+#subset to HMA so I can do one study area at a time in the analysis
+plant_order_AT<-subset(plant_family_meta_wild, study.area == "AT")
+plant_order_CN<-subset(plant_family_meta_wild, study.area == "CN")
+plant_order_FR<-subset(plant_family_meta_wild, study.area == "FR")
+plant_order_GM<-subset(plant_family_meta_wild, study.area == "GM")
+plant_order_LBC<-subset(plant_family_meta_wild, study.area == "LBC")
+plant_order_MP<-subset(plant_family_meta_wild, study.area == "MP")
+plant_order_NH<-subset(plant_family_meta_wild, study.area == "NH")
+plant_order_ON<-subset(plant_family_meta_wild, study.area == "ON")
+plant_order_PB<-subset(plant_family_meta_wild, study.area == "PB")
+plant_order_PN<-subset(plant_family_meta_wild, study.area == "PN")
+plant_order_RR<-subset(plant_family_meta_wild, study.area == "RR")
+plant_order_SC<-subset(plant_family_meta_wild, study.area == "SC")
+plant_order_SS<-subset(plant_family_meta_wild, study.area == "SS")
+plant_order_SW<-subset(plant_family_meta_wild, study.area == "SW")
+plant_order_TP<-subset(plant_family_meta_wild, study.area == "TP")
+
+```
+
+#Seasonal comparison
+## T-tests
+###range
+```{r}
+## t test- not paired 
+t.test(mean_Poales ~ season, data= plant_order_by_HMA_season) #not significant p=0.2101
+
+
+#t-test paired...
+View(plant_order_by_HMA_season)
+range_sum<- plant_order_by_HMA_season[plant_order_by_HMA_season$season == "summer",] #pull summer HMA averages
+range_sum<- range_sum[range_sum$study.area != "SB",]#exclude SB because no winter sample
+range_sum<- range_sum$mean_Poales #take only the graminoid column
+range_sum # View values
+range_win<- plant_order_by_HMA_season[plant_order_by_HMA_season$season == "winter",]#pull winter HMA averages 
+range_win<-range_win$mean_Poales #take only the graminoid column
+range_win #view values
+
+
+t.test(x=range_sum, y=range_win, paired=TRUE, var.equal = T) #when they are paired we have a significant p-value 0.03617
+
+
+#look at histogram and differences 
+hist(range_sum, breaks=10) #summer- not normal
+hist(range_win, breaks= 10) #winter- not normal, but not terrible
+hist(plant_order_by_HMA_season$mean_Poales)#all seasons- does not look super normal...
+#for a paired t-test it is the difference that needs to be normal?
+hist(range_sum - range_win, breaks = 10) #still not normal... 
+
+
+boxplot(plant_order_by_HMA_season$mean_Poales ~ plant_order_by_HMA_season$season) #likely not equal, summer maybe slight more variable- actual numbers close
+var(range_win) # 0.0315
+var(range_sum) # 0.0323
+
+
+```
+
+
+###individual HMAs
+```{r}
+#for each study area do a 2 sample t test independent, then pair for the max and minimum variability to compare the p-values. 
+
+#AT
+t.test(Poales ~ season, data= plant_order_AT) #not significant p=0.8571
+
+AT_sum<- plant_order_AT[plant_order_AT$season == "summer",]
+AT_sum<-AT_sum$Poales
+AT_win<- plant_order_AT[plant_order_AT$season == "winter",]
+AT_win<-AT_win$Poales
+
+#min variation
+t.test(x=sort(AT_sum), y=sort(AT_win,decreasing=FALSE), paired=TRUE) # not significant p = 0.7315
+#max variation
+t.test(x=sort(AT_sum), y=sort(AT_win,decreasing=TRUE), paired=TRUE)# not significant p = 0.8848
+#not paired
+t.test(x=AT_sum, y = AT_win, paired= FALSE) #not significant p=0.8571
+t.test(x=AT_sum, y = AT_win, paired= FALSE, var.equal = TRUE) #not significant p=0.8566
+
+#histograms and assumptions
+hist(plant_order_AT$Poales, breaks = 10) #all observations, not normal
+hist(AT_sum, breaks = 10)#summer, not normal
+hist(AT_win, breaks = 10) #winter, not normal
+hist(AT_sum - AT_win, breaks = 10) #difference, kinda normal 
+
+boxplot(plant_order_AT$Poales ~ plant_order_AT$season) #likely not equal, winter more variable, but summer has outlier 
+var(AT_win) #0.12
+var(AT_sum) #0.03
+
+
+#CN
+t.test(Poales ~ season, data= plant_order_CN) #not significant p=0.1975
+
+CN_sum<- plant_order_CN[plant_order_CN$season == "summer",]
+CN_sum<-CN_sum$Poales
+CN_win<- plant_order_CN[plant_order_CN$season == "winter",]
+CN_win<-CN_win$Poales
+
+#min variation
+t.test(x=sort(CN_sum), y=sort(CN_win,decreasing=FALSE), paired=TRUE) # significant p = 0.0305
+#max variation
+t.test(x=sort(CN_sum), y=sort(CN_win,decreasing=TRUE), paired=TRUE)# not significant p = 0.3133
+#not paired
+t.test(x=CN_sum, y = CN_win, paired= FALSE) #not significant p=0.1975
+t.test(x=CN_sum, y = CN_win, paired= FALSE, var.equal = TRUE) #not significant p=0.1931
+
+#histograms
+hist(plant_order_CN$Poales, breaks = 10) #all observations, not normal
+hist(CN_sum, breaks = 10)#summer, not normal
+hist(CN_win, breaks = 10) #winter, not normal
+hist(CN_sum - CN_win, breaks = 10) #difference, not normal  
+
+
+boxplot(plant_order_CN$Poales ~ plant_order_CN$season) #likely not equal, winter more variable, summer outlier
+var(CN_win) # 0.15
+var(CN_sum) # 0.03
+
+
+#FR
+t.test(Poales ~ season, data= plant_order_FR)#significant p= 0.0002
+
+FR_sum<- plant_order_FR[plant_order_FR$season == "summer",]
+FR_sum<-FR_sum$Poales
+FR_win<- plant_order_FR[plant_order_FR$season == "winter",]
+FR_win<-FR_win$Poales
+
+#min variation
+t.test(x=sort(FR_sum), y=sort(FR_win,decreasing=FALSE), paired=TRUE) #significant p= 4.8 e-10
+#max variation
+t.test(x=sort(FR_sum), y=sort(FR_win,decreasing=TRUE), paired=TRUE) #significant p = 0.0076
+#not paired
+t.test(x=FR_sum, y = FR_win, paired= FALSE)#significant p= 0.0002
+t.test(x=FR_sum, y = FR_win, paired= FALSE, var.equal = TRUE) #significant p=0.000196
+
+#histograms and assumptions
+hist(plant_order_FR$Poales, breaks = 10) #all observations, not normal
+hist(FR_sum, breaks = 10)#summer, not normal
+hist(FR_win, breaks = 10) #winter, not normal
+hist(FR_sum - FR_win, breaks = 10) #difference , not normal
+
+boxplot(plant_order_FR$Poales ~ plant_order_FR$season) #equalish variance 
+var(FR_win) #0.045
+var(FR_sum) #0.029
+
+#GM
+t.test(Poales ~ season, data= plant_order_GM)# not significant p= 0.1413
+
+GM_sum<- plant_order_GM[plant_order_GM$season == "summer",]
+GM_sum<-GM_sum$Poales
+GM_win<- plant_order_GM[plant_order_GM$season == "winter",]
+GM_win<-GM_win$Poales
+
+#min variation
+t.test(x=sort(GM_sum), y=sort(GM_win,decreasing=FALSE), paired=TRUE) #significant p= 0.000069
+#max variation
+t.test(x=sort(GM_sum), y=sort(GM_win,decreasing=TRUE), paired=TRUE)# not significant p= 0.2973
+#not paired
+t.test(x=GM_sum, y = GM_win, paired= FALSE) # not significant p= 0.1413
+t.test(x=GM_sum, y = GM_win, paired= FALSE, var.equal = TRUE) #not significant p=0.1413
+
+#histograms and assumptions
+hist(plant_order_GM$Poales, breaks = 10) #all observations, not normal
+hist(GM_sum, breaks = 10)#summer, not normal
+hist(GM_win, breaks = 10) #winter, not normal
+hist(GM_sum - GM_win, breaks = 10) #difference , not normal
+
+boxplot(plant_order_GM$Poales ~ plant_order_GM$season) #equalish variance
+var(GM_win) #0.076
+var(GM_sum) #0.0804
+
+
+
+#LBC
+t.test(Poales ~ season, data= plant_order_LBC)#significant p=0.02412
+
+LBC_sum<- plant_order_LBC[plant_order_LBC$season == "summer",]
+LBC_sum<-LBC_sum$Poales
+LBC_win<- plant_order_LBC[plant_order_LBC$season == "winter",]
+LBC_win<-LBC_win$Poales
+
+#min variation
+t.test(x=sort(LBC_sum), y=sort(LBC_win,decreasing=FALSE), paired=TRUE) #significant p=0.00000008
+#max variation
+t.test(x=sort(LBC_sum), y=sort(LBC_win,decreasing=TRUE), paired=TRUE) #not significant p=0.1001
+#not paired
+t.test(x=LBC_sum, y = LBC_win, paired= FALSE) #significant p=0.02412
+t.test(x=LBC_sum, y = LBC_win, paired= FALSE, var.equal = TRUE) #significant p=0.0239
+
+#histograms and assumptions
+hist(plant_order_LBC$Poales, breaks = 10) #all observations, not normal
+hist(LBC_sum, breaks = 10)#summer, not normal
+hist(LBC_win, breaks = 10) #winter, not normal
+
+
+boxplot(plant_order_LBC$Poales ~ plant_order_LBC$season)#variance is not super equal, but not terrible, more varaince in winter
+var(LBC_win) #0.119
+var(LBC_sum) #0.086
+
+
+
+
+#MP 
+t.test(Poales ~ season, data= plant_order_MP)#not significant p=0.5294
+
+MP_sum<- plant_order_MP[plant_order_MP$season == "summer",]
+MP_sum<-MP_sum$Poales
+MP_win<- plant_order_MP[plant_order_MP$season == "winter",]
+MP_win<-MP_win$Poales
+
+#min variation
+t.test(x=sort(MP_sum), y=sort(MP_win,decreasing=FALSE), paired=TRUE) #borderline significant p=0.062
+#max variation
+t.test(x=sort(MP_sum), y=sort(MP_win,decreasing=TRUE), paired=TRUE)# not significant p=0.638
+#not paired
+t.test(x=MP_sum, y = MP_win, paired= FALSE) #not significant p= 0.5294
+t.test(x=MP_sum, y = MP_win, paired= FALSE, var.equal = TRUE) #not significant p=0.5288
+
+#histograms and assumptions
+hist(plant_order_MP$Poales, breaks = 10) #all observations. not normal
+hist(MP_sum, breaks = 10)#summer, not normal
+hist(MP_win, breaks = 10) #winter, not normal
+hist(MP_sum - MP_win, breaks = 10) #difference , normal-ish 
+
+boxplot(plant_order_MP$Poales ~ plant_order_MP$season)# variance not super equal, more variance winter
+var(MP_win)# 0.1323
+var(MP_sum) #0.0679
+
+
+
+
+
+
+#NH
+t.test(Poales ~ season, data= plant_order_NH) #not significant p=0.1918
+
+NH_sum<- plant_order_NH[plant_order_NH$season == "summer",]
+NH_sum<-NH_sum$Poales
+NH_win<- plant_order_NH[plant_order_NH$season == "winter",]
+NH_win<-NH_win$Poales
+
+#min variation
+t.test(x=sort(NH_sum), y=sort(NH_win,decreasing=FALSE), paired=TRUE) #significant p=0.0022
+#max variation
+t.test(x=sort(NH_sum), y=sort(NH_win,decreasing=TRUE), paired=TRUE)#not significant p=0.3050
+#not paired
+t.test(x=NH_sum, y = NH_win, paired= FALSE)#not significant p=0.1918
+t.test(x=NH_sum, y = NH_win, paired= FALSE, var.equal = TRUE) #not significant p=0.1909
+
+#histograms and assumptions
+hist(plant_order_NH$Poales, breaks = 10) #all observations, not normal
+hist(NH_sum, breaks = 10)#summer, not normal
+hist(NH_win, breaks = 10) #winter, not normal
+hist(NH_sum - NH_win, breaks = 10) #difference, not normal 
+
+boxplot(plant_order_NH$Poales ~ plant_order_NH$season) #variance not too equal, more variance winter, summer outliers
+var(NH_win) #0.0819
+var(NH_sum) #0.046
+
+
+
+
+#ON
+t.test(Poales ~ season, data= plant_order_ON)#significant p=0.0091
+
+ON_sum<- plant_order_ON[plant_order_ON$season == "summer",]
+ON_sum<-ON_sum$Poales
+ON_win<- plant_order_ON[plant_order_ON$season == "winter",]
+ON_win<-ON_win$Poales
+
+#min variation
+t.test(x=sort(ON_sum), y=sort(ON_win,decreasing=FALSE), paired=TRUE) #significant p=0.000003
+#max variation
+t.test(x=sort(ON_sum), y=sort(ON_win,decreasing=TRUE), paired=TRUE)#borderline significant p=0.05338
+#not paired
+t.test(x=ON_sum, y = ON_win, paired= FALSE)#significant p=0.0091
+t.test(x=ON_sum, y = ON_win, paired= FALSE, var.equal = TRUE) #significant p=0.0089
+
+#histograms and assumptions
+hist(plant_order_ON$Poales, breaks = 10) #all observations, not normal
+hist(ON_sum, breaks = 10)#summer, not normal
+hist(ON_win, breaks = 10) #winter, not normal
+hist(ON_sum - ON_win, breaks = 10) #difference , not normal
+
+boxplot(plant_order_ON$Poales ~ plant_order_ON$season) #variance is not quite equal, more variance, summer, winter outliar 
+var(ON_win) #0.0439
+var(ON_sum) #0.0692
+
+#PB
+t.test(Poales ~ season, data=plant_order_PB) #significant p=0.0116
+
+PB_sum<- plant_order_PB[plant_order_PB$season == "summer",]
+PB_sum<-PB_sum$Poales
+PB_win<- plant_order_PB[plant_order_PB$season == "winter",]
+PB_win<-PB_win$Poales
+
+#min variation
+t.test(x=sort(PB_sum), y=sort(PB_win,decreasing=FALSE), paired=TRUE)#significant p= 0.0008 
+#max variation
+t.test(x=sort(PB_sum), y=sort(PB_win,decreasing=TRUE), paired=TRUE) #significant p = 0.03127
+#not paired
+t.test(x=PB_sum, y = PB_win, paired= FALSE) #significant p=0.0116
+t.test(x=PB_sum, y = PB_win, paired= FALSE, var.equal = TRUE) #significant p=0.00846
+
+#histograms and assumptions
+hist(plant_order_PB$Poales, breaks = 10) #all observations, not normal
+hist(PB_sum, breaks = 10)#summer, nor normal
+hist(PB_win, breaks = 10) #winter, not normal
+hist(PB_sum - PB_win, breaks = 10) #difference, closer to normal
+
+boxplot(plant_order_PB$Poales ~ plant_order_PB$season)#not equal, more variance in summer, outliers in winter
+var(PB_win) #0.0097
+var(PB_sum) #0.102
+
+
+
+
+#PN
+t.test(Poales ~ season, data=plant_order_PN)# not significant p=0.6241
+
+PN_sum<- plant_order_PN[plant_order_PN$season == "summer",]
+PN_sum<-PN_sum$Poales
+PN_win<- plant_order_PN[plant_order_PN$season == "winter",]
+PN_win<-PN_win$Poales
+
+#min variation
+t.test(x=sort(PN_sum), y=sort(PN_win,decreasing=FALSE), paired=TRUE) #borderline significant p=0.0804
+#max variation
+t.test(x=sort(PN_sum), y=sort(PN_win,decreasing=TRUE), paired=TRUE)# not significant p=0.7212
+#not paired
+t.test(x=PN_sum, y = PN_win, paired= FALSE)# not significant p=0.6241
+t.test(x=PN_sum, y = PN_win, paired= FALSE, var.equal = TRUE) #not significant p=0.6239
+
+#histograms and assumptions
+hist(plant_order_PN$Poales, breaks = 10) #all observations, not normal
+hist(PN_sum, breaks = 10)#summer, not normal
+hist(PN_win, breaks = 10) #winter, not normal
+hist(PN_sum - PN_win, breaks = 10) #difference , not normal
+
+boxplot(plant_order_PN$Poales ~ plant_order_PN$season)#equalish variance
+var(PN_win)#0.046
+var(PN_sum) #0.074
+
+
+
+
+#RR
+t.test(Poales ~ season, data=plant_order_RR)# not significant p=0.4158
+
+RR_sum<- plant_order_RR[plant_order_RR$season == "summer",]
+RR_sum<-RR_sum$Poales
+RR_win<- plant_order_RR[plant_order_RR$season == "winter",]
+RR_win<-RR_win$Poales
+
+#min variation
+t.test(x=sort(RR_sum), y=sort(RR_win,decreasing=FALSE), paired=TRUE) # significant p=0.00098
+#max variation
+t.test(x=sort(RR_sum), y=sort(RR_win,decreasing=TRUE), paired=TRUE)# not significant p=0.5658
+#not paired
+t.test(x=RR_sum, y = RR_win, paired= FALSE)# not significant p=0.4158
+t.test(x=RR_sum, y = RR_win, paired= FALSE, var.equal = TRUE) #not significant p=0.4158
+
+#histograms and assumptions
+hist(plant_order_RR$Poales, breaks = 10) #all observations, normalish
+hist(RR_sum, breaks = 10)#summer, not normal
+hist(RR_win, breaks = 10) #winter, not terrible
+hist(RR_sum - RR_win, breaks = 10) #difference #not normal
+
+boxplot(plant_order_RR$Poales ~ plant_order_RR$season)#fairly equal variance
+var(RR_win)#0.0688
+var(RR_sum) #0.0768
+
+
+
+#SC
+t.test(Poales ~ season, data=plant_order_SC)# significant p=0.0003
+
+SC_sum<- plant_order_SC[plant_order_SC$season == "summer",]
+SC_sum<-SC_sum$Poales
+SC_win<- plant_order_SC[plant_order_SC$season == "winter",]
+SC_win<-SC_win$Poales
+
+#min variation
+t.test(x=sort(SC_sum), y=sort(SC_win,decreasing=FALSE), paired=TRUE) # significant p= 0.000001
+#max variation
+t.test(x=sort(SC_sum), y=sort(SC_win,decreasing=TRUE), paired=TRUE)# significant p= 0.0090
+#not paired
+t.test(x=SC_sum, y = SC_win, paired= FALSE)# significant p=0.0003
+t.test(x=SC_sum, y = SC_win, paired= FALSE, var.equal = TRUE) #significant p=0.000299
+
+
+#histograms and assumptions
+hist(plant_order_SC$Poales, breaks = 10) #all observations, not normal
+hist(SC_sum, breaks = 10)#summer, not normal
+hist(SC_win, breaks = 10) #winter, not normal
+hist(SC_sum - SC_win, breaks = 10) #difference , not normal
+
+boxplot(plant_order_SC$Poales ~ plant_order_SC$season) #close variance, more variance winter, summer outliers
+var(SC_win) #0.0535
+var(SC_sum) #0.0366
+
+
+
+
+#SS
+t.test(Poales ~ season, data=plant_order_SS)#not significant p=0.6111
+
+SS_sum<- plant_order_SS[plant_order_SS$season == "summer",]
+SS_sum<-SS_sum$Poales
+SS_win<- plant_order_SS[plant_order_SS$season == "winter",]
+SS_win<-SS_win$Poales
+
+#min variation
+t.test(x=sort(SS_sum), y=sort(SS_win,decreasing=FALSE), paired=TRUE) #not significant p=0.1290
+#max variation
+t.test(x=sort(SS_sum), y=sort(SS_win,decreasing=TRUE), paired=TRUE)#not significant p=0.7122
+#not paired
+t.test(x=SS_sum, y = SS_win, paired= FALSE)#not significant p=0.6111
+t.test(x=SS_sum, y = SS_win, paired= FALSE, var.equal = TRUE) #not significant p=0.611
+
+#histograms and assumptions
+hist(plant_order_SS$Poales, breaks = 10) #all observations, not terrible
+hist(SS_sum, breaks = 10)#summer, not normal
+hist(SS_win, breaks = 10) #winter, normalish
+hist(SS_sum - SS_win, breaks = 10) #difference, not normal 
+
+boxplot(plant_order_SS$Poales ~ plant_order_SS$season) #not super equal- winter has outliers, more variance summer 
+var(SS_win) #0.0359
+var(SS_sum) #0.0517
+
+#SW
+t.test(Poales ~ season, data=plant_order_SW)#borderline significant p=0.07915
+
+SW_sum<- plant_order_SW[plant_order_SW$season == "summer",]
+SW_sum<-SW_sum$Poales
+SW_win<- plant_order_SW[plant_order_SW$season == "winter",]
+SW_win<-SW_win$Poales
+
+#min variation
+t.test(x=sort(SW_sum), y=sort(SW_win,decreasing=FALSE), paired=TRUE) #significant p=0.0002
+#max variation
+t.test(x=sort(SW_sum), y=sort(SW_win,decreasing=TRUE), paired=TRUE)#not significant p=0.1995
+#not paired
+t.test(x=SW_sum, y = SW_win, paired= FALSE)#borderline significant p=0.07915
+t.test(x=SW_sum, y = SW_win, paired= FALSE, var.equal = TRUE) #borderline significant p=0.07716
+
+#histograms and assumptions
+hist(plant_order_SW$Poales, breaks = 10) #all observations, not normal
+hist(SW_sum, breaks = 10)#summer, not normal
+hist(SW_win, breaks = 10) #winter, not normal
+hist(SW_sum - SW_win, breaks = 10) #difference , not normal
+
+boxplot(plant_order_SW$Poales ~ plant_order_SW$season)#not very equal, winter more variable 
+var(SW_win) #0.088
+var(SW_sum)#0.035
+
+
+
+#TP
+t.test(Poales ~ season, data=plant_order_TP)# not significant p=0.9896
+TP_sum<- plant_order_TP[plant_order_TP$season == "summer",]
+TP_sum<-TP_sum$Poales
+TP_win<- plant_order_TP[plant_order_TP$season == "winter",]
+TP_win<-TP_win$Poales
+
+#min variation
+t.test(x=sort(TP_sum), y=sort(TP_win,decreasing=FALSE), paired=TRUE) # not significant p=0.9519
+#max variation
+t.test(x=sort(TP_sum), y=sort(TP_win,decreasing=TRUE), paired=TRUE)# not significant p=0.9925
+#not paired
+t.test(x=TP_sum, y = TP_win, paired= FALSE)# not significant p=0.9896
+t.test(x=TP_sum, y = TP_win, paired= FALSE, var.equal = TRUE) #not significant p=0.9896
+
+#histograms and assumptions
+hist(plant_order_TP$Poales, breaks = 10) #all observations, not normal
+hist(TP_sum, breaks = 10)#summer, not normal
+hist(TP_win, breaks = 10) #winter, not normal
+hist(TP_sum - TP_win) #difference, not terrible... 
+
+boxplot(plant_order_TP$Poales ~ plant_order_TP$season)#equalish, summer more variable 
+var(TP_win) #0.0972
+var(TP_sum) #0.113
+
+```
+
+
+## Bootstrapping
+
+###individual HMAs
+
+####independent (old name)
+
+```{r}
+#code from notes from STATS 5025
+
+permutation.test<-function(obsdat, respvar, treatvar, numsims){
+  Fperm=c()
+  result=0
+  for (i in 1:numsims){
+    newtreat<-sample(treatvar, nrow(obsdat), replace =FALSE)
+    mod<-lm(respvar ~ newtreat, data = obsdat)
+    anovamod<-summary(aov(mod))
+    Fperm[i] <- anovamod[[1]]$"F value"[1]
+  }
+result=sum(Fperm>= Fobs)
+return(list(result, Fperm))
+}
+
+
+#AT
+AT_anova<-lm(Poales~season, data= plant_order_AT)#original ANOVA
+summary(aov(AT_anova)) #view anova summary
+Fobs<-summary(aov(AT_anova)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+AT_perm1<- permutation.test(obsdat=plant_order_AT, respvar=plant_order_AT$Poales, treatvar=plant_order_AT$season, numsims=1000)
+
+AT_perm1
+AT_p_val<-AT_perm1[[1]]/1000
+AT_p_val #p=0.861
+
+
+#CN
+#CN 
+CN_anova<-lm(Poales~season, data= plant_order_CN)
+summary(aov(CN_anova))
+Fobs<-summary(aov(CN_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+
+set.seed(223)   
+CN_perm1<- permutation.test(obsdat=plant_order_CN, respvar=plant_order_CN$Poales, treatvar=plant_order_CN$season, numsims=1000)
+
+CN_perm1
+CN_p_val<-CN_perm1[[1]]/1000
+CN_p_val #p=0.196
+
+#FR
+
+FR_anova<-lm(Poales~season, data= plant_order_FR)
+summary(aov(FR_anova))
+Fobs<-summary(aov(FR_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+
+set.seed(223)   
+FR_perm1<- permutation.test(obsdat=plant_order_FR, respvar=plant_order_FR$Poales, treatvar=plant_order_FR$season, numsims=1000)
+
+FR_perm1
+FR_p_val<-FR_perm1[[1]]/1000
+FR_p_val #p=0.0000
+
+
+#GM 
+GM_anova<-lm(Poales~season, data= plant_order_GM)
+summary(aov(GM_anova))
+Fobs<-summary(aov(GM_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+
+set.seed(223)   
+GM_perm1<- permutation.test(obsdat=plant_order_GM, respvar=plant_order_GM$Poales, treatvar=plant_order_GM$season, numsims=1000)
+
+GM_perm1
+GM_p_val<-GM_perm1[[1]]/1000
+GM_p_val #p=0.141
+
+#LBC 
+LBC_anova<-lm(Poales~season, data= plant_order_LBC)
+summary(aov(LBC_anova))
+Fobs<-summary(aov(LBC_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+LBC_perm1<- permutation.test(obsdat=plant_order_LBC, respvar=plant_order_LBC$Poales, treatvar=plant_order_LBC$season, numsims=1000)
+
+LBC_perm1
+LBC_p_val<-LBC_perm1[[1]]/1000
+LBC_p_val #p=0.024
+
+
+#MP 
+MP_anova<-lm(Poales~season, data= plant_order_MP)
+summary(aov(MP_anova))
+Fobs<-summary(aov(MP_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+ 
+set.seed(223)  
+MP_perm1<- permutation.test(obsdat=plant_order_MP, respvar=plant_order_MP$Poales, treatvar=plant_order_MP$season, numsims=1000)
+
+MP_perm1
+MP_p_val<-MP_perm1[[1]]/1000
+MP_p_val #p=0.537
+
+
+#NH 
+NH_anova<-lm(Poales~season, data= plant_order_NH)
+summary(aov(NH_anova))
+Fobs<-summary(aov(NH_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223) 
+NH_perm1<- permutation.test(obsdat=plant_order_NH, respvar=plant_order_NH$Poales, treatvar=plant_order_NH$season, numsims=1000)
+
+NH_perm1
+NH_p_val<-NH_perm1[[1]]/1000
+NH_p_val #p=0.173
+
+#ON 
+ON_anova<-lm(Poales~season, data= plant_order_ON)
+summary(aov(ON_anova))
+Fobs<-summary(aov(ON_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+
+set.seed(223)  
+ON_perm1<- permutation.test(obsdat=plant_order_ON, respvar=plant_order_ON$Poales, treatvar=plant_order_ON$season, numsims=1000)
+
+ON_perm1
+ON_p_val<-ON_perm1[[1]]/1000
+ON_p_val #p=0.006
+
+#PB 
+PB_anova<-lm(Poales~season, data= plant_order_PB)
+summary(aov(PB_anova))
+Fobs<-summary(aov(PB_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+PB_perm1<- permutation.test(obsdat=plant_order_PB, respvar=plant_order_PB$Poales, treatvar=plant_order_PB$season, numsims=1000)
+
+PB_perm1
+PB_p_val<-PB_perm1[[1]]/1000
+PB_p_val #p=0.007
+
+#PN 
+PN_anova<-lm(Poales~season, data= plant_order_PN)
+summary(aov(PN_anova))
+Fobs<-summary(aov(PN_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+PN_perm1<- permutation.test(obsdat=plant_order_PN, respvar=plant_order_PN$Poales, treatvar=plant_order_PN$season, numsims=1000)
+
+PN_perm1
+PN_p_val<-PN_perm1[[1]]/1000
+PN_p_val #p=0.630
+
+#RR 
+RR_anova<-lm(Poales~season, data= plant_order_RR)
+summary(aov(RR_anova))
+Fobs<-summary(aov(RR_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+RR_perm1<- permutation.test(obsdat=plant_order_RR, respvar=plant_order_RR$Poales, treatvar=plant_order_RR$season, numsims=1000)
+
+RR_perm1
+RR_p_val<-RR_perm1[[1]]/1000
+RR_p_val #p=0.417
+
+#SC 
+SC_anova<-lm(Poales~season, data= plant_order_SC)
+summary(aov(SC_anova))
+Fobs<-summary(aov(SC_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+SC_perm1<- permutation.test(obsdat=plant_order_SC, respvar=plant_order_SC$Poales, treatvar=plant_order_SC$season, numsims=1000)
+
+SC_perm1
+SC_p_val<-SC_perm1[[1]]/1000
+SC_p_val #p=0.001
+
+
+#SS 
+SS_anova<-lm(Poales~season, data= plant_order_SS)
+summary(aov(SS_anova))
+Fobs<-summary(aov(SS_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+SS_perm1<- permutation.test(obsdat=plant_order_SS, respvar=plant_order_SS$Poales, treatvar=plant_order_SS$season, numsims=1000)
+
+SS_perm1
+SS_p_val<-SS_perm1[[1]]/1000
+SS_p_val #p=0.606
+
+#SW 
+SW_anova<-lm(Poales~season, data= plant_order_SW)
+summary(aov(SW_anova))
+Fobs<-summary(aov(SW_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+SW_perm1<- permutation.test(obsdat=plant_order_SW, respvar=plant_order_SW$Poales, treatvar=plant_order_SW$season, numsims=1000)
+
+SW_perm1
+SW_p_val<-SW_perm1[[1]]/1000
+SW_p_val #p=0.090
+
+#TP 
+TP_anova<-lm(Poales~season, data= plant_order_TP)
+summary(aov(TP_anova))
+Fobs<-summary(aov(TP_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+
+set.seed(223)  
+TP_perm1<- permutation.test(obsdat=plant_order_TP, respvar=plant_order_TP$Poales, treatvar=plant_order_TP$season, numsims=1000)
+
+TP_perm1
+TP_p_val<-TP_perm1[[1]]/1000
+TP_p_val #p=0.988
+
+```
+#### independent bootstrapped (new name)
+
+```{r}
+#code from notes from STATS 5025
+
+bootstrap_anova.test<-function(obsdat, respvar, treatvar, numsims){
+  Fperm=c()
+  result=0
+  for (i in 1:numsims){
+    newtreat<-sample(treatvar, nrow(obsdat), replace =FALSE)
+    mod<-lm(respvar ~ newtreat, data = obsdat)
+    anovamod<-summary(aov(mod))
+    Fperm[i] <- anovamod[[1]]$"F value"[1]
+  }
+result=sum(Fperm>= Fobs)
+return(list(result, Fperm))
+}
+
+
+#AT
+AT_anova<-lm(Poales~season, data= plant_order_AT)#original ANOVA
+summary(aov(AT_anova)) #view anova summary
+Fobs<-summary(aov(AT_anova)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+AT_perm1<- bootstrap_anova.test(obsdat=plant_order_AT, respvar=plant_order_AT$Poales, treatvar=plant_order_AT$season, numsims=1000)
+
+AT_perm1
+AT_p_val<-AT_perm1[[1]]/1000
+AT_p_val #p=0.861
+
+
+#CN
+#CN 
+CN_anova<-lm(Poales~season, data= plant_order_CN)
+summary(aov(CN_anova))
+Fobs<-summary(aov(CN_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+
+set.seed(223)   
+CN_perm1<- bootstrap_anova.test(obsdat=plant_order_CN, respvar=plant_order_CN$Poales, treatvar=plant_order_CN$season, numsims=1000)
+
+CN_perm1
+CN_p_val<-CN_perm1[[1]]/1000
+CN_p_val #p=0.196
+
+#FR
+
+FR_anova<-lm(Poales~season, data= plant_order_FR)
+summary(aov(FR_anova))
+Fobs<-summary(aov(FR_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+
+set.seed(223)   
+FR_perm1<- bootstrap_anova.test(obsdat=plant_order_FR, respvar=plant_order_FR$Poales, treatvar=plant_order_FR$season, numsims=1000)
+
+FR_perm1
+FR_p_val<-FR_perm1[[1]]/1000
+FR_p_val #p=0.0000
+
+
+#GM 
+GM_anova<-lm(Poales~season, data= plant_order_GM)
+summary(aov(GM_anova))
+Fobs<-summary(aov(GM_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+
+set.seed(223)   
+GM_perm1<- bootstrap_anova.test(obsdat=plant_order_GM, respvar=plant_order_GM$Poales, treatvar=plant_order_GM$season, numsims=1000)
+
+GM_perm1
+GM_p_val<-GM_perm1[[1]]/1000
+GM_p_val #p=0.141
+
+#LBC 
+LBC_anova<-lm(Poales~season, data= plant_order_LBC)
+summary(aov(LBC_anova))
+Fobs<-summary(aov(LBC_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+LBC_perm1<- bootstrap_anova.test(obsdat=plant_order_LBC, respvar=plant_order_LBC$Poales, treatvar=plant_order_LBC$season, numsims=1000)
+
+LBC_perm1
+LBC_p_val<-LBC_perm1[[1]]/1000
+LBC_p_val #p=0.024
+
+
+#MP 
+MP_anova<-lm(Poales~season, data= plant_order_MP)
+summary(aov(MP_anova))
+Fobs<-summary(aov(MP_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+ 
+set.seed(223)  
+MP_perm1<- bootstrap_anova.test(obsdat=plant_order_MP, respvar=plant_order_MP$Poales, treatvar=plant_order_MP$season, numsims=1000)
+
+MP_perm1
+MP_p_val<-MP_perm1[[1]]/1000
+MP_p_val #p=0.537
+
+
+#NH 
+NH_anova<-lm(Poales~season, data= plant_order_NH)
+summary(aov(NH_anova))
+Fobs<-summary(aov(NH_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223) 
+NH_perm1<- bootstrap_anova.test(obsdat=plant_order_NH, respvar=plant_order_NH$Poales, treatvar=plant_order_NH$season, numsims=1000)
+
+NH_perm1
+NH_p_val<-NH_perm1[[1]]/1000
+NH_p_val #p=0.173
+
+#ON 
+ON_anova<-lm(Poales~season, data= plant_order_ON)
+summary(aov(ON_anova))
+Fobs<-summary(aov(ON_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+
+set.seed(223)  
+ON_perm1<- bootstrap_anova.test(obsdat=plant_order_ON, respvar=plant_order_ON$Poales, treatvar=plant_order_ON$season, numsims=1000)
+
+ON_perm1
+ON_p_val<-ON_perm1[[1]]/1000
+ON_p_val #p=0.006
+
+#PB 
+PB_anova<-lm(Poales~season, data= plant_order_PB)
+summary(aov(PB_anova))
+Fobs<-summary(aov(PB_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+PB_perm1<- bootstrap_anova.test(obsdat=plant_order_PB, respvar=plant_order_PB$Poales, treatvar=plant_order_PB$season, numsims=1000)
+
+PB_perm1
+PB_p_val<-PB_perm1[[1]]/1000
+PB_p_val #p=0.007
+
+#PN 
+PN_anova<-lm(Poales~season, data= plant_order_PN)
+summary(aov(PN_anova))
+Fobs<-summary(aov(PN_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+PN_perm1<- bootstrap_anova.test(obsdat=plant_order_PN, respvar=plant_order_PN$Poales, treatvar=plant_order_PN$season, numsims=1000)
+
+PN_perm1
+PN_p_val<-PN_perm1[[1]]/1000
+PN_p_val #p=0.630
+
+#RR 
+RR_anova<-lm(Poales~season, data= plant_order_RR)
+summary(aov(RR_anova))
+Fobs<-summary(aov(RR_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+RR_perm1<- bootstrap_anova.test(obsdat=plant_order_RR, respvar=plant_order_RR$Poales, treatvar=plant_order_RR$season, numsims=1000)
+
+RR_perm1
+RR_p_val<-RR_perm1[[1]]/1000
+RR_p_val #p=0.417
+
+#SC 
+SC_anova<-lm(Poales~season, data= plant_order_SC)
+summary(aov(SC_anova))
+Fobs<-summary(aov(SC_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+SC_perm1<- bootstrap_anova.test(obsdat=plant_order_SC, respvar=plant_order_SC$Poales, treatvar=plant_order_SC$season, numsims=1000)
+
+SC_perm1
+SC_p_val<-SC_perm1[[1]]/1000
+SC_p_val #p=0.001
+
+
+#SS 
+SS_anova<-lm(Poales~season, data= plant_order_SS)
+summary(aov(SS_anova))
+Fobs<-summary(aov(SS_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+SS_perm1<- bootstrap_anova.test(obsdat=plant_order_SS, respvar=plant_order_SS$Poales, treatvar=plant_order_SS$season, numsims=1000)
+
+SS_perm1
+SS_p_val<-SS_perm1[[1]]/1000
+SS_p_val #p=0.606
+
+#SW 
+SW_anova<-lm(Poales~season, data= plant_order_SW)
+summary(aov(SW_anova))
+Fobs<-summary(aov(SW_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+set.seed(223)  
+SW_perm1<- bootstrap_anova.test(obsdat=plant_order_SW, respvar=plant_order_SW$Poales, treatvar=plant_order_SW$season, numsims=1000)
+
+SW_perm1
+SW_p_val<-SW_perm1[[1]]/1000
+SW_p_val #p=0.090
+
+#TP 
+TP_anova<-lm(Poales~season, data= plant_order_TP)
+summary(aov(TP_anova))
+Fobs<-summary(aov(TP_anova))
+Fobs<-Fobs[[1]]$"F value"[1]
+Fobs
+  
+
+set.seed(223)  
+TP_perm1<- bootstrap_anova.test(obsdat=plant_order_TP, respvar=plant_order_TP$Poales, treatvar=plant_order_TP$season, numsims=1000)
+
+TP_perm1
+TP_p_val<-TP_perm1[[1]]/1000
+TP_p_val #p=0.992
+```
+
+
+#### paired
+
+
+```{r}
+#Use the MKinfer::boot.t.test 
+
+#AT 
+
+AT_sum #list summer graminoid compositions
+AT_win # #list winter graminoid compositions
+
+AT_min_dif<-sort(AT_sum, decreasing=FALSE)-sort(AT_win,decreasing=FALSE) #pair samples for the minimum variance between summer and winter sample differences- this represents the lowest possible p-value we could achieve if all samples were paired so that the lowest graminoid composition summer is paired with the lowest graminoid composition winter and the highest summer is paired with highest winter  
+AT_min_dif
+
+AT_max_dif<-sort(AT_sum, decreasing=FALSE)-sort(AT_win,decreasing=TRUE)
+AT_max_dif #pair samples for the maximum variance between summer and winter sample differences- this represents the highest possible p-value we could achieve if all samples were paired so that the lowest graminoid composition summer is paired with the highest graminoid composition winter and the highest summer is paired with lowest winter  
+
+set.seed(223)
+boot.t.test(AT_min_dif) #p=0.6535
+
+set.seed(223)
+boot.t.test(AT_max_dif)#p=0.8749
+
+
+#playing with the function to see if we get the same results with using the two vectors of summer and winter rather than just the difference and we get the same result 
+
+#Min
+set.seed(223)
+boot.t.test(x=sort(AT_sum, decreasing=FALSE), y= sort(AT_win,decreasing=FALSE), paired=TRUE)
+
+#Max
+set.seed(223)
+boot.t.test(x=sort(AT_sum, decreasing=FALSE), y= sort(AT_win,decreasing=TRUE), paired=TRUE)
+
+
+
+#CN
+CN_sum
+CN_win
+
+CN_min_dif<-sort(CN_sum, decreasing=FALSE)-sort(CN_win,decreasing=FALSE)
+CN_min_dif
+
+CN_max_dif<-sort(CN_sum, decreasing=FALSE)-sort(CN_win,decreasing=TRUE)
+CN_max_dif
+
+
+set.seed(223)
+boot.t.test(CN_min_dif) #p=0.019
+
+set.seed(223)
+boot.t.test(CN_max_dif)#p=0.2926
+
+
+#FR 
+
+FR_sum
+FR_win
+
+FR_min_dif<-sort(FR_sum, decreasing=FALSE)-sort(FR_win,decreasing=FALSE)
+FR_min_dif
+
+FR_max_dif<-sort(FR_sum, decreasing=FALSE)-sort(FR_win,decreasing=TRUE)
+FR_max_dif
+
+
+set.seed(223)
+boot.t.test(FR_min_dif) #p= < 0.001
+
+
+set.seed(223)
+boot.t.test(FR_max_dif)#p=0.0164
+
+
+#GM 
+
+GM_sum
+GM_win
+
+GM_min_dif<-sort(GM_sum, decreasing=FALSE)-sort(GM_win,decreasing=FALSE)
+GM_min_dif
+
+GM_max_dif<-sort(GM_sum, decreasing=FALSE)-sort(GM_win,decreasing=TRUE)
+GM_max_dif
+
+
+set.seed(223)
+boot.t.test(GM_min_dif) #p= <0.001
+
+set.seed(223)
+boot.t.test(GM_max_dif)#p=0.3196
+
+
+
+#LBC
+
+LBC_sum
+LBC_win
+
+LBC_min_dif<-sort(LBC_sum, decreasing=FALSE)-sort(LBC_win,decreasing=FALSE)
+LBC_min_dif
+
+LBC_max_dif<-sort(LBC_sum, decreasing=FALSE)-sort(LBC_win,decreasing=TRUE)
+LBC_max_dif
+
+
+set.seed(223)
+boot.t.test(LBC_min_dif) #p= <0.001
+
+set.seed(223)
+boot.t.test(LBC_max_dif)#p=0.1206
+
+
+
+#MP
+
+MP_sum
+MP_win
+
+MP_min_dif<-sort(MP_sum, decreasing=FALSE)-sort(MP_win,decreasing=FALSE)
+MP_min_dif
+
+MP_max_dif<-sort(MP_sum, decreasing=FALSE)-sort(MP_win,decreasing=TRUE)
+MP_max_dif
+
+
+set.seed(223)
+boot.t.test(MP_min_dif) #p= 0.028
+
+set.seed(223)
+boot.t.test(MP_max_dif)#p=0.6173
+
+
+
+#NH
+
+NH_sum
+NH_win
+
+NH_min_dif<-sort(NH_sum, decreasing=FALSE)-sort(NH_win,decreasing=FALSE)
+NH_min_dif
+
+NH_max_dif<-sort(NH_sum, decreasing=FALSE)-sort(NH_win,decreasing=TRUE)
+NH_max_dif
+
+
+set.seed(223)
+boot.t.test(NH_min_dif) #p= 0.p= <0.001
+
+set.seed(223)
+boot.t.test(NH_max_dif)#p=0.3088
+
+
+
+#ON
+
+ON_sum
+ON_win
+
+ON_min_dif<-sort(ON_sum, decreasing=FALSE)-sort(ON_win,decreasing=FALSE)
+ON_min_dif
+
+ON_max_dif<-sort(ON_sum, decreasing=FALSE)-sort(ON_win,decreasing=TRUE)
+ON_max_dif
+
+
+set.seed(223)
+boot.t.test(ON_min_dif) #p= 0.0006
+
+set.seed(223)
+boot.t.test(ON_max_dif)#p=0.0836
+
+#PB
+
+PB_sum
+PB_win
+
+PB_min_dif<-sort(PB_sum, decreasing=FALSE)-sort(PB_win,decreasing=FALSE)
+PB_min_dif
+
+PB_max_dif<-sort(PB_sum, decreasing=FALSE)-sort(PB_win,decreasing=TRUE)
+PB_max_dif
+
+
+set.seed(223)
+boot.t.test(PB_min_dif) #p= <0.0001
+
+set.seed(223)
+boot.t.test(PB_max_dif)#p=0.019
+
+
+#PN
+
+PN_sum
+PN_win
+
+PN_min_dif<-sort(PN_sum, decreasing=FALSE)-sort(PN_win,decreasing=FALSE)
+PN_min_dif
+
+PN_max_dif<-sort(PN_sum, decreasing=FALSE)-sort(PN_win,decreasing=TRUE)
+PN_max_dif
+
+set.seed(223)
+boot.t.test(PN_min_dif) #p= 0.1316
+
+set.seed(223)
+boot.t.test(PN_max_dif)#p=0.7213
+
+
+#RR
+
+RR_sum
+RR_win
+
+RR_min_dif<-sort(RR_sum, decreasing=FALSE)-sort(RR_win,decreasing=FALSE)
+RR_min_dif
+
+RR_max_dif<-sort(RR_sum, decreasing=FALSE)-sort(RR_win,decreasing=TRUE)
+RR_max_dif
+
+
+set.seed(223)
+boot.t.test(RR_min_dif) #p= 0.0056
+
+set.seed(223)
+boot.t.test(RR_max_dif)#p=0.5625
+
+
+
+#SC
+
+SC_sum
+SC_win
+
+SC_min_dif<-sort(SC_sum, decreasing=FALSE)-sort(SC_win,decreasing=FALSE)
+SC_min_dif
+
+SC_max_dif<-sort(SC_sum, decreasing=FALSE)-sort(SC_win,decreasing=TRUE)
+SC_max_dif
+
+set.seed(223)
+boot.t.test(SC_min_dif) #p= <0.0001
+
+set.seed(223)
+boot.t.test(SC_max_dif)#p=0.0302
+
+
+
+#SS
+
+SS_sum
+SS_win
+
+SS_min_dif<-sort(SS_sum, decreasing=FALSE)-sort(SS_win,decreasing=FALSE)
+SS_min_dif
+
+SS_max_dif<-sort(SS_sum, decreasing=FALSE)-sort(SS_win,decreasing=TRUE)
+SS_max_dif
+
+set.seed(223)
+boot.t.test(SS_min_dif) #p=0.1006
+
+set.seed(223)
+boot.t.test(SS_max_dif)#p=0.6905
+
+#SW
+
+SW_sum
+SW_win
+
+SW_min_dif<-sort(SW_sum, decreasing=FALSE)-sort(SW_win,decreasing=FALSE)
+SW_min_dif
+
+
+SW_max_dif<-sort(SW_sum, decreasing=FALSE)-sort(SW_win,decreasing=TRUE)
+SW_max_dif
+
+set.seed(223)
+boot.t.test(SW_min_dif) #p=0.0014
+
+set.seed(223)
+boot.t.test(SW_max_dif)#p=0.2162
+
+
+#TP
+
+TP_sum
+TP_win
+
+TP_min_dif<-sort(TP_sum, decreasing=FALSE)-sort(TP_win,decreasing=FALSE)
+TP_min_dif
+
+TP_max_dif<-sort(TP_sum, decreasing=FALSE)-sort(TP_win,decreasing=TRUE)
+TP_max_dif
+
+
+set.seed(223)
+boot.t.test(TP_min_dif) #p=0.9721
+
+set.seed(223)
+boot.t.test(TP_max_dif)#p=0.9811
+
+
+```
+###range
+
+```{r}
+#paired bootstraped t-test
+
+#t-test paired...
+
+range_sum # View values
+
+range_win #view values
+
+range_dif<- range_sum - range_win #make vesctor of difference of summer and winter
+
+range_dif
+
+set.seed(223)
+boot.t.test(x=range_sum, y=range_win, paired=TRUE) #when they are paired we have a borderline significant p-value 0.050
+
+set.seed(223)
+boot.t.test(range_dif)
+
+#independent non-paired bootstrap 
+
+range_anova<-lm(mean_Poales~season, data= plant_order_by_HMA_season)#original ANOVA
+summary(aov(range_anova)) #view anova summary
+Fobs<-summary(aov(range_anova)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+range_perm1<- permutation.test(obsdat=plant_order_by_HMA_season, respvar=plant_order_by_HMA_season$mean_Poales, treatvar=plant_order_by_HMA_season$season, numsims=1000)
+
+range_perm1
+range_p_val<-range_perm1[[1]]/1000
+range_p_val #p=0.221
+
+```
+
+
+
+# BCS seasonal comparison (to BCS)
+##average BCS observations
+```{r}
+
+View(individual_BCS)#look at the file of individual observations
+individual_BCS$body_condition_obs<-as.numeric(individual_BCS$body_condition_obs)#make BCS numeric
+
+
+
+#summarize by HMA
+BCS_by_HMA_season<-individual_BCS%>% #create a file that has summary statistics    
+  group_by( study.area,area_season, season)%>%
+  summarise(mean_BCS=mean(body_condition_obs), sd=sd(body_condition_obs), number= n())
+
+View(BCS_by_HMA_season)#check values
+
+
+
+#create a dataframe of just summer
+BCS_by_HMA_summer<-subset(BCS_by_HMA_season, season == "Summer")
+View(BCS_by_HMA_summer)#check the subset
+
+#create a dataframe of just winter
+BCS_by_HMA_winter<-subset(BCS_by_HMA_season, season == "Winter")
+View(BCS_by_HMA_winter)#check the subset
+
+
+#get some summary stats
+
+sum(BCS_by_HMA_winter$number)#702
+
+sum(BCS_by_HMA_summer$number)#707
+
+#seasonal summary stats
+#summer
+mean(BCS_by_HMA_summer$number) # number of obs per HMA average 44.1875
+mean(subset(BCS_by_HMA_summer, study.area != "SB")$number) # excluding SB data number of obs per HMA average 45.5333 
+
+mean(BCS_by_HMA_summer$mean_BCS) # BCS HMA average 5.01898
+mean(subset(BCS_by_HMA_summer, study.area != "SB")$mean_BCS) # excluding SB data number of obs per HMA average 5.014691 
+
+
+#winter
+
+mean(BCS_by_HMA_winter$number) # number of obs per HMA average 46.8
+mean(BCS_by_HMA_winter$mean_BCS) # BCS HMA average 4.97807
+
+```
+
+## Visualizations of BCS
+```{r}
+
+#calculate SE for bar chart
+
+BCS_by_HMA_season$number<-as.numeric(BCS_by_HMA_season$number)#make BCS number numeric
+
+BCS_by_HMA_season$se<-BCS_by_HMA_season$sd/sqrt(BCS_by_HMA_season$number) #calculate SE
+
+
+#barchart
+body_condition_bar<- ggplot(BCS_by_HMA_season, aes(study.area, mean_BCS, fill=season)) + geom_bar(stat="identity", position=position_dodge()) + geom_errorbar(aes(ymin=mean_BCS-se, ymax=mean_BCS + se), width=.2, position=position_dodge(.9)) + scale_y_continuous(limits=c(0,6))
+
+body_condition_bar + theme(text = element_text(size = 18, family= "Times New Roman")) + theme(legend.text = element_text(size = 18, color="black")) + theme(axis.text = element_text(size = 18, color= "black")) + theme(axis.title = element_text(size = 18, color= "black")) +scale_fill_manual(values=c("#db6d00","#006ddb"), name= "Season") + labs(title="Average Body Condition Score by HMA", x="HMA", y="Average Body Condition Score")+ theme(plot.title = element_text(hjust = 0.5)) 
+
+#Histogram of body conditions
+
+BCS_hist<- ggplot(individual_BCS, aes(x=body_condition_obs, fill=season))+geom_histogram(position=position_dodge(), binwidth = 1)
+
+
+BCS_hist +theme_bw() + theme(text = element_text(size = 16, family= "Times New Roman")) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_fill_manual(values=c("#db6d00","#006ddb")) + labs(title="Body Condition Observations by Season", x="Body Condition Score", y="Count")+ theme(plot.title = element_text(hjust = 0.5)) 
+
+ggsave("body_condition_season_hist.png", width=10, height=7, dpi=300)
+
+
+##NOTE THIS CHUNK IS FOR A VISUAL THAT IS NOT WORKING YET
+#stacked bar chart by HMA... work on this maybe- want a chart showing the proportion of each HMA with each observation numbers- how many 3, 4, 5 etc. 
+BCS_stack_study_area<- ggplot(individual_BCS, aes(x=area_season, fill=body_condition_obs)) + geom_bar()
+
+BCS_stack_study_area<- ggplot(individual_BCS, aes(x=area_season, y=body_condition_obs, fill=body_condition_obs)) + geom_bar(stat="identity", position="fill")
+
+BCS_stack_study_area + theme(text = element_text(size = 12, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 12, color= "black")) + theme(axis.title = element_text(size = 12, color= "black"))  + labs(title="Body Condition Observations by Study Area", x="Body Condition Score", y="Count")+ theme(plot.title = element_text(hjust = 0.5)) + scale_fill_manual(values= c("#db6d00","#006ddb", "#ffff6d","#000000","#fdae61"))
+
+
+
+
+```
+
+
+##BCS to graminoid comparison 
+
+```{r}
+
+#Correlations of gramminoid composition to BCS on herd averages
+########### summer ######################
+
+#pull out summer values for BCS herd averages
+
+BCS_by_HMA_summer<-subset(BCS_by_HMA_season, season == "Summer")
+View(BCS_by_HMA_summer)#check the subset
+
+
+graminoids_by_HMA_summer$mean_BCS<-as.numeric(BCS_by_HMA_summer$mean_BCS)#add BCS to graminoid composition
+View(graminoids_by_HMA_summer)#check
+
+#make one withoug SB to add to graminoids by_HMA_summer
+BCS_by_HMA_summer2<-subset(BCS_by_HMA_summer, study.area != "SB")
+View(BCS_by_HMA_summer2)
+
+
+## with SB
+ggplot(data=graminoids_by_HMA_summer, aes(x=mean_Poales, y=mean_BCS, color=epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco, size=5)) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of HMA Average BCS and Graminoids Composition Summer", x="% Graminoids diet", y="Herd BCS") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) 
+
+
+ggsave("body_condition_graminoid_summer.png", width=10, height=7, dpi=300)
+
+cor.test(graminoids_by_HMA_summer$mean_Poales, graminoids_by_HMA_summer$mean_BCS, method="spearman") #significant p=0.01893 rho = -0.578366
+
+cor.test(graminoids_by_HMA_summer$mean_Poales, graminoids_by_HMA_summer$mean_BCS, method="pearson") #significant p=0.0353 cor = -0.5284
+
+####without SB ##################
+
+Fig5A<-ggplot(data=graminoids_by_HMA_summer2, aes(x=mean_Poales, y=mean_BCS, color=epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco, size=5)) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(x="Graminoids in Diet (%) Summer", y=" Summer Herd Average BCS") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=0.48, y= 4.6, label=" Spearman's rho = -0.554,  p= 0.035",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+ggsave("body_condition_graminoid_summer.png", width=10, height=7, dpi=300)
+
+cor.test(graminoids_by_HMA_summer2$mean_Poales, graminoids_by_HMA_summer2$mean_BCS, method="spearman") #significant p=0.03491 rho = -0.5535
+
+cor.test(graminoids_by_HMA_summer2$mean_Poales, graminoids_by_HMA_summer2$mean_BCS, method="pearson") #significant p=0.04607 cor = -0.5217
+
+
+########### winter ######################
+
+#pull out winter values for BCS herd averages
+
+BCS_by_HMA_winter<-subset(BCS_by_HMA_season, season == "Winter")
+View(BCS_by_HMA_winter)#check the subset
+
+graminoids_by_HMA_winter$mean_BCS<-as.numeric(BCS_by_HMA_winter$mean_BCS)#add BCS to graminoid composition
+View(graminoids_by_HMA_winter)#check
+
+
+Fig5B<-ggplot(data=graminoids_by_HMA_winter, aes(x=mean_Poales, y=mean_BCS, color=epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco, size=5)) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(x="Graminoids in Diet (%) Winter", y="Winter Herd Average BCS") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=0.35, y= 4.6, label=" Spearman's rho = -0.118,  p= 0.676",color="black", size=8, family= "Times New Roman") + theme(text = element_text(family= "Times New Roman"))
+
+ggsave("body_condition_graminoid_winter.png", width=10, height=7, dpi=300)
+
+cor.test(graminoids_by_HMA_winter$mean_Poales, graminoids_by_HMA_winter$mean_BCS, method="spearman") # not significant p=0.6763 rho = -0.1179
+
+cor.test(graminoids_by_HMA_winter$mean_Poales, graminoids_by_HMA_winter$mean_BCS, method="pearson") # not significant p=0.8561 cor = -0.0512
+
+ 
+
+###### Summer grass and winter body condition #############
+
+# put the summer poales value into and winter bcs dataframe
+
+graminoids_by_HMA_summer2<-subset(graminoids_by_HMA_summer, area_season != "SB")# remove SB HMA because it was not collected in winter
+
+View(graminoids_by_HMA_summer2)#check 
+
+graminoids_by_HMA_winter$summer_Poales<-graminoids_by_HMA_summer2$mean_Poales #add summer graminoid composition to winter dataframe
+
+View(graminoids_by_HMA_winter) #it worked
+
+#corelations
+ggplot(data=graminoids_by_HMA_winter, aes(x=summer_Poales, y=mean_BCS))+ geom_point() +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of HMA Average winter BCS and Graminoids consumed previous summer", x="% Poales diet previous summer", y="Herd BCS winter") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) 
+
+Fig5C<-ggplot(data=graminoids_by_HMA_winter, aes(x=summer_Poales, y=mean_BCS, color=epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco, size=5)) +geom_smooth(method=lm, color="black")+ theme_bw()+labs( x="Graminoids in Diet Summer", y="Winter Herd Average BCS") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=0.48, y= 4.6, label=" Spearman's rho = -0.068,  p= 0.812",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+ggsave("body_condition_graminoid_sum_win.png", width=10, height=7, dpi=300)
+  
+cor.test(graminoids_by_HMA_winter$summer_Poales, graminoids_by_HMA_winter$mean_BCS, method="pearson") #not significant p=0.7211 cor= -0.10067 
+
+cor.test(graminoids_by_HMA_winter$summer_Poales, graminoids_by_HMA_winter$mean_BCS, method="spearman") # not significant p=0.8124 rho = -0.067857
+
+```
+###Combine into Figure 5
+```{r}
+#use ggpubr
+Figure5<-ggarrange(Fig5A, Fig5B,Fig5C, labels= c("A","B", "C"), ncol=2, nrow=2, common.legend=TRUE, legend="right", font.label = list(size = 24)) #combine Fig 5 A-C
+
+Figure5 #view
+
+
+ggsave("multipane_Fig5.png", width=18, height=12, dpi=300) #save
+
+```
+
+
+## seasonal BCS comparison
+###individual HMAs(old name)
+```{r}
+
+#AT
+AT_BCS<-subset(individual_BCS, study.area == "AT") #subset to only AT
+AT_BCS %>% count(season) #get summer and winter observation counts
+View(AT_BCS) #check data 
+
+AT_anova1<-lm(body_condition_obs~season, data= AT_BCS)#original ANOVA
+summary(aov(AT_anova1)) #view anova summary p=0.138
+Fobs<-summary(aov(AT_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+AT_perm<- permutation.test(obsdat=AT_BCS, respvar=AT_BCS$body_condition_obs, treatvar=AT_BCS$season, numsims=1000)
+
+AT_perm
+AT_p_valBCS<-AT_perm[[1]]/1000
+AT_p_valBCS #p=0.128
+
+#CN
+CN_BCS<-subset(individual_BCS, study.area == "CN") #subset to only CN
+CN_BCS %>% count(season) #get summer and winter observation counts
+View(CN_BCS) #check data 
+
+CN_anova1<-lm(body_condition_obs~season, data= CN_BCS)#original ANOVA
+summary(aov(CN_anova1)) #view anova summary p=0.71
+Fobs<-summary(aov(CN_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+CN_perm<- permutation.test(obsdat=CN_BCS, respvar=CN_BCS$body_condition_obs, treatvar=CN_BCS$season, numsims=1000)
+
+CN_perm
+CN_p_valBCS<-CN_perm[[1]]/1000
+CN_p_valBCS #p=0.982
+
+#FR
+FR_BCS<-subset(individual_BCS, study.area == "FR") #subset to only FR
+FR_BCS %>% count(season) #get summer and winter observation counts
+View(FR_BCS) #check data 
+
+FR_anova1<-lm(body_condition_obs~season, data= FR_BCS)#original ANOVA
+summary(aov(FR_anova1)) #view anova summary p=0.525
+Fobs<-summary(aov(FR_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+FR_perm<- permutation.test(obsdat=FR_BCS, respvar=FR_BCS$body_condition_obs, treatvar=FR_BCS$season, numsims=1000)
+
+FR_perm
+FR_p_valBCS<-FR_perm[[1]]/1000
+FR_p_valBCS #p=0.559
+
+#GM
+GM_BCS<-subset(individual_BCS, study.area == "GM") #subset to only GM
+GM_BCS %>% count(season) #get summer and winter observation counts
+View(GM_BCS) #check data 
+
+GM_anova1<-lm(body_condition_obs~season, data= GM_BCS)#original ANOVA
+summary(aov(GM_anova1)) #view anova summary p=0.614
+Fobs<-summary(aov(GM_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+GM_perm<- permutation.test(obsdat=GM_BCS, respvar=GM_BCS$body_condition_obs, treatvar=GM_BCS$season, numsims=1000)
+
+GM_perm
+GM_p_valBCS<-GM_perm[[1]]/1000
+GM_p_valBCS #p=0.713
+
+#LBC
+LBC_BCS<-subset(individual_BCS, study.area == "LBC") #subset to only LBC
+LBC_BCS %>% count(season) #get summer and winter observation counts
+View(LBC_BCS) #check data 
+
+LBC_anova1<-lm(body_condition_obs~season, data= LBC_BCS)#original ANOVA
+summary(aov(LBC_anova1)) #view anova summary p=0.399
+Fobs<-summary(aov(LBC_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+LBC_perm<- permutation.test(obsdat=LBC_BCS, respvar=LBC_BCS$body_condition_obs, treatvar=LBC_BCS$season, numsims=1000)
+
+LBC_perm
+LBC_p_valBCS<-LBC_perm[[1]]/1000
+LBC_p_valBCS #p=0.460
+
+#MP
+MP_BCS<-subset(individual_BCS, study.area == "MP") #subset to only MP
+MP_BCS %>% count(season) #get summer and winter observation counts
+View(MP_BCS) #check data 
+
+MP_anova1<-lm(body_condition_obs~season, data= MP_BCS)#original ANOVA
+summary(aov(MP_anova1)) #view anova summary p=0.834
+Fobs<-summary(aov(MP_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+MP_perm<- permutation.test(obsdat=MP_BCS, respvar=MP_BCS$body_condition_obs, treatvar=MP_BCS$season, numsims=1000)
+
+MP_perm
+MP_p_valBCS<-MP_perm[[1]]/1000
+MP_p_valBCS #p=0.852
+
+#NH
+NH_BCS<-subset(individual_BCS, study.area == "NH") #subset to only NH
+NH_BCS %>% count(season) #get summer and winter observation counts
+View(NH_BCS) #check data 
+
+NH_anova1<-lm(body_condition_obs~season, data= NH_BCS)#original ANOVA
+summary(aov(NH_anova1)) #view anova summary p=0.479
+Fobs<-summary(aov(NH_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+NH_perm<- permutation.test(obsdat=NH_BCS, respvar=NH_BCS$body_condition_obs, treatvar=NH_BCS$season, numsims=1000)
+
+NH_perm
+NH_p_valBCS<-NH_perm[[1]]/1000
+NH_p_valBCS #p=0.423
+
+#ON
+ON_BCS<-subset(individual_BCS, study.area == "ON") #subset to only ON
+ON_BCS %>% count(season) #get summer and winter observation counts
+View(ON_BCS) #check data 
+
+ON_anova1<-lm(body_condition_obs~season, data= ON_BCS)#original ANOVA
+summary(aov(ON_anova1)) #view anova summary p=0.230
+Fobs<-summary(aov(ON_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+ON_perm<- permutation.test(obsdat=ON_BCS, respvar=ON_BCS$body_condition_obs, treatvar=ON_BCS$season, numsims=1000)
+
+ON_perm
+ON_p_valBCS<-ON_perm[[1]]/1000
+ON_p_valBCS #p=0.232
+
+#PB
+PB_BCS<-subset(individual_BCS, study.area == "PB") #subset to only PB
+PB_BCS %>% count(season) #get summer and winter observation counts
+View(PB_BCS) #check data 
+
+PB_anova1<-lm(body_condition_obs~season, data= PB_BCS)#original ANOVA
+summary(aov(PB_anova1)) #view anova summary p=0.00886
+Fobs<-summary(aov(PB_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+PB_perm<- permutation.test(obsdat=PB_BCS, respvar=PB_BCS$body_condition_obs, treatvar=PB_BCS$season, numsims=1000)
+
+PB_perm
+PB_p_valBCS<-PB_perm[[1]]/1000
+PB_p_valBCS #p=0.016
+
+#PN
+PN_BCS<-subset(individual_BCS, study.area == "PN") #subset to only PN
+PN_BCS %>% count(season) #get summer and winter observation counts
+View(PN_BCS) #check data 
+
+PN_anova1<-lm(body_condition_obs~season, data= PN_BCS)#original ANOVA
+summary(aov(PN_anova1)) #view anova summary p=0.209
+Fobs<-summary(aov(PN_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+PN_perm<- permutation.test(obsdat=PN_BCS, respvar=PN_BCS$body_condition_obs, treatvar=PN_BCS$season, numsims=1000)
+
+PN_perm
+PN_p_valBCS<-PN_perm[[1]]/1000
+PN_p_valBCS #p=0.266
+
+#RR
+RR_BCS<-subset(individual_BCS, study.area == "RR") #subset to only RR
+RR_BCS %>% count(season) #get summer and winter observation counts
+View(RR_BCS) #check data 
+
+RR_anova1<-lm(body_condition_obs~season, data= RR_BCS)#original ANOVA
+summary(aov(RR_anova1)) #view anova summary p=0.676
+Fobs<-summary(aov(RR_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+RR_perm<- permutation.test(obsdat=RR_BCS, respvar=RR_BCS$body_condition_obs, treatvar=RR_BCS$season, numsims=1000)
+
+RR_perm
+RR_p_valBCS<-RR_perm[[1]]/1000
+RR_p_valBCS #p=0.742
+
+
+
+
+#SB
+SB_BCS<-subset(individual_BCS, study.area == "SB")#subset to only SB
+SB_BCS %>% count(season)
+
+
+
+#SC
+SC_BCS<-subset(individual_BCS, study.area == "SC") #subset to only SC
+SC_BCS %>% count(season) #get summer and winter observation counts
+View(SC_BCS) #check data 
+
+SC_anova1<-lm(body_condition_obs~season, data= SC_BCS)#original ANOVA
+summary(aov(SC_anova1)) #view anova summary p=0.923
+Fobs<-summary(aov(SC_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+SC_perm<- permutation.test(obsdat=SC_BCS, respvar=SC_BCS$body_condition_obs, treatvar=SC_BCS$season, numsims=1000)
+
+SC_perm
+SC_p_valBCS<-SC_perm[[1]]/1000
+SC_p_valBCS #p=0.784
+
+#SS
+SS_BCS<-subset(individual_BCS, study.area == "SS") #subset to only SS
+SS_BCS %>% count(season) #get summer and winter observation counts
+View(SS_BCS) #check data 
+
+SS_anova1<-lm(body_condition_obs~season, data= SS_BCS)#original ANOVA
+summary(aov(SS_anova1)) #view anova summary p=0.000131
+Fobs<-summary(aov(SS_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+SS_perm<- permutation.test(obsdat=SS_BCS, respvar=SS_BCS$body_condition_obs, treatvar=SS_BCS$season, numsims=1000)
+
+SS_perm
+SS_p_valBCS<-SS_perm[[1]]/1000
+SS_p_valBCS #p=<0.001
+
+
+#SW
+SW_BCS<-subset(individual_BCS, study.area == "SW") #subset to only SW
+SW_BCS %>% count(season) #get summer and winter observation counts
+View(SW_BCS) #check data 
+
+SW_anova1<-lm(body_condition_obs~season, data= SW_BCS)#original ANOVA
+summary(aov(SW_anova1)) #view anova summary p=0.278
+Fobs<-summary(aov(SW_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+SW_perm<- permutation.test(obsdat=SW_BCS, respvar=SW_BCS$body_condition_obs, treatvar=SW_BCS$season, numsims=1000)
+
+SW_perm
+SW_p_valBCS<-SW_perm[[1]]/1000
+SW_p_valBCS #p=0.329
+
+#TP
+TP_BCS<-subset(individual_BCS, study.area == "TP") #subset to only TP
+TP_BCS %>% count(season) #get summer and winter observation counts
+View(TP_BCS) #check data 
+
+TP_anova1<-lm(body_condition_obs~season, data= TP_BCS)#original ANOVA
+summary(aov(TP_anova1)) #view anova summary p=0.147
+Fobs<-summary(aov(TP_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+TP_perm<- permutation.test(obsdat=TP_BCS, respvar=TP_BCS$body_condition_obs, treatvar=TP_BCS$season, numsims=1000)
+
+TP_perm
+TP_p_valBCS<-TP_perm[[1]]/1000
+TP_p_valBCS #p=0.096
+
+
+```
+###individual HMA bootstrap (new name)
+
+```{r}
+#AT
+AT_BCS<-subset(individual_BCS, study.area == "AT") #subset to only AT
+AT_BCS %>% count(season) #get summer and winter observation counts
+View(AT_BCS) #check data 
+
+AT_anova1<-lm(body_condition_obs~season, data= AT_BCS)#original ANOVA
+summary(aov(AT_anova1)) #view anova summary p=0.138
+Fobs<-summary(aov(AT_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+AT_perm<- bootstrap_anova.test(obsdat=AT_BCS, respvar=AT_BCS$body_condition_obs, treatvar=AT_BCS$season, numsims=1000)
+
+AT_perm
+AT_p_valBCS<-AT_perm[[1]]/1000
+AT_p_valBCS #p=0.128
+
+#CN
+CN_BCS<-subset(individual_BCS, study.area == "CN") #subset to only CN
+CN_BCS %>% count(season) #get summer and winter observation counts
+View(CN_BCS) #check data 
+
+CN_anova1<-lm(body_condition_obs~season, data= CN_BCS)#original ANOVA
+summary(aov(CN_anova1)) #view anova summary p=0.71
+Fobs<-summary(aov(CN_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+CN_perm<- bootstrap_anova.test(obsdat=CN_BCS, respvar=CN_BCS$body_condition_obs, treatvar=CN_BCS$season, numsims=1000)
+
+CN_perm
+CN_p_valBCS<-CN_perm[[1]]/1000
+CN_p_valBCS #p=0.982
+
+#FR
+FR_BCS<-subset(individual_BCS, study.area == "FR") #subset to only FR
+FR_BCS %>% count(season) #get summer and winter observation counts
+View(FR_BCS) #check data 
+
+FR_anova1<-lm(body_condition_obs~season, data= FR_BCS)#original ANOVA
+summary(aov(FR_anova1)) #view anova summary p=0.525
+Fobs<-summary(aov(FR_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+FR_perm<- bootstrap_anova.test(obsdat=FR_BCS, respvar=FR_BCS$body_condition_obs, treatvar=FR_BCS$season, numsims=1000)
+
+FR_perm
+FR_p_valBCS<-FR_perm[[1]]/1000
+FR_p_valBCS #p=0.559
+
+#GM
+GM_BCS<-subset(individual_BCS, study.area == "GM") #subset to only GM
+GM_BCS %>% count(season) #get summer and winter observation counts
+View(GM_BCS) #check data 
+
+GM_anova1<-lm(body_condition_obs~season, data= GM_BCS)#original ANOVA
+summary(aov(GM_anova1)) #view anova summary p=0.614
+Fobs<-summary(aov(GM_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+GM_perm<- bootstrap_anova.test(obsdat=GM_BCS, respvar=GM_BCS$body_condition_obs, treatvar=GM_BCS$season, numsims=1000)
+
+GM_perm
+GM_p_valBCS<-GM_perm[[1]]/1000
+GM_p_valBCS #p=0.713
+
+#LBC
+LBC_BCS<-subset(individual_BCS, study.area == "LBC") #subset to only LBC
+LBC_BCS %>% count(season) #get summer and winter observation counts
+View(LBC_BCS) #check data 
+
+LBC_anova1<-lm(body_condition_obs~season, data= LBC_BCS)#original ANOVA
+summary(aov(LBC_anova1)) #view anova summary p=0.399
+Fobs<-summary(aov(LBC_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+LBC_perm<- bootstrap_anova.test(obsdat=LBC_BCS, respvar=LBC_BCS$body_condition_obs, treatvar=LBC_BCS$season, numsims=1000)
+
+LBC_perm
+LBC_p_valBCS<-LBC_perm[[1]]/1000
+LBC_p_valBCS #p=0.460
+
+#MP
+MP_BCS<-subset(individual_BCS, study.area == "MP") #subset to only MP
+MP_BCS %>% count(season) #get summer and winter observation counts
+View(MP_BCS) #check data 
+
+MP_anova1<-lm(body_condition_obs~season, data= MP_BCS)#original ANOVA
+summary(aov(MP_anova1)) #view anova summary p=0.834
+Fobs<-summary(aov(MP_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+MP_perm<- bootstrap_anova.test(obsdat=MP_BCS, respvar=MP_BCS$body_condition_obs, treatvar=MP_BCS$season, numsims=1000)
+
+MP_perm
+MP_p_valBCS<-MP_perm[[1]]/1000
+MP_p_valBCS #p=0.852
+
+#NH
+NH_BCS<-subset(individual_BCS, study.area == "NH") #subset to only NH
+NH_BCS %>% count(season) #get summer and winter observation counts
+View(NH_BCS) #check data 
+
+NH_anova1<-lm(body_condition_obs~season, data= NH_BCS)#original ANOVA
+summary(aov(NH_anova1)) #view anova summary p=0.479
+Fobs<-summary(aov(NH_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+NH_perm<- bootstrap_anova.test(obsdat=NH_BCS, respvar=NH_BCS$body_condition_obs, treatvar=NH_BCS$season, numsims=1000)
+
+NH_perm
+NH_p_valBCS<-NH_perm[[1]]/1000
+NH_p_valBCS #p=0.423
+
+#ON
+ON_BCS<-subset(individual_BCS, study.area == "ON") #subset to only ON
+ON_BCS %>% count(season) #get summer and winter observation counts
+View(ON_BCS) #check data 
+
+ON_anova1<-lm(body_condition_obs~season, data= ON_BCS)#original ANOVA
+summary(aov(ON_anova1)) #view anova summary p=0.230
+Fobs<-summary(aov(ON_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+ON_perm<- bootstrap_anova.test(obsdat=ON_BCS, respvar=ON_BCS$body_condition_obs, treatvar=ON_BCS$season, numsims=1000)
+
+ON_perm
+ON_p_valBCS<-ON_perm[[1]]/1000
+ON_p_valBCS #p=0.232
+
+#PB
+PB_BCS<-subset(individual_BCS, study.area == "PB") #subset to only PB
+PB_BCS %>% count(season) #get summer and winter observation counts
+View(PB_BCS) #check data 
+
+PB_anova1<-lm(body_condition_obs~season, data= PB_BCS)#original ANOVA
+summary(aov(PB_anova1)) #view anova summary p=0.00886
+Fobs<-summary(aov(PB_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+PB_perm<- bootstrap_anova.test(obsdat=PB_BCS, respvar=PB_BCS$body_condition_obs, treatvar=PB_BCS$season, numsims=1000)
+
+PB_perm
+PB_p_valBCS<-PB_perm[[1]]/1000
+PB_p_valBCS #p=0.016
+
+#PN
+PN_BCS<-subset(individual_BCS, study.area == "PN") #subset to only PN
+PN_BCS %>% count(season) #get summer and winter observation counts
+View(PN_BCS) #check data 
+
+PN_anova1<-lm(body_condition_obs~season, data= PN_BCS)#original ANOVA
+summary(aov(PN_anova1)) #view anova summary p=0.209
+Fobs<-summary(aov(PN_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+PN_perm<- bootstrap_anova.test(obsdat=PN_BCS, respvar=PN_BCS$body_condition_obs, treatvar=PN_BCS$season, numsims=1000)
+
+PN_perm
+PN_p_valBCS<-PN_perm[[1]]/1000
+PN_p_valBCS #p=0.266
+
+#RR
+RR_BCS<-subset(individual_BCS, study.area == "RR") #subset to only RR
+RR_BCS %>% count(season) #get summer and winter observation counts
+View(RR_BCS) #check data 
+
+RR_anova1<-lm(body_condition_obs~season, data= RR_BCS)#original ANOVA
+summary(aov(RR_anova1)) #view anova summary p=0.676
+Fobs<-summary(aov(RR_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+RR_perm<- bootstrap_anova.test(obsdat=RR_BCS, respvar=RR_BCS$body_condition_obs, treatvar=RR_BCS$season, numsims=1000)
+
+RR_perm
+RR_p_valBCS<-RR_perm[[1]]/1000
+RR_p_valBCS #p=0.742
+
+
+
+
+#SB
+SB_BCS<-subset(individual_BCS, study.area == "SB")#subset to only SB
+SB_BCS %>% count(season)
+
+
+
+#SC
+SC_BCS<-subset(individual_BCS, study.area == "SC") #subset to only SC
+SC_BCS %>% count(season) #get summer and winter observation counts
+View(SC_BCS) #check data 
+
+SC_anova1<-lm(body_condition_obs~season, data= SC_BCS)#original ANOVA
+summary(aov(SC_anova1)) #view anova summary p=0.923
+Fobs<-summary(aov(SC_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+SC_perm<- bootstrap_anova.test(obsdat=SC_BCS, respvar=SC_BCS$body_condition_obs, treatvar=SC_BCS$season, numsims=1000)
+
+SC_perm
+SC_p_valBCS<-SC_perm[[1]]/1000
+SC_p_valBCS #p=0.784
+
+#SS
+SS_BCS<-subset(individual_BCS, study.area == "SS") #subset to only SS
+SS_BCS %>% count(season) #get summer and winter observation counts
+View(SS_BCS) #check data 
+
+SS_anova1<-lm(body_condition_obs~season, data= SS_BCS)#original ANOVA
+summary(aov(SS_anova1)) #view anova summary p=0.000131
+Fobs<-summary(aov(SS_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+SS_perm<- bootstrap_anova.test(obsdat=SS_BCS, respvar=SS_BCS$body_condition_obs, treatvar=SS_BCS$season, numsims=1000)
+
+SS_perm
+SS_p_valBCS<-SS_perm[[1]]/1000
+SS_p_valBCS #p=<0.001
+
+
+#SW
+SW_BCS<-subset(individual_BCS, study.area == "SW") #subset to only SW
+SW_BCS %>% count(season) #get summer and winter observation counts
+View(SW_BCS) #check data 
+
+SW_anova1<-lm(body_condition_obs~season, data= SW_BCS)#original ANOVA
+summary(aov(SW_anova1)) #view anova summary p=0.278
+Fobs<-summary(aov(SW_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+SW_perm<- bootstrap_anova.test(obsdat=SW_BCS, respvar=SW_BCS$body_condition_obs, treatvar=SW_BCS$season, numsims=1000)
+
+SW_perm
+SW_p_valBCS<-SW_perm[[1]]/1000
+SW_p_valBCS #p=0.329
+
+#TP
+TP_BCS<-subset(individual_BCS, study.area == "TP") #subset to only TP
+TP_BCS %>% count(season) #get summer and winter observation counts
+View(TP_BCS) #check data 
+
+TP_anova1<-lm(body_condition_obs~season, data= TP_BCS)#original ANOVA
+summary(aov(TP_anova1)) #view anova summary p=0.147
+Fobs<-summary(aov(TP_anova1)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+TP_perm<- bootstrap_anova.test(obsdat=TP_BCS, respvar=TP_BCS$body_condition_obs, treatvar=TP_BCS$season, numsims=1000)
+
+TP_perm
+TP_p_valBCS<-TP_perm[[1]]/1000
+TP_p_valBCS #p=0.096
+
+
+```
+
+###range
+```{r}
+#check the format of the dataframes we are using
+View(BCS_by_HMA_season)
+View(BCS_by_HMA_summer)
+
+range_BCS_sum<-subset(BCS_by_HMA_summer, study.area != "SB")#remove SB because it is not paired
+View(range_BCS_sum)#check
+range_BCS_sum<-range_BCS_sum$mean_BCS #pull out only the BCS from data frame
+range_BCS_sum #list of the 15 summer herd average BCS
+
+range_BCS_win<-BCS_by_HMA_winter$mean_BCS #pull out only the BCS from winter data frame
+range_BCS_win #list of the 15 winter herd average BCS
+
+
+#paired
+
+set.seed(223)
+boot.t.test(x=range_BCS_sum, y=range_BCS_win, paired=TRUE) #when they are paired we have non significant p-value 0.205
+
+
+
+#independent non-paired bootstrap 
+
+range_BCS_anova<-lm(mean_BCS~season, data= BCS_by_HMA_season)#original ANOVA
+summary(aov(range_anova)) #view anova summary p=0.213
+Fobs<-summary(aov(range_anova)) #prep to pull F-statistic out of summary
+Fobs<-Fobs[[1]]$"F value"[1] #pull F-statistic out of summary
+Fobs
+
+set.seed(223)  
+range_perm_BCS<- permutation.test(obsdat=BCS_by_HMA_season, respvar=BCS_by_HMA_season$mean_BCS, treatvar=BCS_by_HMA_season$season, numsims=1000)
+
+range_perm_BCS
+rangeBCS_p_val<-range_perm_BCS[[1]]/1000
+rangeBCS_p_val #p=0.217
+
+
+```
+
+#Graminoid diet to Herb Available Comparison
+```{r}
+View(HMA_RAP) #View to figure out which observtions correspond to study HMAs
+
+HMA_RAP_subset<- HMA_RAP [c(122, 154, 146, 126, 118, 123, 147, 164, 85, 71, 42, 27, 25, 93, 135, 187),]#subset 16 HMAs of interest- this keeps them in alphabetical order to match the file we merge into  
+
+View(HMA_RAP_subset) #check that I got the right ones
+```
+
+##Summer samples and herbaceous cover
+```{r}
+#add RAP columns to summer data for each HMA shape file extracted
+graminoids_by_HMA_summer$RAP_AGF<-as.numeric(HMA_RAP_subset$annforbandgrasscov)#annual forbs and grass (herbaceous) cover
+
+graminoids_by_HMA_summer$RAP_PGF<-as.numeric(HMA_RAP_subset$perforbandgrasscov)#perennial forbs and grass (herbaceous) cover
+
+graminoids_by_HMA_summer$RAP_total_GF<-as.numeric(graminoids_by_HMA_summer$RAP_AGF +graminoids_by_HMA_summer$RAP_PGF) #total annual plus perennial forbs and grass (herbaceous) cover
+
+graminoids_by_HMA_summer$RAP_shrub<-as.numeric(HMA_RAP_subset$shrub) #shrub cover
+
+graminoids_by_HMA_summer$RAP_bare<-as.numeric(HMA_RAP_subset$bareground) #bare ground cover
+
+graminoids_by_HMA_summer$RAP_annual_biomass<-as.numeric(HMA_RAP_subset$annforbandgrassbio)#annual forbs and grass (herbaceous) biomass
+
+graminoids_by_HMA_summer$RAP_perennial_biomass<-as.numeric(HMA_RAP_subset$perforbandgrassbio)#perennial forbs and grass (herbaceous) biomass
+
+graminoids_by_HMA_summer$RAP_herb_biomass<-as.numeric(HMA_RAP_subset$perforbandgrassbio + HMA_RAP_subset$annforbandgrassbio) #total forbs and grass (herbaceous) biomass
+
+View(graminoids_by_HMA_summer)#check that all columns added in 
+
+
+## Also do the ones that exclude SB
+
+HMA_RAP_subset2<- subset(HMA_RAP_subset, OBJECTID != "27") #exclude SB from dataframe
+
+View(HMA_RAP_subset2)#check
+
+#add RAP columns to summer data for each HMA shape file extracted
+graminoids_by_HMA_summer2$RAP_AGF<-as.numeric(HMA_RAP_subset2$annforbandgrasscov)#annual forbs and grass (herbaceous) cover
+
+graminoids_by_HMA_summer2$RAP_PGF<-as.numeric(HMA_RAP_subset2$perforbandgrasscov)#perennial forbs and grass (herbaceous) cover
+
+graminoids_by_HMA_summer2$RAP_total_GF<-as.numeric(graminoids_by_HMA_summer2$RAP_AGF +graminoids_by_HMA_summer2$RAP_PGF) #total annual plus perennial forbs and grass (herbaceous) cover
+
+graminoids_by_HMA_summer2$RAP_shrub<-as.numeric(HMA_RAP_subset2$shrub) #shrub cover
+
+graminoids_by_HMA_summer2$RAP_bare<-as.numeric(HMA_RAP_subset2$bareground) #bare ground cover
+
+graminoids_by_HMA_summer2$RAP_annual_biomass<-as.numeric(HMA_RAP_subset2$annforbandgrassbio)#annual forbs and grass (herbaceous) biomass
+
+graminoids_by_HMA_summer2$RAP_perennial_biomass<-as.numeric(HMA_RAP_subset2$perforbandgrassbio)#perennial forbs and grass (herbaceous) biomass
+
+graminoids_by_HMA_summer2$RAP_herb_biomass<-as.numeric(HMA_RAP_subset2$perforbandgrassbio + HMA_RAP_subset2$annforbandgrassbio) #total forbs and grass (herbaceous) biomass
+
+View(graminoids_by_HMA_summer2)#check that all columns added in 
+
+graminoids_by_HMA_summer2[7, "RAP_total_GF"] <- 20.72217 #change the RAP herb cover for NH HMA to be weighted average for the HMA and WHT areas 
+
+graminoids_by_HMA_summer2[7, "RAP_herb_biomass"] <- 267.20907 #change the total biomass for NH HMA to be weighted average for the HMA and WHT areas 
+
+
+```
+
+
+##summer herb cover and graminoid diet correlations
+```{r}
+
+############## full set of 16 HMA #######################
+
+#add an ecoregion column to color points by 
+graminoids_by_HMA_summer$epa_eco<- c("Wyoming Basin", "Central Basin", "Central Basin", "Wyoming Basin", "Colorado Plateau","Wyoming Basin", "Central Basin", "Central Basin", "Northern Basin", "Central Basin", "Mojave", "Northern Basin", "Snake River","Northern Basin", "Northern Basin","Northern Basin")
+
+### Total grass forb cover
+ggplot(data=graminoids_by_HMA_summer, aes(x=RAP_total_GF, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of HMA Herbaceous Cover and Graminoids consumed Summer", y="% Graminoids diet", x="% Herbaceous cover HMA") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))
+
+cor.test(graminoids_by_HMA_summer$mean_Poales, graminoids_by_HMA_summer$RAP_total_GF, method="spearman") #not significant p=0.1582 rho= -0.3706
+
+cor.test(graminoids_by_HMA_summer$mean_Poales, graminoids_by_HMA_summer$RAP_total_GF, method="pearson") #not significant p=0.1640 cor= -.3654
+
+
+### Total grass forb biomass
+ggplot(data=graminoids_by_HMA_summer, aes(x=RAP_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of HMA Herbaceous Biomass and Graminoids consumed Summer", y="% Graminoids", x="% Herbaceous Biomass HMA") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))
+
+cor.test(graminoids_by_HMA_summer$mean_Poales, graminoids_by_HMA_summer$RAP_herb_biomass, method="spearman") #not significant p=0.1062 rho= -0.4206
+
+cor.test(graminoids_by_HMA_summer$mean_Poales, graminoids_by_HMA_summer$RAP_herb_biomass, method="pearson") #not significant p=0.2052 cor= -.3346
+
+
+
+############ Without sand basin ###############
+
+graminoids_by_HMA_summer2$epa_eco<- c("Wyoming Basin", "Central Basin", "Central Basin", "Wyoming Basin", "Colorado Plateau","Wyoming Basin", "Central Basin", "Central Basin", "Northern Basin", "Central Basin", "Mojave",  "Snake River","Northern Basin", "Northern Basin","Northern Basin")
+
+### Total grass forb cover
+Fig3A<-ggplot(data=graminoids_by_HMA_summer2, aes(x=RAP_total_GF, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Summer", x="HMA Herbaceous Cover (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=29, y=0.28, label=" Spearman's rho = -0.379,  p= 0.165",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+cor.test(graminoids_by_HMA_summer2$mean_Poales, graminoids_by_HMA_summer2$RAP_total_GF, method="spearman") #not significant p=0.1649 rho= -0.3786
+
+cor.test(graminoids_by_HMA_summer2$mean_Poales, graminoids_by_HMA_summer2$RAP_total_GF, method="pearson") #not significant p=0.3241 cor= -.2734
+
+ggsave("herb_cover_graminoid_summer.png", width=10, height=7, dpi=300)
+
+
+
+### Total grass forb biomass
+Fig3B<-ggplot(data=graminoids_by_HMA_summer2, aes(x=RAP_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Summer", x="HMA Herbaceous Biomass (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=390, y=0.25, label=" Spearman's rho = -0.439,  p= 0.103",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+cor.test(graminoids_by_HMA_summer2$mean_Poales, graminoids_by_HMA_summer2$RAP_herb_biomass, method="spearman") #not significant p=0.1032 rho= -0.439
+
+cor.test(graminoids_by_HMA_summer2$mean_Poales, graminoids_by_HMA_summer2$RAP_herb_biomass, method="pearson") #not significant p=0.4265 cor= -.2220
+
+ggsave("herb_bio_graminoid_summer.png", width=10, height=7, dpi=300)
+
+```
+##Winter samples and herbaceous cover
+```{r}
+
+
+#add RAP columns to winter data for each HMA shape file extracted
+graminoids_by_HMA_winter$RAP_AGF<-as.numeric(HMA_RAP_subset2$annforbandgrasscov)#annual forbs and grass (herbaceous) cover
+
+graminoids_by_HMA_winter$RAP_PGF<-as.numeric(HMA_RAP_subset2$perforbandgrasscov)#perennial forbs and grass (herbaceous) cover
+
+graminoids_by_HMA_winter$RAP_total_GF<-as.numeric(graminoids_by_HMA_winter$RAP_AGF +graminoids_by_HMA_winter$RAP_PGF) #total annual plus perennial forbs and grass (herbaceous) cover
+
+graminoids_by_HMA_winter$RAP_shrub<-as.numeric(HMA_RAP_subset2$shrub) #shrub cover
+
+graminoids_by_HMA_winter$RAP_bare<-as.numeric(HMA_RAP_subset2$bareground) #bare ground cover
+
+graminoids_by_HMA_winter$RAP_annual_biomass<-as.numeric(HMA_RAP_subset2$annforbandgrassbio)#annual forbs and grass (herbaceous) biomass
+
+graminoids_by_HMA_winter$RAP_perennial_biomass<-as.numeric(HMA_RAP_subset2$perforbandgrassbio)#perennial forbs and grass (herbaceous) biomass
+
+graminoids_by_HMA_winter$RAP_herb_biomass<-as.numeric(HMA_RAP_subset2$perforbandgrassbio + HMA_RAP_subset2$annforbandgrassbio) #total forbs and grass (herbaceous) biomass
+
+View(graminoids_by_HMA_winter)#check that all columns added in 
+
+graminoids_by_HMA_winter[7, "RAP_total_GF"] <- 20.72217 #change the RAP herb cover for NH HMA to be weighted average for the HMA and WHT areas 
+
+graminoids_by_HMA_winter[7, "RAP_herb_biomass"] <- 267.20907 #change the total biomass for NH HMA to be weighted average for the HMA and WHT areas 
+
+```
+
+
+##winter herb cover and graminoid diet correlations
+```{r}
+graminoids_by_HMA_winter$epa_eco<- c("Wyoming Basin", "Central Basin", "Central Basin", "Wyoming Basin", "Colorado Plateau","Wyoming Basin", "Central Basin", "Central Basin", "Northern Basin", "Central Basin", "Mojave", "Snake River","Northern Basin", "Northern Basin","Northern Basin")
+
+### Total grass forb cover
+Fig3E<-ggplot(data=graminoids_by_HMA_winter, aes(x=RAP_total_GF, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Winter", x="HMA Herbaceous Cover (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=29, y=0.05, label=" Spearman's rho = -0.279,  p= 0.314",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+ggsave("herb_cover_graminoid_winter.png", width=10, height=7, dpi=300)
+
+cor.test(graminoids_by_HMA_winter$mean_Poales, graminoids_by_HMA_winter$RAP_total_GF, method="spearman") #not significant p=0.3138 rho= -0.2785
+
+cor.test(graminoids_by_HMA_winter$mean_Poales, graminoids_by_HMA_winter$RAP_total_GF, method="pearson") #not significant p=0.3539 cor= -.2576
+
+
+
+### Total grass forb biomass
+Fig3F<- ggplot(data=graminoids_by_HMA_winter, aes(x=RAP_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Winter", x="HMA Herbaceous Biomass (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=395, y=0.05, label=" Spearman's rho = -0.371,  p= 0.174",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+ggsave("herb_bio_graminoid_winter.png", width=10, height=7, dpi=300)
+
+cor.test(graminoids_by_HMA_winter$mean_Poales, graminoids_by_HMA_winter$RAP_herb_biomass, method="spearman") #not significant p=0.1735 rho= -0.3714
+
+cor.test(graminoids_by_HMA_winter$mean_Poales, graminoids_by_HMA_winter$RAP_herb_biomass, method="pearson") #not significant p=0.2912 cor= -.29187
+```
+
+## Individual buffer data
+###prep files
+
+```{r}
+
+# Use the file Buffered each fecal location point by 13.5km diameter to represent 36 hours of movement with a 9km a day average
+
+View(plant_family_meta_wild)#check what we are joining
+
+
+metadata_with_RAP<- subset(metadata_with_RAP, domestication == "wild") #remove domestic horses so we have the same number of samples to join for our analyses
+
+
+metadata_with_RAP<-subset(metadata_with_RAP, sample != "WMP11")#Exclude WMP11 as above
+View(metadata_with_RAP) #check 
+
+metadata_RAP_family<- left_join(plant_family_meta_wild, metadata_with_RAP, by="sample") #join the RAP data to individual sample data
+
+View(metadata_RAP_family)#check 
+
+metadata_RAP_family$RAP_total_GF<-metadata_RAP_family$perforbandgrasscov + metadata_RAP_family$annforbandgrasscov #make column of total herbaceous cover (annual + perennial grass and forb cover)
+
+metadata_RAP_family$RAP_herb_biomass<-metadata_RAP_family$perforbandgrassbio + metadata_RAP_family$annforbandgrassbio #make column of total herbaceous biomass (annual + perennial grass and forb biomass)
+
+#get the average percent cover for each HMA by averaging the buffers 
+
+RAP_and_poales_by_HMA<-metadata_RAP_family%>% 
+  group_by(study.area.x, area_season.x, season.x)%>%
+  summarise(mean_Poales=mean(Poales), mean_herb_cover=mean(RAP_total_GF), mean_herb_biomass=mean(RAP_herb_biomass))
+            
+View(RAP_and_poales_by_HMA) #check 
+
+RAP_and_poales_by_HMA_summer<-subset(RAP_and_poales_by_HMA, season.x == "summer")#subset to summer only
+
+#add an ecoregion column to color points by later
+RAP_and_poales_by_HMA_summer$epa_eco<- c("Wyoming Basin", "Central Basin", "Central Basin", "Wyoming Basin", "Colorado Plateau","Wyoming Basin", "Central Basin", "Central Basin", "Northern Basin", "Central Basin", "Mojave", "Northern Basin", "Snake River","Northern Basin", "Northern Basin","Northern Basin")
+
+View(RAP_and_poales_by_HMA_summer) #check 
+
+RAP_and_poales_by_HMA_winter<-subset(RAP_and_poales_by_HMA, season.x == "winter")#subset to winter only 
+
+#add an ecoregion column to color points by later
+RAP_and_poales_by_HMA_winter$epa_eco<- c("Wyoming Basin", "Central Basin", "Central Basin", "Wyoming Basin", "Colorado Plateau","Wyoming Basin", "Central Basin", "Central Basin", "Northern Basin", "Central Basin", "Mojave",  "Snake River","Northern Basin", "Northern Basin","Northern Basin")
+
+View(RAP_and_poales_by_HMA_winter) #check 
+
+```
+
+
+
+
+
+###Summer
+```{r}
+
+########### With SB ######################
+
+#Cover 
+
+ggplot(data=RAP_and_poales_by_HMA_summer, aes(x=mean_herb_cover, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of Herd Average Buffered Herbaceous Cover and Graminoids consumed Summer", y="% Graminoids diet", x="% Average Herd Buffered Herbaceous Cover") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))
+
+
+cor.test(RAP_and_poales_by_HMA_summer$mean_herb_cover, RAP_and_poales_by_HMA_summer$mean_Poales, method="spearman")#borderline significant p=0.05085 rho = -0.500
+
+
+cor.test(RAP_and_poales_by_HMA_summer$mean_herb_cover, RAP_and_poales_by_HMA_summer$mean_Poales, method="pearson")#borderline significant p=0.0778 cor = -0.4534
+
+#Biomass
+
+ggplot(data=RAP_and_poales_by_HMA_summer, aes(x=mean_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of Herd Average Buffered Herbaceous Biomass and Graminoids consumed Summer", y="% Graminoids diet", x="% Average Herd Buffered Herbaceous Biomass") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))
+
+
+
+cor.test(RAP_and_poales_by_HMA_summer$mean_herb_biomass, RAP_and_poales_by_HMA_summer$mean_Poales, method="spearman")#borderline significant p=0.05558 rho = -0.49117
+
+
+cor.test(RAP_and_poales_by_HMA_summer$mean_herb_biomass, RAP_and_poales_by_HMA_summer$mean_Poales, method="pearson")#borderline significant p=0.07053 cor = -0.4635
+
+
+########### Without SB ######################
+
+RAP_and_poales_by_HMA_summer2<-subset(RAP_and_poales_by_HMA_summer, study.area.x != "SB") #exclude SB from dataframe
+
+View(RAP_and_poales_by_HMA_summer2)#check
+
+
+#Cover 
+
+Fig3C<-ggplot(data=RAP_and_poales_by_HMA_summer2, aes(x=mean_herb_cover, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Summer", x="Herd Average Buffered Herbaceous Cover (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=32.25, y=0.24, label=" Spearman's rho = -0.475,  p= 0.076",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+ggsave("herb_cover_graminoid_summer_buffer.png", width=10, height=7, dpi=300)
+
+cor.test(RAP_and_poales_by_HMA_summer2$mean_herb_cover, RAP_and_poales_by_HMA_summer2$mean_Poales, method="spearman")#borderline significant p=0.07587 rho = -0.475
+
+
+
+cor.test(RAP_and_poales_by_HMA_summer2$mean_herb_cover, RAP_and_poales_by_HMA_summer2$mean_Poales, method="pearson")#not significant p=0.1863 cor = -0.3609
+
+#Biomass
+
+Fig3D<-ggplot(data=RAP_and_poales_by_HMA_summer2, aes(x=mean_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Summer", x= "Herd Average Buffered Herbaceous Biomass (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=425, y=0.22, label=" Spearman's rho = -0.479,  p= 0.073",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+ggsave("herb_bio_graminoid_summer_buffer.png", width=10, height=7, dpi=300)
+
+cor.test(RAP_and_poales_by_HMA_summer2$mean_herb_biomass, RAP_and_poales_by_HMA_summer2$mean_Poales, method="spearman")#borderline significant p=0.07347 rho = -0.47857
+
+
+cor.test(RAP_and_poales_by_HMA_summer2$mean_herb_biomass, RAP_and_poales_by_HMA_summer2$mean_Poales, method="pearson")#borderline significant p=0.1672 cor = -0.376
+
+```
+
+
+###Winter
+```{r}
+#Cover 
+
+Fig3G<-ggplot(data=RAP_and_poales_by_HMA_winter, aes(x=mean_herb_cover, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Winter", x="% Herd Average Buffered Herbaceous Cover (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=32.5, y=0.05, label=" Spearman's rho = -0.268,  p= 0.333",color="black", size=8,  family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+ggsave("herb_cover_graminoid_winter_buffer.png", width=10, height=7, dpi=300)
+
+cor.test(RAP_and_poales_by_HMA_winter$mean_herb_cover, RAP_and_poales_by_HMA_winter$mean_Poales, method="spearman")#not significant p=0.3334 rho = -0.2679
+
+
+cor.test(RAP_and_poales_by_HMA_winter$mean_herb_cover, RAP_and_poales_by_HMA_winter$mean_Poales, method="pearson")#not significant p=0.7178 rho = -0.10189
+
+#Biomass
+
+Fig3H<-ggplot(data=RAP_and_poales_by_HMA_winter, aes(x=mean_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Winter", x="% Herd Average Buffered Herbaceous Biomass (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=425, y=0.05, label=" Spearman's rho = -0.286,  p= 0.301",color="black", size = 8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+ggsave("herb_bio_graminoid_winter_buffer.png", width=10, height=7, dpi=300)
+
+cor.test(RAP_and_poales_by_HMA_winter$mean_herb_biomass, RAP_and_poales_by_HMA_winter$mean_Poales, method="spearman")#not significant p=0.3011 rho = -0.2857
+
+
+cor.test(RAP_and_poales_by_HMA_winter$mean_herb_biomass, RAP_and_poales_by_HMA_winter$mean_Poales, method="pearson")#not significant p=0.3827 cor = -0.24309
+```
+### Combine Fig 3
+
+```{r}
+
+#use ggpubr
+Figure3<-ggarrange(Fig3A, Fig3E , Fig3B, Fig3F, Fig3C, Fig3G, Fig3D, Fig3H, labels= c("A","E", "B", "F", "C", "G", "D", "H"), ncol=2, nrow=4, common.legend=TRUE, legend="right", font.label = list(size = 24)) #Combine Fig3A-H
+
+Figure3 #View
+
+
+ggsave("multipane_Fig3.png", width=15, height=20, dpi=300)#save
+```
+
+
+### Individual Horses for Visual only 
+```{r}
+View(metadata_RAP_family)
+
+
+ggplot(data=metadata_RAP_family, aes(x=RAP_total_GF, y=Poales))+ geom_point(aes(color=study.area.y, shape=season.y), size=5) + theme_bw()+labs(title = "Individual Horse Buffered Herbaceous Cover and Graminoids in Diet by HMA and Season", y= "Graminoids in Diet (%)", x=" Movement Buffer Herbaceous Cover") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) + scale_color_manual(values=c("#db6d00","#006ddb", "#e94c1f", "#000000","#fdae61", "#009292", "#24ff24","#ff6db6","#b6dbff",
+ "#490092","#b66dff",
+ "#920000", "#6db6ff","#004949",  "#924900","#ffb6db", "#FFFF00",  "#f7f7f7" ))+ theme(text = element_text(family= "Times New Roman"))
+
+ggsave("individual_herb__graminoid.png", width=10, height=7, dpi=300)
+
+```
+
+
+#Range model incl. cover and ecosystem
+```{r}
+
+#View (range_dif) #this is the values that calculate difference HMA average summer/winter
+
+range_dif_df<- as.data.frame(range_dif) #make it a dataframe
+
+View(range_dif_df) #check it
+
+View(graminoids_by_HMA_winter) #view dataframe to pull values from 
+
+range_dif_df$study.area<- graminoids_by_HMA_winter$study.area
+range_dif_df$epa_eco<-as.factor(graminoids_by_HMA_winter$epa_eco)#add ecosystem as a factor
+range_dif_df$RAP_total_GF<-graminoids_by_HMA_winter$RAP_total_GF #add the RAP herbaceous cover data
+range_dif_df$herb_cover_group<- c("Low", "Medium", "Low", "Medium", "Low","Medium", "Medium", "High", "Medium", "Low", "Low", "High","High", "High","High")#create factor for cover grouping high, med,low
+range_dif_df$herb_cover_group<-as.factor(range_dif_df$herb_cover_group) #make it a factor
+
+View(range_dif_df) #check it again
+
+#create some models
+
+range_cover_lm<- lm(range_dif~ herb_cover_group, data=range_dif_df) #lm with cover factors
+summary(range_cover_lm)
+anova(range_cover_lm)
+
+range_eco_lm<- lm(range_dif~ epa_eco, data=range_dif_df) #lm with ecosystem factor 
+summary(range_eco_lm) 
+anova(range_eco_lm)
+
+range_cover_eco_lm<- lm(range_dif~ epa_eco + herb_cover_group, data=range_dif_df) #lm with cover and ecosystem factors 
+summary(range_cover_eco_lm)
+anova(range_cover_eco_lm)
+
+range_cover_eco_int_lm<- lm(range_dif~ epa_eco + herb_cover_group + herb_cover_group:epa_eco, data=range_dif_df) #lm with cover and ecosystem factors with interaction of the two  
+summary(range_cover_eco_int_lm)
+anova(range_cover_eco_int_lm)
+
+
+
+
+
+```
+
