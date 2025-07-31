@@ -3528,7 +3528,9 @@ plant_family_HMA_season_no_sd<-plant_family_HMA_season%>%
 View(plant_family_HMA_season_no_sd)
 #export
 write.csv(plant_family_HMA_season_no_sd, "family_by_HMA_noSD.csv")# write to csv dataframe for each HMA/season
-
+```
+#Asteraceae/Chenopodiaceae comparisons
+```{r}
 #calculate range-wide SD/ mean (including SB in summer)
 
 mean(subset(plant_family_HMA_season_no_sd, season == "winter")$Asteraceae1) # 15.05261
@@ -3564,6 +3566,10 @@ boot.t.test(x=range_aster_summer, y=range_aster_winter, paired=TRUE) #paired boo
 mean(range_cheno_summer) # 4.06774
 sd(range_cheno_summer)# 8.38929
 
+mean(range_aster_summer)# 5.69809
+sd(range_aster_summer) # 5.834804
+
+```
 mean(range_aster_summer)# 5.69809
 sd(range_aster_summer) # 5.834804
 
