@@ -15,7 +15,8 @@ File "11_9_23_metadata_no_copy.csv" is the same metadata as above regarding each
 
 This code will ouput the file "9_10_24plant_family_percents_outputoftrnlcleaned.csv" which is the diet composition for each fecal collection grouped at the family taxonomic level which is used in the analyses below..
 
-The code "graminoid_composition.Rmd" goes through the steps to complete downstream analyses related to the graminoid composition in the horse diets and includes: seasonal comparisons of diet graminoid composition within each HMA and at the range-wide scale, seasonal comparisons of body condition within each HMA and at the range-wide scale, correlations between graminoid composition and herbacous cover and biomass, correlations between graminoid composition and body condition, and the figures to visualize these relationships.   
+The code "graminoid_composition.Rmd" goes through the steps to complete downstream analyses related to the graminoid composition in the horse diets and includes: seasonal comparisons of diet graminoid composition within each HMA and at the range-wide scale, seasonal comparisons of body condition within each HMA and at the range-wide scale, correlations between graminoid composition and herbacous cover and biomass, correlations between graminoid composition and body condition, and the figures to visualize these relationships. There are also some additional analyses related to select other plant families as well. 
+
 The following input csv files are read in and used with the R code "graminoid_composition.Rmd". 
 
 File "9_10_24plant_family_percents_outputoftrnlcleaned.csv" shows the percentage of each plant family present in each individual fecal collection. 
