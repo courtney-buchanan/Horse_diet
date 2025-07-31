@@ -1,4 +1,3 @@
----
 title: "Gramminoid Composition Analysis"
 author: "Courtney Buchanan"
 date: "2024-09-10"
@@ -21,6 +20,7 @@ library(tidyr)
 #install.packages("gggpubr")
 library(ggpubr)
 library(MKinfer)
+library(car)
 
 ```
 #read in files
@@ -85,11 +85,20 @@ View(plant_order_by_HMA_season)
 graminoids_by_HMA_summer<- subset(plant_order_by_HMA_season, season == "summer") #subset summer
 mean(graminoids_by_HMA_summer$mean_Poales)# 58.102 summer average including SB
 mean(subset(graminoids_by_HMA_summer, study.area != "SB")$mean_Poales) # 59.43886 summer average no SB 
+
+sd(graminoids_by_HMA_summer$mean_Poales)# 18.16 including SB
+sd(subset(graminoids_by_HMA_summer, study.area != "SB")$mean_Poales) # 17.9647 no SB 
+
+
+
 graminoids_by_HMA_winter<- subset(plant_order_by_HMA_season, season == "winter")#subset winter
 mean(graminoids_by_HMA_winter$mean_Poales)# 49.874 winter average
+sd(graminoids_by_HMA_winter$mean_Poales)# 17.74981 winter sd
 
 mean(plant_order_by_HMA_season$mean_Poales) #overall average = 54.12116 with SB
 mean(subset(plant_order_by_HMA_season, study.area != "SB")$mean_Poales) # 54.6566 average no SB 
+sd(subset(plant_order_by_HMA_season, study.area != "SB")$mean_Poales) # 18.20867 no SB
+sd(plant_order_by_HMA_season$mean_Poales) #18.14916 with SB
 ```
 #subset to each study area for analyses
 
@@ -1057,6 +1066,84 @@ TP_perm1
 TP_p_val<-TP_perm1[[1]]/1000
 TP_p_val #p=0.992
 ```
+#### independent bootstrapped (boot.t.test)
+```{r}
+set.seed(223)
+boot.t.test(x=AT_sum, y = AT_win, var.equal = TRUE) # p=0.851
+set.seed(223)
+boot.t.test(x=AT_sum, y = AT_win) # p=0.820
+
+set.seed(223)
+boot.t.test(x=CN_sum, y = CN_win, var.equal = TRUE) # p= 0.193
+set.seed(223)
+boot.t.test(x=CN_sum, y = CN_win)# p= 0.189
+
+set.seed(223)
+boot.t.test(x=FR_sum, y = FR_win, var.equal = TRUE) # p= 0.0001
+set.seed(223)
+boot.t.test(x=FR_sum, y = FR_win) # p=0.001
+
+set.seed(223)
+boot.t.test(x=GM_sum, y = GM_win, var.equal = TRUE) # p=0.1422
+set.seed(223)
+boot.t.test(x=GM_sum, y = GM_win) # p=0.1544
+
+set.seed(223)
+boot.t.test(x=LBC_sum, y = LBC_win, var.equal = TRUE) # p= 0.027
+set.seed(223)
+boot.t.test(x=LBC_sum, y = LBC_win) # p = 0.0258
+
+set.seed(223)
+boot.t.test(x=MP_sum, y = MP_win, var.equal = TRUE) # p= 0.5303
+set.seed(223)
+boot.t.test(x=MP_sum, y = MP_win) # p= 0.519
+
+set.seed(223)
+boot.t.test(x=NH_sum, y = NH_win, var.equal = TRUE) # p=0.1938
+set.seed(223)
+boot.t.test(x=NH_sum, y = NH_win) # p=0.1738
+
+set.seed(223)
+boot.t.test(x=ON_sum, y = ON_win, var.equal = TRUE) # p=0.0088
+set.seed(223)
+boot.t.test(x=ON_sum, y = ON_win) #p=0.017
+
+set.seed(223)
+boot.t.test(x=PB_sum, y = PB_win, var.equal = TRUE) # p= 0.0064
+set.seed(223)
+boot.t.test(x=PB_sum, y = PB_win) # p=0.0034
+
+set.seed(223)
+boot.t.test(x=PN_sum, y = PN_win, var.equal = TRUE) # p=0.6167
+set.seed(223)
+boot.t.test(x=PN_sum, y = PN_win) # p=0.6315
+
+set.seed(223)
+boot.t.test(x=RR_sum, y = RR_win, var.equal = TRUE) # p = 0.415
+set.seed(223)
+boot.t.test(x=RR_sum, y = RR_win) # p =0.4244
+
+set.seed(223)
+boot.t.test(x=SC_sum, y = SC_win, var.equal = TRUE) # p= 0.0001
+set.seed(223)
+boot.t.test(x=SC_sum, y = SC_win) # p=0.0032
+
+set.seed(223)
+boot.t.test(x=SS_sum, y = SS_win, var.equal = TRUE) #p= 0.6209
+set.seed(223)
+boot.t.test(x=SS_sum, y = SS_win) # p= 0.6183
+
+set.seed(223)
+boot.t.test(x=SW_sum, y = SW_win, var.equal = TRUE) # p=0.07501
+set.seed(223)
+boot.t.test(x=SW_sum, y = SW_win) # p=0.1022
+
+set.seed(223)
+boot.t.test(x=TP_sum, y = TP_win, var.equal = TRUE) # p=0.9763
+set.seed(223)
+boot.t.test(x=TP_sum, y = TP_win) # p=0.9981
+
+```
 
 
 #### paired
@@ -1439,17 +1526,23 @@ sum(BCS_by_HMA_summer$number)#707
 #seasonal summary stats
 #summer
 mean(BCS_by_HMA_summer$number) # number of obs per HMA average 44.1875
+sd(BCS_by_HMA_summer$number) # number of obs per HMA sd 21.98247
+
 mean(subset(BCS_by_HMA_summer, study.area != "SB")$number) # excluding SB data number of obs per HMA average 45.5333 
+sd(subset(BCS_by_HMA_summer, study.area != "SB")$number) # excluding SB data number of obs per HMA sd 22.06117
 
 mean(BCS_by_HMA_summer$mean_BCS) # BCS HMA average 5.01898
-mean(subset(BCS_by_HMA_summer, study.area != "SB")$mean_BCS) # excluding SB data number of obs per HMA average 5.014691 
+mean(subset(BCS_by_HMA_summer, study.area != "SB")$mean_BCS) # excluding SB HMA average 5.014691 
+sd(subset(BCS_by_HMA_summer, study.area != "SB")$mean_BCS) # excluding SB HMA sd 0.157855 
 
 
 #winter
 
 mean(BCS_by_HMA_winter$number) # number of obs per HMA average 46.8
-mean(BCS_by_HMA_winter$mean_BCS) # BCS HMA average 4.97807
+sd(BCS_by_HMA_winter$number) # number of obs per HMA sd 18.04043
 
+mean(BCS_by_HMA_winter$mean_BCS) # BCS HMA average 4.97807
+sd(BCS_by_HMA_winter$mean_BCS) # BCS HMA sd 0.138982
 ```
 
 ## Visualizations of BCS
@@ -1476,6 +1569,12 @@ BCS_hist +theme_bw() + theme(text = element_text(size = 16, family= "Times New R
 
 ggsave("body_condition_season_hist.png", width=10, height=7, dpi=300)
 
+#adding spaces 
+BCS_hist<- ggplot(individual_BCS, aes(x=body_condition_obs, fill=season))+geom_histogram(position=position_dodge(), binwidth = 0.5)
+
+BCS_hist +theme_bw() + theme(text = element_text(size = 16, family= "Times New Roman")) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_fill_manual(values=c("#db6d00","#006ddb")) + labs(title="Body Condition Observations by Season", x="Body Condition Score", y="Count")+ theme(plot.title = element_text(hjust = 0.5)) 
+
+ggsave("body_condition_season_hist2.png", width=10, height=7, dpi=300)
 
 ##NOTE THIS CHUNK IS FOR A VISUAL THAT IS NOT WORKING YET
 #stacked bar chart by HMA... work on this maybe- want a chart showing the proportion of each HMA with each observation numbers- how many 3, 4, 5 etc. 
@@ -1484,12 +1583,6 @@ BCS_stack_study_area<- ggplot(individual_BCS, aes(x=area_season, fill=body_condi
 BCS_stack_study_area<- ggplot(individual_BCS, aes(x=area_season, y=body_condition_obs, fill=body_condition_obs)) + geom_bar(stat="identity", position="fill")
 
 BCS_stack_study_area + theme(text = element_text(size = 12, family= "Times New Roman")) + theme(legend.text = element_text(size = 12, color="black")) + theme(axis.text = element_text(size = 12, color= "black")) + theme(axis.title = element_text(size = 12, color= "black"))  + labs(title="Body Condition Observations by Study Area", x="Body Condition Score", y="Count")+ theme(plot.title = element_text(hjust = 0.5)) + scale_fill_manual(values= c("#db6d00","#006ddb", "#ffff6d","#000000","#fdae61"))
-
-
-
-
-```
-
 
 ##BCS to graminoid comparison 
 
@@ -1590,7 +1683,6 @@ Figure5 #view
 ggsave("multipane_Fig5.png", width=18, height=12, dpi=300) #save
 
 ```
-
 
 ## seasonal BCS comparison
 ###individual HMAs(old name)
@@ -2163,6 +2255,262 @@ TP_p_valBCS #p=0.096
 
 
 ```
+###individual HMA bootstrap (boot.t.test)
+```{r}
+
+#Use default bootstrapped t, var=T did not work in all HMAs I think because of unequal sample sizes?
+
+#AT 
+View(AT_BCS) #check data 
+
+AT_BCS_sum<- AT_BCS[AT_BCS$season == "Summer",] #pull out summer observations
+AT_BCS_sum<-AT_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+AT_BCS_win<- AT_BCS[AT_BCS$season == "Winter",] #pull out winter observations
+AT_BCS_win<-AT_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=AT_BCS_sum, y = AT_BCS_win, var.equal = TRUE) # p=0.138
+
+set.seed(223)
+boot.t.test(x=AT_BCS_sum, y = AT_BCS_win) # p=0.1366
+
+#CN 
+View(CN_BCS) #check data 
+
+CN_BCS_sum<- CN_BCS[CN_BCS$season == "Summer",] #pull out summer observations
+CN_BCS_sum<-CN_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+CN_BCS_win<- CN_BCS[CN_BCS$season == "Winter",] #pull out winter observations
+CN_BCS_win<-CN_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=CN_BCS_sum, y=CN_BCS_win, var.equal = T) # ERROR
+set.seed(223)
+boot.t.test(x=CN_BCS_sum, y = CN_BCS_win, var.equal = TRUE, R = 999) # ERROR
+set.seed(223)
+boot.t.test(x=CN_BCS_sum, y = CN_BCS_win, var.equal = TRUE, R = 99) # p=0.6263
+
+set.seed(223)
+boot.t.test(x=CN_BCS_sum, y=CN_BCS_win) # p= 0.7339
+
+
+#FR 
+View(FR_BCS) #check data 
+
+FR_BCS_sum<- FR_BCS[FR_BCS$season == "Summer",] #pull out summer observations
+FR_BCS_sum<-FR_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+FR_BCS_win<- FR_BCS[FR_BCS$season == "Winter",] #pull out winter observations
+FR_BCS_win<-FR_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=FR_BCS_sum, y = FR_BCS_win, var.equal = TRUE) # ERROR
+
+set.seed(223)
+boot.t.test(x=FR_BCS_sum, y = FR_BCS_win, var.equal = TRUE, R = 999) # p=0.5105
+
+set.seed(223)
+boot.t.test(x=FR_BCS_sum, y = FR_BCS_win) # p= 0.4754
+
+#GM 
+View(GM_BCS) #check data 
+
+GM_BCS_sum<- GM_BCS[GM_BCS$season == "Summer",] #pull out summer observations
+GM_BCS_sum<-GM_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+GM_BCS_win<- GM_BCS[GM_BCS$season == "Winter",] #pull out winter observations
+GM_BCS_win<-GM_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=GM_BCS_sum, y = GM_BCS_win, var.equal = TRUE) # p=0.6303
+
+set.seed(223)
+boot.t.test(x=GM_BCS_sum, y = GM_BCS_win) # p=0.6251
+
+#LBC 
+View(LBC_BCS) #check data 
+
+LBC_BCS_sum<- LBC_BCS[LBC_BCS$season == "Summer",] #pull out summer observations
+LBC_BCS_sum<-LBC_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+LBC_BCS_win<- LBC_BCS[LBC_BCS$season == "Winter",] #pull out winter observations
+LBC_BCS_win<-LBC_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=LBC_BCS_sum, y = LBC_BCS_win, var.equal = TRUE) # p=0.4144
+set.seed(223)
+boot.t.test(x=LBC_BCS_sum, y = LBC_BCS_win) # p=0.251
+
+#MP 
+View(MP_BCS) #check data 
+
+MP_BCS_sum<- MP_BCS[MP_BCS$season == "Summer",] #pull out summer observations
+MP_BCS_sum<-MP_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+MP_BCS_win<- MP_BCS[MP_BCS$season == "Winter",] #pull out winter observations
+MP_BCS_win<-MP_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=MP_BCS_sum, y = MP_BCS_win, var.equal = TRUE) # p=0.8397
+
+set.seed(223)
+boot.t.test(x=MP_BCS_sum, y = MP_BCS_win) # p=0.8381
+
+#NH 
+View(NH_BCS) #check data 
+
+NH_BCS_sum<- NH_BCS[NH_BCS$season == "Summer",] #pull out summer observations
+NH_BCS_sum<-NH_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+NH_BCS_win<- NH_BCS[NH_BCS$season == "Winter",] #pull out winter observations
+NH_BCS_win<-NH_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=NH_BCS_sum, y = NH_BCS_win, var.equal = TRUE) # p=0.4868
+
+set.seed(223)
+boot.t.test(x=NH_BCS_sum, y = NH_BCS_win) # p=0.4608
+
+#ON 
+View(ON_BCS) #check data 
+
+ON_BCS_sum<- ON_BCS[ON_BCS$season == "Summer",] #pull out summer observations
+ON_BCS_sum<-ON_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+ON_BCS_win<- ON_BCS[ON_BCS$season == "Winter",] #pull out winter observations
+ON_BCS_win<-ON_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=ON_BCS_sum, y = ON_BCS_win, var.equal = TRUE) # p=0.2374
+
+set.seed(223)
+boot.t.test(x=ON_BCS_sum, y = ON_BCS_win) # p=0.2636
+
+
+#PB 
+View(PB_BCS) #check data 
+
+PB_BCS_sum<- PB_BCS[PB_BCS$season == "Summer",] #pull out summer observations
+PB_BCS_sum<-PB_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+PB_BCS_win<- PB_BCS[PB_BCS$season == "Winter",] #pull out winter observations
+PB_BCS_win<-PB_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=PB_BCS_sum, y = PB_BCS_win, var.equal = TRUE) # p=0.0072
+
+set.seed(223)
+boot.t.test(x=PB_BCS_sum, y = PB_BCS_win) # p=0.0026
+
+#PN 
+View(PN_BCS) #check data 
+
+PN_BCS_sum<- PN_BCS[PN_BCS$season == "Summer",] #pull out summer observations
+PN_BCS_sum<-PN_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+PN_BCS_win<- PN_BCS[PN_BCS$season == "Winter",] #pull out winter observations
+PN_BCS_win<-PN_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=PN_BCS_sum, y = PN_BCS_win, var.equal = TRUE) # ERROR
+set.seed(223)
+boot.t.test(x=PN_BCS_sum, y = PN_BCS_win, var.equal = TRUE, R=999) # p=0.2242
+
+set.seed(223)
+boot.t.test(x=PN_BCS_sum, y = PN_BCS_win) # p=0.1762
+
+#RR 
+View(RR_BCS) #check data 
+
+RR_BCS_sum<- RR_BCS[RR_BCS$season == "Summer",] #pull out summer observations
+RR_BCS_sum<-RR_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+RR_BCS_win<- RR_BCS[RR_BCS$season == "Winter",] #pull out winter observations
+RR_BCS_win<-RR_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=RR_BCS_sum, y = RR_BCS_win, var.equal = TRUE) # p=0.6995
+
+set.seed(223)
+boot.t.test(x=RR_BCS_sum, y = RR_BCS_win) # p=0.6977
+
+#SC 
+View(SC_BCS) #check data 
+
+SC_BCS_sum<- SC_BCS[SC_BCS$season == "Summer",] #pull out summer observations
+SC_BCS_sum<-SC_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+SC_BCS_win<- SC_BCS[SC_BCS$season == "Winter",] #pull out winter observations
+SC_BCS_win<-SC_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=SC_BCS_sum, y = SC_BCS_win, var.equal = TRUE) # p=0.9081
+set.seed(223)
+boot.t.test(x=SC_BCS_sum, y = SC_BCS_win) # p=0.9317
+
+#SS 
+View(SS_BCS) #check data 
+
+SS_BCS_sum<- SS_BCS[SS_BCS$season == "Summer",] #pull out summer observations
+SS_BCS_sum<-SS_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+SS_BCS_win<- SS_BCS[SS_BCS$season == "Winter",] #pull out winter observations
+SS_BCS_win<-SS_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=SS_BCS_sum, y = SS_BCS_win, var.equal = TRUE) # p=0.0001
+set.seed(223)
+boot.t.test(x=SS_BCS_sum, y = SS_BCS_win) # p=0.0001
+
+#SW 
+View(SW_BCS) #check data 
+
+SW_BCS_sum<- SW_BCS[SW_BCS$season == "Summer",] #pull out summer observations
+SW_BCS_sum<-SW_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+SW_BCS_win<- SW_BCS[SW_BCS$season == "Winter",] #pull out winter observations
+SW_BCS_win<-SW_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=SW_BCS_sum, y = SW_BCS_win, var.equal = TRUE) # p=0.2778
+set.seed(223)
+boot.t.test(x=SW_BCS_sum, y = SW_BCS_win) # p=0.2732
+
+#TP 
+View(TP_BCS) #check data 
+
+TP_BCS_sum<- TP_BCS[TP_BCS$season == "Summer",] #pull out summer observations
+TP_BCS_sum<-TP_BCS_sum$body_condition_obs #pull data from just BCS column summer values
+
+
+TP_BCS_win<- TP_BCS[TP_BCS$season == "Winter",] #pull out winter observations
+TP_BCS_win<-TP_BCS_win$body_condition_obs #pull data from just BCS column winter values
+
+set.seed(223)
+boot.t.test(x=TP_BCS_sum, y = TP_BCS_win, var.equal = TRUE) # ERROR
+set.seed(223)
+boot.t.test(x=TP_BCS_sum, y = TP_BCS_win, var.equal = TRUE, R=999) # p=0.1381
+
+set.seed(223)
+boot.t.test(x=TP_BCS_sum, y = TP_BCS_win) # p=0.08001
+
+```
+
 
 ###range
 ```{r}
@@ -2309,7 +2657,7 @@ ggsave("herb_cover_graminoid_summer.png", width=10, height=7, dpi=300)
 
 
 ### Total grass forb biomass
-Fig3B<-ggplot(data=graminoids_by_HMA_summer2, aes(x=RAP_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Summer", x="HMA Herbaceous Biomass (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=390, y=0.25, label=" Spearman's rho = -0.439,  p= 0.103",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+Fig3B<-ggplot(data=graminoids_by_HMA_summer2, aes(x=RAP_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Summer", x="HMA Herbaceous Biomass (lbs/acre)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=390, y=0.25, label=" Spearman's rho = -0.439,  p= 0.103",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
 
 cor.test(graminoids_by_HMA_summer2$mean_Poales, graminoids_by_HMA_summer2$RAP_herb_biomass, method="spearman") #not significant p=0.1032 rho= -0.439
 
@@ -2365,7 +2713,7 @@ cor.test(graminoids_by_HMA_winter$mean_Poales, graminoids_by_HMA_winter$RAP_tota
 
 
 ### Total grass forb biomass
-Fig3F<- ggplot(data=graminoids_by_HMA_winter, aes(x=RAP_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Winter", x="HMA Herbaceous Biomass (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=395, y=0.05, label=" Spearman's rho = -0.371,  p= 0.174",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+Fig3F<- ggplot(data=graminoids_by_HMA_winter, aes(x=RAP_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Winter", x="HMA Herbaceous Biomass (lbs/acre)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=395, y=0.05, label=" Spearman's rho = -0.371,  p= 0.174",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
 
 ggsave("herb_bio_graminoid_winter.png", width=10, height=7, dpi=300)
 
@@ -2373,7 +2721,6 @@ cor.test(graminoids_by_HMA_winter$mean_Poales, graminoids_by_HMA_winter$RAP_herb
 
 cor.test(graminoids_by_HMA_winter$mean_Poales, graminoids_by_HMA_winter$RAP_herb_biomass, method="pearson") #not significant p=0.2912 cor= -.29187
 ```
-
 ## Individual buffer data
 ###prep files
 
@@ -2475,7 +2822,7 @@ cor.test(RAP_and_poales_by_HMA_summer2$mean_herb_cover, RAP_and_poales_by_HMA_su
 
 #Biomass
 
-Fig3D<-ggplot(data=RAP_and_poales_by_HMA_summer2, aes(x=mean_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Summer", x= "Herd Average Buffered Herbaceous Biomass (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=425, y=0.22, label=" Spearman's rho = -0.479,  p= 0.073",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+Fig3D<-ggplot(data=RAP_and_poales_by_HMA_summer2, aes(x=mean_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Summer", x= "Herd Average Buffered Herbaceous Biomass (lbs/acre)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=425, y=0.22, label=" Spearman's rho = -0.479,  p= 0.073",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
 
 
 ggsave("herb_bio_graminoid_summer_buffer.png", width=10, height=7, dpi=300)
@@ -2492,7 +2839,7 @@ cor.test(RAP_and_poales_by_HMA_summer2$mean_herb_biomass, RAP_and_poales_by_HMA_
 ```{r}
 #Cover 
 
-Fig3G<-ggplot(data=RAP_and_poales_by_HMA_winter, aes(x=mean_herb_cover, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Winter", x="% Herd Average Buffered Herbaceous Cover (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=32.5, y=0.05, label=" Spearman's rho = -0.268,  p= 0.333",color="black", size=8,  family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+Fig3G<-ggplot(data=RAP_and_poales_by_HMA_winter, aes(x=mean_herb_cover, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Winter", x="Herd Average Buffered Herbaceous Cover (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=32.5, y=0.05, label=" Spearman's rho = -0.268,  p= 0.333",color="black", size=8,  family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
 
 ggsave("herb_cover_graminoid_winter_buffer.png", width=10, height=7, dpi=300)
 
@@ -2503,7 +2850,7 @@ cor.test(RAP_and_poales_by_HMA_winter$mean_herb_cover, RAP_and_poales_by_HMA_win
 
 #Biomass
 
-Fig3H<-ggplot(data=RAP_and_poales_by_HMA_winter, aes(x=mean_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Winter", x="% Herd Average Buffered Herbaceous Biomass (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=425, y=0.05, label=" Spearman's rho = -0.286,  p= 0.301",color="black", size = 8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+Fig3H<-ggplot(data=RAP_and_poales_by_HMA_winter, aes(x=mean_herb_biomass, y=mean_Poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Graminoids in Diet (%) Winter", x="Herd Average Buffered Herbaceous Biomass (lbs/acre)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=425, y=0.05, label=" Spearman's rho = -0.286,  p= 0.301",color="black", size = 8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
 
 
 ggsave("herb_bio_graminoid_winter_buffer.png", width=10, height=7, dpi=300)
@@ -2523,7 +2870,7 @@ Figure3<-ggarrange(Fig3A, Fig3E , Fig3B, Fig3F, Fig3C, Fig3G, Fig3D, Fig3H, labe
 Figure3 #View
 
 
-ggsave("multipane_Fig3.png", width=15, height=20, dpi=300)#save
+ggsave("multipane_Fig3new.png", width=15, height=20, dpi=300)#save
 ```
 
 
@@ -2538,8 +2885,530 @@ ggplot(data=metadata_RAP_family, aes(x=RAP_total_GF, y=Poales))+ geom_point(aes(
 
 ggsave("individual_herb__graminoid.png", width=10, height=7, dpi=300)
 
+
+#correlations
+cor.test(metadata_RAP_family$RAP_total_GF, metadata_RAP_family$Poales, method="spearman") #significant p= 1.85 e-5 rho = -0.1972
+
+cor.test(metadata_RAP_family$RAP_total_GF, metadata_RAP_family$Poales, method="pearson") #significant p=0.00068 cor = -0.1568
+
+```
+#### logit individuals 
+```{r}
+#fix values that are > 1 to 1, replace 1 to 0.99999 and 0 to 0.000001
+metadata_RAP_family2<-metadata_RAP_family
+View(metadata_RAP_family2)
+metadata_RAP_family2[265, 74] = 1.00000
+metadata_RAP_family2[59, 74] = 1.00000
+metadata_RAP_family2[34, 74] = 1.00000
+
+#These 2 lines of code makes the scales for the 0 and 1 values get weird... can run without/ with these lines and results are similar.  If run without the logit function adjusts for the 0 and 1
+metadata_RAP_family2$Poales[metadata_RAP_family2$Poales==1]<-0.99999
+metadata_RAP_family2$Poales[metadata_RAP_family2$Poales==0]<-0.0000001
+
+metadata_RAP_family2$logit_poales<-logit(p=metadata_RAP_family2$Poales, percents=FALSE)#transform
+View(metadata_RAP_family2)#check
+
+
+
+ggplot(data=metadata_RAP_family2, aes(x=RAP_total_GF, y=logit_poales))+ geom_point(aes(color=study.area.y, shape=season.y), size=5) + theme_bw()+labs(title = "Individual Horse Buffered Herbaceous Cover and Graminoids in Diet logit by HMA and Season", y= "Logit Graminoids in Diet", x=" Movement Buffer Herbaceous Cover") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) + scale_color_manual(values=c("#db6d00","#006ddb", "#e94c1f", "#000000","#fdae61", "#009292", "#24ff24","#ff6db6","#b6dbff",
+ "#490092","#b66dff",
+ "#920000", "#6db6ff","#004949",  "#924900","#ffb6db", "#FFFF00",  "#f7f7f7" ))+ theme(text = element_text(family= "Times New Roman"))
+
+#correlations
+cor.test(metadata_RAP_family2$RAP_total_GF, metadata_RAP_family2$logit_poales, method="spearman") #significant p= 1.84 e-5 rho = -0.1972
+
+cor.test(metadata_RAP_family2$RAP_total_GF, metadata_RAP_family2$logit_poales, method="pearson") #significant p=0.00019 cor = -0.17179
+
+
+# Set to run without SB
+metadata_RAP_family2<-metadata_RAP_family
+metadata_RAP_family2<-subset(metadata_RAP_family2, study.area.y != "SB")
+
+#fix values that are > 1 to 1, replace 1 to 0.99999 and 0 to 0.000001
+
+View(metadata_RAP_family2)
+metadata_RAP_family2[250, 74] = 1.00000
+metadata_RAP_family2[59, 74] = 1.00000
+metadata_RAP_family2[34, 74] = 1.00000
+
+#These 2 lines of code makes the scales for the 0 and 1 values get weird... can run without/ with these lines and results are similar.  If run without the logit function adjusts for the 0 and 1 
+metadata_RAP_family2$Poales[metadata_RAP_family2$Poales==1]<-0.99999
+metadata_RAP_family2$Poales[metadata_RAP_family2$Poales==0]<-0.0000001
+
+metadata_RAP_family2$logit_poales<-logit(p=metadata_RAP_family2$Poales, percents=FALSE)#transform
+View(metadata_RAP_family2)#check
+
+
+
+ggplot(data=metadata_RAP_family2, aes(x=RAP_total_GF, y=logit_poales))+ geom_point(aes(color=study.area.y, shape=season.y), size=5) + theme_bw()+labs(title = "Individual Horse Buffered Herbaceous Cover and Graminoids in Diet logit by HMA and Season", y= "Logit Graminoids in Diet", x=" Movement Buffer Herbaceous Cover") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) + scale_color_manual(values=c("#db6d00","#006ddb", "#e94c1f", "#000000","#fdae61", "#009292", "#24ff24","#ff6db6","#b6dbff",
+ "#490092","#b66dff",
+ "#920000", "#6db6ff","#004949",  "#924900","#ffb6db", "#FFFF00",  "#f7f7f7" ))+ theme(text = element_text(family= "Times New Roman")) + geom_smooth(method='lm')
+
+#correlations
+cor.test(metadata_RAP_family2$RAP_total_GF, metadata_RAP_family2$logit_poales, method="spearman") #significant p= 0.000127 rho = -0.17959
+
+cor.test(metadata_RAP_family2$RAP_total_GF, metadata_RAP_family2$logit_poales, method="pearson") #significant p=0.002605 cor = -0.1416
+
+
+
 ```
 
+
+
+#Logit transformed comparisons
+## gramioids and BCS
+```{r}
+
+#Correlations of gramminoid composition to BCS on herd averages Logit transformed
+
+########### summer ######################
+
+#check dataframes to use
+View(BCS_by_HMA_summer)#check the subset
+
+View(graminoids_by_HMA_summer)#check
+
+View(BCS_by_HMA_summer2)#check
+
+View(graminoids_by_HMA_summer2)#check
+
+#logit transform graminoid proportions
+
+graminoids_by_HMA_summer$logit_poales<-logit(p=graminoids_by_HMA_summer$mean_Poales, percents=FALSE)#transform
+View(graminoids_by_HMA_summer)#check
+
+graminoids_by_HMA_summer2$logit_poales<-logit(p=graminoids_by_HMA_summer2$mean_Poales, percents=FALSE)#transform
+View(graminoids_by_HMA_summer2)#check
+
+## with SB
+ggplot(data=graminoids_by_HMA_summer, aes(x=logit_poales, y=mean_BCS, color=epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco, size=5)) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of HMA Average BCS and Graminoids Composition Summer", x=" Logit graminoids diet", y="Herd BCS") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) 
+
+
+cor.test(graminoids_by_HMA_summer$logit_poales, graminoids_by_HMA_summer$mean_BCS, method="spearman") #significant p=0.01893 rho = -0.578366
+
+cor.test(graminoids_by_HMA_summer$logit_poales, graminoids_by_HMA_summer$mean_BCS, method="pearson") #significant p=0.02909 cor = -0.54482
+
+####without SB ################## THIS IS ONE USED IN PAPER
+
+ggplot(data=graminoids_by_HMA_summer2, aes(x=logit_poales, y=mean_BCS, color=epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco, size=5)) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(x="Logit graminoids in diet summer", y=" Summer herd average BCS") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=0.48, y= 4.6, label=" Spearman's rho = -0.554,  p= 0.035",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+cor.test(graminoids_by_HMA_summer2$logit_poales, graminoids_by_HMA_summer2$mean_BCS, method="spearman") #significant p=0.03491 rho = -0.5535
+
+cor.test(graminoids_by_HMA_summer2$logit_poales, graminoids_by_HMA_summer2$mean_BCS, method="pearson") #significant p=0.0383 cor = -0.5385586
+
+
+########### winter ######################
+
+#check dataframes
+
+View(BCS_by_HMA_winter)#check  
+View(graminoids_by_HMA_winter)#check
+
+#logit transform graminoid proportions
+
+graminoids_by_HMA_winter$logit_poales<-logit(p=graminoids_by_HMA_winter$mean_Poales, percents=FALSE)#transform
+View(graminoids_by_HMA_winter)#check
+
+
+ggplot(data=graminoids_by_HMA_winter, aes(x=logit_poales, y=mean_BCS, color=epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco, size=5)) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(x="Logit graminoids in diet winter", y="Winter herd average BCS") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=0.35, y= 4.6, label=" Spearman's rho = -0.118,  p= 0.676",color="black", size=8, family= "Times New Roman") + theme(text = element_text(family= "Times New Roman"))
+
+
+cor.test(graminoids_by_HMA_winter$logit_poales, graminoids_by_HMA_winter$mean_BCS, method="spearman") # not significant p=0.6763 rho = -0.1179
+
+cor.test(graminoids_by_HMA_winter$logit_poales, graminoids_by_HMA_winter$mean_BCS, method="pearson") # not significant p=0.9322 cor = -0.02405
+
+ 
+
+###### Summer grass and winter body condition #############
+
+# check that the summer poales value is in winter dataframe
+
+View(graminoids_by_HMA_winter) #yes
+
+#logit transform graminoid proportions
+
+graminoids_by_HMA_winter$summer_logit_poales<-logit(p=graminoids_by_HMA_winter$summer_Poales, percents=FALSE)#transform
+View(graminoids_by_HMA_winter)#check
+
+#corelations
+
+ggplot(data=graminoids_by_HMA_winter, aes(x=summer_logit_poales, y=mean_BCS, color=epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco, size=5)) +geom_smooth(method=lm, color="black")+ theme_bw()+labs( x="Logit graminoids in diet summer", y="Winter herd average BCS") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=0.48, y= 4.6, label=" Spearman's rho = -0.068,  p= 0.812",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+  
+cor.test(graminoids_by_HMA_winter$summer_logit_poales, graminoids_by_HMA_winter$mean_BCS, method="pearson") #not significant p=0.6513 cor= -0.1272 
+
+cor.test(graminoids_by_HMA_winter$summer_logit_poales, graminoids_by_HMA_winter$mean_BCS, method="spearman") # not significant p=0.8124 rho = -0.067857
+```
+## gramioids and cover/biomass
+###Summer
+```{r}
+################## HMA average correlations ###################################
+
+############## full set of 16 HMA #######################
+
+View(graminoids_by_HMA_summer)#make sure it is the dataframe that I want
+
+### Total grass forb cover
+ggplot(data=graminoids_by_HMA_summer, aes(x=RAP_total_GF, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of HMA Herbaceous Cover and Graminoids consumed Summer", y="Logit Graminoids diet", x="% Herbaceous cover HMA") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))
+
+cor.test(graminoids_by_HMA_summer$logit_poales, graminoids_by_HMA_summer$RAP_total_GF, method="spearman") #not significant p=0.1582 rho= -0.3706
+
+cor.test(graminoids_by_HMA_summer$logit_poales, graminoids_by_HMA_summer$RAP_total_GF, method="pearson") #not significant p=0.1471 cor= -.37952
+
+
+### Total grass forb biomass
+ggplot(data=graminoids_by_HMA_summer, aes(x=RAP_herb_biomass, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of HMA Herbaceous Biomass and Graminoids consumed Summer", y="Logit Graminoids", x="% Herbaceous Biomass HMA") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))
+
+cor.test(graminoids_by_HMA_summer$logit_poales, graminoids_by_HMA_summer$RAP_herb_biomass, method="spearman") #not significant p=0.1062 rho= -0.4206
+
+cor.test(graminoids_by_HMA_summer$logit_poales, graminoids_by_HMA_summer$RAP_herb_biomass, method="pearson") #not significant p=0.1839 cor= -.34994
+
+
+
+############ Without sand basin ###############
+View(graminoids_by_HMA_summer2) #check it is correct dataframe
+
+### Total grass forb cover
+ggplot(data=graminoids_by_HMA_summer2, aes(x=RAP_total_GF, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Summer", x="HMA Herbaceous Cover (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=29, y=0.28, label=" Spearman's rho = -0.379,  p= 0.165",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+cor.test(graminoids_by_HMA_summer2$logit_poales, graminoids_by_HMA_summer2$RAP_total_GF, method="spearman") #not significant p=0.1649 rho= -0.3786
+
+cor.test(graminoids_by_HMA_summer2$logit_poales, graminoids_by_HMA_summer2$RAP_total_GF, method="pearson") #not significant p=0.2753 cor= -.3012
+
+
+### Total grass forb biomass
+ggplot(data=graminoids_by_HMA_summer2, aes(x=RAP_herb_biomass, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Summer", x="HMA Herbaceous Biomass (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=390, y=0.25, label=" Spearman's rho = -0.439,  p= 0.103",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+cor.test(graminoids_by_HMA_summer2$logit_poales, graminoids_by_HMA_summer2$RAP_herb_biomass, method="spearman") #not significant p=0.1032 rho= -0.439
+
+cor.test(graminoids_by_HMA_summer2$logit_poales, graminoids_by_HMA_summer2$RAP_herb_biomass, method="pearson") #not significant p=0.3636 cor= -.2526
+
+
+
+############### Buffered HMA correlations ##################################
+
+########### With SB ######################
+
+View(RAP_and_poales_by_HMA_summer) #check dataframe
+
+RAP_and_poales_by_HMA_summer$logit_poales<-logit(p=RAP_and_poales_by_HMA_summer$mean_Poales, percents=FALSE)#transform
+View(RAP_and_poales_by_HMA_summer)#check
+
+#Cover 
+
+ggplot(data=RAP_and_poales_by_HMA_summer, aes(x=mean_herb_cover, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of Herd Average Buffered Herbaceous Cover and Logit Graminoids consumed Summer", y="Logit Graminoids diet", x="% Average Herd Buffered Herbaceous Cover") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))
+
+
+cor.test(RAP_and_poales_by_HMA_summer$mean_herb_cover, RAP_and_poales_by_HMA_summer$logit_poales, method="spearman")#borderline significant p=0.05085 rho = -0.500
+
+
+cor.test(RAP_and_poales_by_HMA_summer$mean_herb_cover, RAP_and_poales_by_HMA_summer$logit_poales, method="pearson")#borderline significant p=0.06945 cor = -0.4651
+
+#Biomass
+
+ggplot(data=RAP_and_poales_by_HMA_summer, aes(x=mean_herb_biomass, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(title = "Correlation of Herd Average Buffered Herbaceous Biomass and Logit Graminoids consumed Summer", y="Logit Graminoids diet", x="% Average Herd Buffered Herbaceous Biomass") + theme(text = element_text(size = 16)) + theme(plot.title = element_text(hjust = 0.5, size = 16)) + theme(legend.text = element_text(size = 16, color="black")) + theme(axis.text = element_text(size = 16, color= "black")) + theme(axis.title = element_text(size = 16, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))
+
+
+
+cor.test(RAP_and_poales_by_HMA_summer$mean_herb_biomass, RAP_and_poales_by_HMA_summer$logit_poales, method="spearman")#borderline significant p=0.05558 rho = -0.49117
+
+
+cor.test(RAP_and_poales_by_HMA_summer$mean_herb_biomass, RAP_and_poales_by_HMA_summer$logit_poales, method="pearson")#borderline significant p=0.06174 cor = -0.476985
+
+
+########### Without SB ###################### 
+
+
+View(RAP_and_poales_by_HMA_summer2)#check dataframe
+
+RAP_and_poales_by_HMA_summer2$logit_poales<-logit(p=RAP_and_poales_by_HMA_summer2$mean_Poales, percents=FALSE)#transform
+View(RAP_and_poales_by_HMA_summer2)#check
+
+
+#Cover 
+
+ggplot(data=RAP_and_poales_by_HMA_summer2, aes(x=mean_herb_cover, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Summer", x="Herd Average Buffered Herbaceous Cover (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=32.25, y=0.24, label=" Spearman's rho = -0.475,  p= 0.076",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+
+cor.test(RAP_and_poales_by_HMA_summer2$mean_herb_cover, RAP_and_poales_by_HMA_summer2$logit_poales, method="spearman")#borderline significant p=0.07587 rho = -0.475
+
+
+
+cor.test(RAP_and_poales_by_HMA_summer2$mean_herb_cover, RAP_and_poales_by_HMA_summer2$logit_poales, method="pearson")#not significant p=0.1581 cor = -0.383589
+
+#Biomass
+
+ggplot(data=RAP_and_poales_by_HMA_summer2, aes(x=mean_herb_biomass, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Summer", x= "Herd Average Buffered Herbaceous Biomass") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + annotate(geom="text", x=425, y=0.22, label=" Spearman's rho = -0.479,  p= 0.073",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+
+cor.test(RAP_and_poales_by_HMA_summer2$mean_herb_biomass, RAP_and_poales_by_HMA_summer2$logit_poales, method="spearman")#borderline significant p=0.07347 rho = -0.47857
+
+
+cor.test(RAP_and_poales_by_HMA_summer2$mean_herb_biomass, RAP_and_poales_by_HMA_summer2$logit_poales, method="pearson")#not significant p=0.1369 cor = -0.4025
+
+```
+###Winter
+```{r}
+############# HMA averages correlations #########################
+
+View(graminoids_by_HMA_winter)
+
+### Total grass forb cover
+ggplot(data=graminoids_by_HMA_winter, aes(x=RAP_total_GF, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Winter", x="HMA Herbaceous Cover (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=29, y=0.05, label=" Spearman's rho = -0.279,  p= 0.314",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+cor.test(graminoids_by_HMA_winter$logit_poales, graminoids_by_HMA_winter$RAP_total_GF, method="spearman") #not significant p=0.3138 rho= -0.2785
+
+cor.test(graminoids_by_HMA_winter$logit_poales, graminoids_by_HMA_winter$RAP_total_GF, method="pearson") #not significant p=0.4058 cor= -.23178
+
+
+
+### Total grass forb biomass
+ggplot(data=graminoids_by_HMA_winter, aes(x=RAP_herb_biomass, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Winter", x="HMA Herbaceous Biomass") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=395, y=0.05, label=" Spearman's rho = -0.371,  p= 0.174",color="black", size=8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+cor.test(graminoids_by_HMA_winter$logit_poales, graminoids_by_HMA_winter$RAP_herb_biomass, method="spearman") #not significant p=0.1735 rho= -0.3714
+
+cor.test(graminoids_by_HMA_winter$logit_poales, graminoids_by_HMA_winter$RAP_herb_biomass, method="pearson") #not significant p=0.3462 cor= -.2616
+
+############### Buffered HMA correlations ##################################
+
+View(RAP_and_poales_by_HMA_winter) #check which dataframe
+RAP_and_poales_by_HMA_winter$logit_poales<-logit(p=RAP_and_poales_by_HMA_winter$mean_Poales, percents=FALSE)#transform
+View(RAP_and_poales_by_HMA_winter)#check
+
+#Cover 
+
+ggplot(data=RAP_and_poales_by_HMA_winter, aes(x=mean_herb_cover, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Winter", x="% Herd Average Buffered Herbaceous Cover (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=32.5, y=0.05, label=" Spearman's rho = -0.268,  p= 0.333",color="black", size=8,  family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+cor.test(RAP_and_poales_by_HMA_winter$mean_herb_cover, RAP_and_poales_by_HMA_winter$logit_poales, method="spearman")#not significant p=0.3334 rho = -0.2679
+
+
+cor.test(RAP_and_poales_by_HMA_winter$mean_herb_cover, RAP_and_poales_by_HMA_winter$logit_poales, method="pearson")#not significant p=0.820 rho = -0.0643
+
+#Biomass
+
+ggplot(data=RAP_and_poales_by_HMA_winter, aes(x=mean_herb_biomass, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Winter", x="% Herd Average Buffered Herbaceous Biomass (%)") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ annotate(geom="text", x=425, y=0.05, label=" Spearman's rho = -0.286,  p= 0.301",color="black", size = 8, family= "Times New Roman")+ theme(text = element_text(family= "Times New Roman"))
+
+
+cor.test(RAP_and_poales_by_HMA_winter$mean_herb_biomass, RAP_and_poales_by_HMA_winter$logit_poales, method="spearman")#not significant p=0.3011 rho = -0.2857
+
+
+cor.test(RAP_and_poales_by_HMA_winter$mean_herb_biomass, RAP_and_poales_by_HMA_winter$logit_poales, method="pearson")#not significant p=0.471 cor = -0.202
+```
+### Transformed Cover 
+```{r}
+######### SUMMER ################ 
+################## HMA average correlations ###################################
+#(no SB)
+
+View(graminoids_by_HMA_summer2) #check it is correct dataframe
+graminoids_by_HMA_summer2$logit_cover<- (graminoids_by_HMA_summer2$RAP_total_GF)/100 #turn cover % into proportion
+graminoids_by_HMA_summer2$logit_cover<-logit(p=graminoids_by_HMA_summer2$logit_cover, percents=FALSE)#transform
+View(graminoids_by_HMA_summer2)#check
+
+
+### Total grass forb cover
+ggplot(data=graminoids_by_HMA_summer2, aes(x=logit_cover, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Summer", x="Logit Herbaceous Cover") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + theme(text = element_text(family= "Times New Roman"))
+
+cor.test(graminoids_by_HMA_summer2$logit_poales, graminoids_by_HMA_summer2$logit_cover, method="spearman") #not significant p=0.1649 rho= -0.3786
+
+cor.test(graminoids_by_HMA_summer2$logit_poales, graminoids_by_HMA_summer2$logit_cover, method="pearson") #not significant p=0.2151 cor= -.339944
+
+
+############### Buffered HMA correlations ##################################
+########### Without SB ###################### 
+
+
+View(RAP_and_poales_by_HMA_summer2)#check dataframe
+
+RAP_and_poales_by_HMA_summer2$logit_cover<- (RAP_and_poales_by_HMA_summer2$mean_herb_cover)/100 #turn cover % into proportion
+
+RAP_and_poales_by_HMA_summer2$logit_cover<-logit(p=RAP_and_poales_by_HMA_summer2$logit_cover, percents=FALSE)#transform
+View(RAP_and_poales_by_HMA_summer2)#check
+
+
+#Cover 
+
+ggplot(data=RAP_and_poales_by_HMA_summer2, aes(x=logit_cover, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Summer", x="Logit Herd Average Herbaceous Cover") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18)) + theme(text = element_text(family= "Times New Roman"))
+
+
+
+cor.test(RAP_and_poales_by_HMA_summer2$logit_cover, RAP_and_poales_by_HMA_summer2$logit_poales, method="spearman")#borderline significant p=0.07587 rho = -0.475
+
+
+
+cor.test(RAP_and_poales_by_HMA_summer2$logit_cover, RAP_and_poales_by_HMA_summer2$logit_poales, method="pearson")#not significant p=0.1202 cor = -0.4188
+
+
+######## Winter ######################
+
+############# HMA averages correlations #########################
+
+View(graminoids_by_HMA_winter) #check which dataframe I am using 
+
+graminoids_by_HMA_winter$logit_cover<- (graminoids_by_HMA_winter$RAP_total_GF)/100 #turn cover % into proportion
+graminoids_by_HMA_winter$logit_cover<-logit(p=graminoids_by_HMA_winter$logit_cover, percents=FALSE)#transform
+View(graminoids_by_HMA_winter)#check
+
+### Total grass forb cover
+ggplot(data=graminoids_by_HMA_winter, aes(x=logit_cover, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Winter", x="Logit Herbaceous Cover") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ theme(text = element_text(family= "Times New Roman"))
+
+
+cor.test(graminoids_by_HMA_winter$logit_poales, graminoids_by_HMA_winter$logit_cover, method="spearman") #not significant p=0.3138 rho= -0.2785
+
+cor.test(graminoids_by_HMA_winter$logit_poales, graminoids_by_HMA_winter$logit_cover, method="pearson") #not significant p=0.411 cor= -.2293
+
+
+############### Buffered HMA correlations ##################################
+
+View(RAP_and_poales_by_HMA_winter) #check which dataframe
+RAP_and_poales_by_HMA_winter$logit_cover<- (RAP_and_poales_by_HMA_winter$mean_herb_cover)/100 #turn cover % into proportion
+RAP_and_poales_by_HMA_winter$logit_cover<-logit(p=RAP_and_poales_by_HMA_winter$logit_cover, percents=FALSE)#transform
+View(RAP_and_poales_by_HMA_winter)#check
+
+#Cover 
+
+ggplot(data=RAP_and_poales_by_HMA_winter, aes(x=logit_cover, y=logit_poales, color= epa_eco))+ geom_point(aes(shape=epa_eco, color=epa_eco), size=5) +geom_smooth(method=lm, color="black")+ theme_bw()+labs(y="Logit Graminoids in Diet Winter", x="Logit Herd Buffered Herbaceous Cover") + theme(text = element_text(size = 20)) + theme(plot.title = element_text(hjust = 0.5, size = 20)) + theme(legend.text = element_text(size = 20, color="black")) + theme(axis.text = element_text(size = 20, color= "black")) + theme(axis.title = element_text(size = 20, color= "black")) +scale_color_manual(name="EPA III Ecoregion", values=c("#000000", "#009E73", "#E69F00", "#56B4E9", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")) + scale_shape_manual(values=c(1,7,15,16,17,18))+ theme(text = element_text(family= "Times New Roman"))
+
+
+cor.test(RAP_and_poales_by_HMA_winter$logit_cover, RAP_and_poales_by_HMA_winter$logit_poales, method="spearman")#not significant p=0.3334 rho = -0.2679
+
+
+cor.test(RAP_and_poales_by_HMA_winter$logit_cover, RAP_and_poales_by_HMA_winter$logit_poales, method="pearson")#not significant p=0.761 rho = -0.0857
+
+```
+#Logit transformed linear regressions
+## Response transformed Graminoids, predictor cover/biomass
+```{r}
+##Summer (no SB) 
+
+#### Cover
+
+View(graminoids_by_HMA_summer2) #check dataframe
+mod1 = lm(formula= logit_poales ~ RAP_total_GF, data= graminoids_by_HMA_summer2)
+summary(mod1)
+
+#### Biomass
+
+mod2 = lm(formula= logit_poales ~ RAP_herb_biomass, data= graminoids_by_HMA_summer2)
+summary(mod2)
+
+####Herd Buffered cover
+View(RAP_and_poales_by_HMA_summer2) #check dataframe
+
+
+mod3 = lm(formula= logit_poales ~ mean_herb_cover, data= RAP_and_poales_by_HMA_summer2)
+summary(mod3)
+
+#### Herd buffered biomass
+
+
+mod4 = lm(formula= logit_poales ~ mean_herb_biomass, data= RAP_and_poales_by_HMA_summer2)
+summary(mod4)
+
+# Winter 
+
+#### Cover
+
+View(graminoids_by_HMA_winter) #check dataframe
+
+mod5 = lm(formula= logit_poales ~ RAP_total_GF, data= graminoids_by_HMA_winter)
+summary(mod5)
+
+#### Biomass
+cor.test(graminoids_by_HMA_winter$logit_poales, graminoids_by_HMA_winter$RAP_herb_biomass, method="spearman") #not significant p=0.1735 rho= -0.3714
+
+mod6 = lm(formula= logit_poales ~ RAP_herb_biomass, data= graminoids_by_HMA_winter)
+summary(mod6)
+
+####Herd Buffered cover
+
+View(RAP_and_poales_by_HMA_winter) #check dataframe
+
+mod7 = lm(formula= logit_poales ~ mean_herb_cover, data= RAP_and_poales_by_HMA_winter)
+summary(mod7)
+#### Herd buffered biomass
+
+
+cor.test(RAP_and_poales_by_HMA_winter$mean_herb_biomass, RAP_and_poales_by_HMA_winter$logit_poales, method="pearson")#not significant p=0.471 cor = -0.202
+
+mod8 = lm(formula= logit_poales ~ mean_herb_biomass, data= RAP_and_poales_by_HMA_winter)
+summary(mod8)
+
+```
+
+
+##Response transformed Graminoids, predictor cover transformed
+```{r}
+
+##Summer (no SB) 
+
+#### Cover
+
+
+View(graminoids_by_HMA_summer2) #check dataframe
+mod9 = lm(formula= logit_poales ~ logit_cover, data= graminoids_by_HMA_summer2)
+summary(mod9)
+
+####Herd Buffered cover
+
+View(RAP_and_poales_by_HMA_summer2) #check dataframe
+
+
+mod10 = lm(formula= logit_poales ~ logit_cover, data= RAP_and_poales_by_HMA_summer2)
+summary(mod10)
+
+# Winter 
+
+#### Cover
+
+View(graminoids_by_HMA_winter) #check dataframe
+
+mod11 = lm(formula= logit_poales ~ logit_cover, data= graminoids_by_HMA_winter)
+summary(mod11)
+
+####Herd Buffered cover
+cor.test(RAP_and_poales_by_HMA_winter$logit_cover, RAP_and_poales_by_HMA_winter$logit_poales, method="spearman")#not significant p=0.3334 rho = -0.2679
+
+View(RAP_and_poales_by_HMA_winter) #check dataframe
+
+mod12 = lm(formula= logit_poales ~ logit_cover, data= RAP_and_poales_by_HMA_winter)
+summary(mod12)
+```
+
+
+## Response BCS, predictor graminoids transformed
+```{r}
+
+## Summer
+
+View(graminoids_by_HMA_summer2)
+mod13 = lm(formula= mean_BCS ~ logit_poales, data= graminoids_by_HMA_summer2)
+summary(mod13)
+
+## Winter 
+
+cor.test(graminoids_by_HMA_winter$logit_poales, graminoids_by_HMA_winter$mean_BCS, method="pearson") # not significant p=0.9322 cor = -0.02405
+
+View(graminoids_by_HMA_winter)
+mod14 = lm(formula= mean_BCS ~ logit_poales, data= graminoids_by_HMA_winter)
+summary(mod14)
+
+
+###### Summer graminoid and winter body condition #############
+
+cor.test(graminoids_by_HMA_winter$summer_logit_poales, graminoids_by_HMA_winter$mean_BCS, method="spearman") # not significant p=0.8124 rho = -0.067857
+
+
+View(graminoids_by_HMA_winter)
+mod15 = lm(formula= mean_BCS ~ summer_logit_poales, data= graminoids_by_HMA_winter)
+summary(mod15)
+
+```
 
 #Range model incl. cover and ecosystem
 ```{r}
@@ -2584,3 +3453,118 @@ anova(range_cover_eco_int_lm)
 
 ```
 
+#Table of families by HMA
+```{r}
+
+plant_family_HMA_season<-plant_family_meta_wild #move to new dataframe
+
+#make each family a numeric that has not already been made numberic
+plant_family_HMA_season$Chenopodiaceae<-as.numeric(plant_family_HMA_season$Chenopodiaceae)
+plant_family_HMA_season$Polygonaceae<-as.numeric(plant_family_HMA_season$Polygonaceae)
+plant_family_HMA_season$Asteraceae<-as.numeric(plant_family_HMA_season$Asteraceae)
+plant_family_HMA_season$Fabaceae<-as.numeric(plant_family_HMA_season$Fabaceae)
+plant_family_HMA_season$Brassicaceae<-as.numeric(plant_family_HMA_season$Brassicaceae)
+plant_family_HMA_season$Sarcobataceae<-as.numeric(plant_family_HMA_season$Sarcobataceae)
+plant_family_HMA_season$Fagaceae<-as.numeric(plant_family_HMA_season$Fagaceae)
+plant_family_HMA_season$Ephedraceae<-as.numeric(plant_family_HMA_season$Ephedraceae)
+plant_family_HMA_season$Ranunculaceae<-as.numeric(plant_family_HMA_season$Ranunculaceae)
+plant_family_HMA_season$Malvaceae<-as.numeric(plant_family_HMA_season$Malvaceae)
+plant_family_HMA_season$Rosaceae<-as.numeric(plant_family_HMA_season$Rosaceae)
+plant_family_HMA_season$Hydrophyllaceae<-as.numeric(plant_family_HMA_season$Hydrophyllaceae)
+plant_family_HMA_season$Tamaricaceae<-as.numeric(plant_family_HMA_season$Tamaricaceae)
+plant_family_HMA_season$Geraniaceae<-as.numeric(plant_family_HMA_season$Geraniaceae)
+plant_family_HMA_season$Potamogetonaceae<-as.numeric(plant_family_HMA_season$Potamogetonaceae)
+plant_family_HMA_season$Apiaceae<-as.numeric(plant_family_HMA_season$Apiaceae)
+plant_family_HMA_season$Berberidaceae<-as.numeric(plant_family_HMA_season$Berberidaceae)
+plant_family_HMA_season$Boraginaceae<-as.numeric(plant_family_HMA_season$Boraginaceae)
+plant_family_HMA_season$Onagraceae<-as.numeric(plant_family_HMA_season$Onagraceae)
+plant_family_HMA_season$Polemoniaceae<-as.numeric(plant_family_HMA_season$Polemoniaceae)
+plant_family_HMA_season$Pinaceae<-as.numeric(plant_family_HMA_season$Pinaceae)
+plant_family_HMA_season$Cupressaceae<-as.numeric(plant_family_HMA_season$Cupressaceae)
+plant_family_HMA_season$Nyctaginaceae<-as.numeric(plant_family_HMA_season$Nyctaginaceae)
+plant_family_HMA_season$Plantaginaceae<-as.numeric(plant_family_HMA_season$Plantaginaceae)
+plant_family_HMA_season$Comandraceae<-as.numeric(plant_family_HMA_season$Comandraceae)
+plant_family_HMA_season$Salicaceae<-as.numeric(plant_family_HMA_season$Salicaceae)
+plant_family_HMA_season$Bignoniaceae<-as.numeric(plant_family_HMA_season$Bignoniaceae)
+plant_family_HMA_season$Caryophyllaceae<-as.numeric(plant_family_HMA_season$Caryophyllaceae)
+plant_family_HMA_season$Urticaceae<-as.numeric(plant_family_HMA_season$Urticaceae)
+plant_family_HMA_season$Campanulaceae<-as.numeric(plant_family_HMA_season$Campanulaceae)
+plant_family_HMA_season$Krameriaceae<-as.numeric(plant_family_HMA_season$Krameriaceae)
+plant_family_HMA_season$Scrophulariaceae<-as.numeric(plant_family_HMA_season$Scrophulariaceae)
+plant_family_HMA_season$Loasaceae<-as.numeric(plant_family_HMA_season$Loasaceae)
+plant_family_HMA_season$Stachyuraceae<-as.numeric(plant_family_HMA_season$Stachyuraceae)
+plant_family_HMA_season$Caprifoliaceae<-as.numeric(plant_family_HMA_season$Caprifoliaceae)
+plant_family_HMA_season$Amblystegiaceae<-as.numeric(plant_family_HMA_season$Amblystegiaceae)
+plant_family_HMA_season$Zygophyllaceae<-as.numeric(plant_family_HMA_season$Zygophyllaceae)
+plant_family_HMA_season$Asparagaceae<-as.numeric(plant_family_HMA_season$Asparagaceae)
+plant_family_HMA_season$Linaceae<-as.numeric(plant_family_HMA_season$Linaceae)
+plant_family_HMA_season$Phrymaceae<-as.numeric(plant_family_HMA_season$Phrymaceae)
+plant_family_HMA_season$Orobanchaceae<-as.numeric(plant_family_HMA_season$Orobanchaceae)
+plant_family_HMA_season$Anacardiaceae<-as.numeric(plant_family_HMA_season$Anacardiaceae)
+plant_family_HMA_season$Amaryllidaceae<-as.numeric(plant_family_HMA_season$Amaryllidaceae)
+plant_family_HMA_season$Bryaceae<-as.numeric(plant_family_HMA_season$Bryaceae)
+plant_family_HMA_season$Cucurbitaceae<-as.numeric(plant_family_HMA_season$Cucurbitaceae)
+plant_family_HMA_season$Juncaginaceae<-as.numeric(plant_family_HMA_season$Juncaginaceae)
+plant_family_HMA_season$Solanaceae<-as.numeric(plant_family_HMA_season$Solanaceae)
+
+#export
+write.csv(plant_family_HMA_season, "family_by_sample.csv")# write to csv dataframe for each sample
+
+#get the HMA/season averages
+plant_family_HMA_season_sd<-plant_family_HMA_season%>%   
+  group_by(study.area, season)%>%
+  summarise(Poaceae1=mean(Poaceae), sd_Poaceae=sd(Poaceae), Cyperaceae1=mean(Cyperaceae), sd_Cyperaceae=sd(Cyperaceae), Juncaceae1=mean(Juncaceae), sd_Juncaceae=sd(Juncaceae), Asteraceae1=mean(Asteraceae), sd_Asteraceae=sd(Asteraceae), Chenopodiaceae1=mean(Chenopodiaceae), sd_Chenopodiaceae=sd(Chenopodiaceae),Polygonaceae1=mean(Polygonaceae), sd_Polygonaceae=sd(Polygonaceae), Fabaceae1=mean(Fabaceae), sd_Fabaceae=sd(Fabaceae),Brassicaceae1=mean(Brassicaceae), sd_Brassicaceae=sd(Brassicaceae),Sarcobataceae1=mean(Sarcobataceae), sd_Sarcobataceae=sd(Sarcobataceae),Fagaceae1=mean(Fagaceae), sd_Fagaceae=sd(Fagaceae),Ephedraceae1=mean(Ephedraceae), sd_Ephedraceae=sd(Ephedraceae),Ranunculaceae1=mean(Ranunculaceae), sd_Ranunculaceae=sd(Ranunculaceae),Malvaceae1=mean(Malvaceae), sd_Malvaceae=sd(Malvaceae),Rosaceae1=mean(Rosaceae), sd_Rosaceae=sd(Rosaceae),Hydrophyllaceae1=mean(Hydrophyllaceae), sd_Hydrophyllaceae=sd(Hydrophyllaceae), Tamaricaceae1=mean(Tamaricaceae), sd_Tamaricaceae=sd(Tamaricaceae), Geraniaceae1=mean(Geraniaceae), sd_Geraniaceae=sd(Geraniaceae),Potamogetonaceae1=mean(Potamogetonaceae), sd_Potamogetonaceae=sd(Potamogetonaceae), Apiaceae1=mean(Apiaceae), sd_Apiaceae=sd(Apiaceae), Berberidaceae1=mean(Berberidaceae), sd_Berberidaceae=sd(Berberidaceae), Boraginaceae1=mean(Boraginaceae), sd_Boraginaceae=sd(Boraginaceae), Onagraceae1=mean(Onagraceae), sd_Onagraceae=sd(Onagraceae), Polemoniaceae1=mean(Polemoniaceae), sd_Polemoniaceae=sd(Polemoniaceae), Pinaceae1=mean(Pinaceae), sd_Pinaceae=sd(Pinaceae), Cupressaceae1=mean(Cupressaceae), sd_Cupressaceae=sd(Cupressaceae), Nyctaginaceae1=mean(Nyctaginaceae), sd_Nyctaginaceae=sd(Nyctaginaceae), Plantaginaceae1=mean(Plantaginaceae), sd_Plantaginaceae=sd(Plantaginaceae), Comandraceae1=mean(Comandraceae), sd_Comandraceae=sd(Comandraceae),  Salicaceae1=mean(Salicaceae), sd_Salicaceae=sd(Salicaceae), Bignoniaceae1=mean(Bignoniaceae), sd_Bignoniaceae=sd(Bignoniaceae), Caryophyllaceae1=mean(Caryophyllaceae), sd_Caryophyllaceae=sd(Caryophyllaceae), Urticaceae1=mean(Urticaceae), sd_Urticaceae=sd(Urticaceae), Campanulaceae1=mean(Campanulaceae), sd_Campanulaceae=sd(Campanulaceae),  Krameriaceae1=mean(Krameriaceae), sd_Krameriaceae=sd(Krameriaceae), Scrophulariaceae1=mean(Scrophulariaceae), sd_Scrophulariaceae=sd(Scrophulariaceae), Loasaceae1=mean(Loasaceae), sd_Loasaceae=sd(Loasaceae), Stachyuraceae1=mean(Stachyuraceae), sd_Stachyuraceae=sd(Stachyuraceae), Caprifoliaceae1=mean(Caprifoliaceae), sd_Caprifoliaceae=sd(Caprifoliaceae), Amblystegiaceae1=mean(Amblystegiaceae), sd_Amblystegiaceae=sd(Amblystegiaceae), Zygophyllaceae1=mean(Zygophyllaceae), sd_Zygophyllaceae=sd(Zygophyllaceae), Asparagaceae1=mean(Asparagaceae), sd_Asparagaceae=sd(Asparagaceae), Linaceae1=mean(Linaceae), sd_Linaceae=sd(Linaceae), Phrymaceae1=mean(Phrymaceae), sd_Phrymaceae=sd(Phrymaceae), Orobanchaceae1=mean(Orobanchaceae), sd_Orobanchaceae=sd(Orobanchaceae), Anacardiaceae1=mean(Anacardiaceae), sd_Anacardiaceae=sd(Anacardiaceae), Amaryllidaceae1=mean(Amaryllidaceae), sd_Amaryllidaceae=sd(Amaryllidaceae), Bryaceae1=mean(Bryaceae), sd_Bryaceae=sd(Bryaceae), Cucurbitaceae1=mean(Cucurbitaceae), sd_Cucurbitaceae=sd(Cucurbitaceae), Juncaginaceae1=mean(Juncaginaceae), sd_Juncaginaceae=sd(Juncaginaceae), Solanaceae1=mean(Solanaceae), sd_Solanaceae=sd(Solanaceae))
+
+View(plant_family_HMA_season_sd)
+
+#export
+write.csv(plant_family_HMA_season_sd, "family_by_HMA.csv")# write to csv dataframe for each HMA/season
+
+#HMA averages without the SD
+plant_family_HMA_season_no_sd<-plant_family_HMA_season%>%   
+  group_by(study.area, season)%>%
+  summarise(Poaceae1=mean(Poaceae), Cyperaceae1=mean(Cyperaceae),  Juncaceae1=mean(Juncaceae),  Asteraceae1=mean(Asteraceae),  Chenopodiaceae1=mean(Chenopodiaceae), Polygonaceae1=mean(Polygonaceae),  Fabaceae1=mean(Fabaceae), Brassicaceae1=mean(Brassicaceae), Sarcobataceae1=mean(Sarcobataceae), Fagaceae1=mean(Fagaceae), Ephedraceae1=mean(Ephedraceae), Ranunculaceae1=mean(Ranunculaceae), Malvaceae1=mean(Malvaceae), Rosaceae1=mean(Rosaceae), Hydrophyllaceae1=mean(Hydrophyllaceae), Tamaricaceae1=mean(Tamaricaceae),  Geraniaceae1=mean(Geraniaceae), Potamogetonaceae1=mean(Potamogetonaceae), Apiaceae1=mean(Apiaceae),  Berberidaceae1=mean(Berberidaceae),  Boraginaceae1=mean(Boraginaceae),  Onagraceae1=mean(Onagraceae),  Polemoniaceae1=mean(Polemoniaceae),  Pinaceae1=mean(Pinaceae),  Cupressaceae1=mean(Cupressaceae), Nyctaginaceae1=mean(Nyctaginaceae),  Plantaginaceae1=mean(Plantaginaceae), Comandraceae1=mean(Comandraceae),  Salicaceae1=mean(Salicaceae),  Bignoniaceae1=mean(Bignoniaceae),  Caryophyllaceae1=mean(Caryophyllaceae), Urticaceae1=mean(Urticaceae),  Campanulaceae1=mean(Campanulaceae),   Krameriaceae1=mean(Krameriaceae),  Scrophulariaceae1=mean(Scrophulariaceae),  Loasaceae1=mean(Loasaceae), Stachyuraceae1=mean(Stachyuraceae),  Caprifoliaceae1=mean(Caprifoliaceae),  Amblystegiaceae1=mean(Amblystegiaceae), Zygophyllaceae1=mean(Zygophyllaceae),  Asparagaceae1=mean(Asparagaceae), Linaceae1=mean(Linaceae), Phrymaceae1=mean(Phrymaceae), Orobanchaceae1=mean(Orobanchaceae),  Anacardiaceae1=mean(Anacardiaceae),  Amaryllidaceae1=mean(Amaryllidaceae),  Bryaceae1=mean(Bryaceae),  Cucurbitaceae1=mean(Cucurbitaceae),  Juncaginaceae1=mean(Juncaginaceae),  Solanaceae1=mean(Solanaceae))
+
+View(plant_family_HMA_season_no_sd)
+#export
+write.csv(plant_family_HMA_season_no_sd, "family_by_HMA_noSD.csv")# write to csv dataframe for each HMA/season
+
+#calculate range-wide SD/ mean (including SB in summer)
+
+mean(subset(plant_family_HMA_season_no_sd, season == "winter")$Asteraceae1) # 15.05261
+sd(subset(plant_family_HMA_season_no_sd, season == "winter")$Asteraceae1) # 15.7874
+
+mean(subset(plant_family_HMA_season_no_sd, season == "summer")$Asteraceae1) # 6.03408
+sd(subset(plant_family_HMA_season_no_sd, season == "summer")$Asteraceae1) # 5.794897
+
+mean(subset(plant_family_HMA_season_no_sd, season == "winter")$Chenopodiaceae1)# 14.53212
+sd(subset(plant_family_HMA_season_no_sd, season == "winter")$Chenopodiaceae1) # 15.22876
+
+mean(subset(plant_family_HMA_season_no_sd, season == "summer")$Chenopodiaceae1) # 3.9063
+sd(subset(plant_family_HMA_season_no_sd, season == "summer")$Chenopodiaceae1) # 8.1305
+
+
+#t-tests for Chenopodiaceae and Asteraceae
+range_cheno_summer<-(subset(plant_family_HMA_season_no_sd, study.area != "SB"))
+range_cheno_summer<-(subset(range_cheno_summer, season == "summer")$Chenopodiaceae1) 
+range_cheno_winter<-(subset(plant_family_HMA_season_no_sd, season == "winter")$Chenopodiaceae1) 
+
+set.seed(223)
+boot.t.test(x=range_cheno_summer, y=range_cheno_winter, paired=TRUE) #paired bootstrap 0.0144, paired traditional p=0.037
+
+range_aster_summer<-(subset(plant_family_HMA_season_no_sd, study.area != "SB"))
+range_aster_summer<-(subset(range_aster_summer, season == "summer")$Asteraceae1) 
+range_aster_winter<-(subset(plant_family_HMA_season_no_sd, season == "winter")$Asteraceae1) 
+
+set.seed(223)
+boot.t.test(x=range_aster_summer, y=range_aster_winter, paired=TRUE) #paired bootstrap 0.0096, paired traditional p=0.028
+
+
+#calculate range-wide SD/ mean (excluding SB in summer)
+mean(range_cheno_summer) # 4.06774
+sd(range_cheno_summer)# 8.38929
+
+mean(range_aster_summer)# 5.69809
+sd(range_aster_summer) # 5.834804
+
+```
