@@ -29,4 +29,4 @@ File "allHMAs_withRAP_4_18_24.csv" is the metadata information for each HMA (pro
 
 File "5_9_23_metadata_no_copy_withRAP.csv" is the metadata for each individual fecal collection with columns added for spatially calculated RAP 2020 cover and biomass. These values represent the "potential movement buffers" of each individual horse to represent the theoretical available cover or biomass to that animal in the 36 hours preceeding fecal defecation.  
 
-  
+ In addition, the large supplemental information Tables A1 and A3 are also included here for download as well.  
